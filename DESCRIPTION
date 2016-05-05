@@ -9,6 +9,7 @@ License: LGPL-3.0
 Encoding: UTF-8
 LazyData: true
 Suggests: testthat,
-    covr
+    covr,
+    knitr
 RoxygenNote: 5.0.1
 VignetteBuilder: knitr
