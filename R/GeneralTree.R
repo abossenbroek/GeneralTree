@@ -48,20 +48,17 @@ GeneralTree <- R6Class('GeneralTree',
      invisible(result)
    },
    search_id_starting_at_node = function(id) {
+     result = NULL
      # Verify whether the current node matches the id.
      if (identical(id, self$id)) {
        result = self
-     } else if (!is.null(private$.siblings)) {
-       # Find whether any id in the siblings matches the one we are looking
-       # for.
-       find_sibling <- sapply(private$.siblings, identical, id)
+     }
 
-       if (any(find_sibling)) {
-         result = private$.siblings[[find_sibling]]
-       } else {
-         result = NULL
-       }
-     } else {
+     if (!is.null(private$.siblings) && is.null(result)) {
+       result = self$get_sibling(id)
+     }
+
+     if (is.null(result)) {
        # Search the left child if it is present.
        if (!is.null(private$.left_child)) {
          result = private$.left_child$search_id_starting_at_node(id)
@@ -71,6 +68,27 @@ GeneralTree <- R6Class('GeneralTree',
      }
 
      invisible(result)
+   },
+   get_sibling = function(id) {
+     result = NULL
+
+     if (self$have_siblings) {
+       # Find whether any id in the siblings matches the one we are looking
+       # for.
+       find_sibling <- sapply(private$.siblings, identical, id)
+
+       if (any(find_sibling)) {
+         result = private$.siblings[[find_sibling]]
+       }
+     }
+
+     invisible(result)
+   },
+   add_sibling = function(node) {
+
+   },
+   add_child = function(node) {
+
    },
    set_root = function(node) {
      private$.root = node
