@@ -71,6 +71,15 @@ GeneralTree <- R6Class('GeneralTree',
      #browser()
      invisible(new_node)
    },
+   add_sibling = function(node) {
+     private$.siblings = c(private$.siblings, list(node))
+     node$set_root(self$root)
+
+     invisible(node)
+   },
+   search = function(id) {
+     self$search_id(id)$data
+   },
    search_id = function(id) {
      # Determine whether search was called at the root node.
      if (is.null(private$.root))
@@ -79,12 +88,6 @@ GeneralTree <- R6Class('GeneralTree',
        result = private$.root$search_id_starting_at_node(id)
 
      invisible(result)
-   },
-   add_sibling = function(node) {
-     private$.siblings = c(private$.siblings, list(node))
-     node$set_root(self$root)
-
-     invisible(node)
    },
    search_id_starting_at_node = function(id) {
      result = NULL
