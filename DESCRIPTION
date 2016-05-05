@@ -5,11 +5,12 @@ Authors@R: person("Anton", "Bossenbroek", email = "anton.bossenbroek@me.com", ro
 Description: An implementation of a general tree data structure in R.
 Depends: R (>= 3.2.5),
     R6 (>= 2.1.2)
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Suggests: testthat,
     covr,
-    knitr
+    knitr,
+    DiagrammeR
 RoxygenNote: 5.0.1
 VignetteBuilder: knitr
