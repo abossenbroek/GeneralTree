@@ -19,13 +19,7 @@ GeneralTree <- R6Class('GeneralTree',
      invisible(self)
    },
    add_node = function(parent_id, id, data) {
-     # Three cases,
-     # i.   tree is completely empty,
-     # ii.  tree contains parent, but:
-     #        ii.a.    parent has no child
-     #        ii.b.    parent has child
-     # iii. tree does not contain parent
-
+     # i.   tree contains only root node
      if (is.null(private$.root) && is.null(private$.siblings) &&
          is.null(private$.left_child)) {
        if (parent_id != private$.id) {
@@ -36,9 +30,47 @@ GeneralTree <- R6Class('GeneralTree',
          private$.left_child$set_root(self)
          added_node = private$.left_child
        }
+     } else {
+       # Find the parent node.
+       parent_node = self$search_id(parent_id)
+
+       #TODO: implement
      }
      invisible(added_node)
    },
+   search_id = function(id) {
+     # Determine whether search was called at the root node.
+     if (is.null(private$.root))
+       result = self$search_id_starting_at_node(id)
+     else
+       result = private$.root$search_id_starting_at_node(id)
+
+     invisible(result)
+   },
+   search_id_starting_at_node = function(id) {
+     # Verify whether the current node matches the id.
+     if (identical(id, self$id)) {
+       result = self
+     } else if (!is.null(private$.siblings)) {
+       # Find whether any id in the siblings matches the one we are looking
+       # for.
+       find_sibling <- sapply(private$.siblings, identical, id)
+
+       if (any(find_sibling)) {
+         result = private$.siblings[[find_sibling]]
+       } else {
+         result = NULL
+       }
+     } else {
+       # Search the left child if it is present.
+       if (!is.null(private$.left_child)) {
+         result = private$.left_child$search_id_starting_at_node(id)
+       } else {
+         result = NULL
+       }
+     }
+
+     invisible(result)
    },
    set_root = function(node) {
      private$.root = node
@@ -53,8 +85,11 @@ GeneralTree <- R6Class('GeneralTree',
     left_child = function() {
       invisible(private$.left_child)
     },
-    left_siblings= function() {
-      invisible(private$.left_siblings)
+    siblings= function() {
+      invisible(private$.siblings)
+    },
+    id = function() {
+      invisible(private$.id)
     }
   )
 )
