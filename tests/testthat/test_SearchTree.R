@@ -1,7 +1,5 @@
 context("Searching tree")
 test_that("search tree with only a single child", {
-  require(GeneralTree)
-
   nodes <- list()
 
   nodes[["root"]] <- GeneralTree$new(0, "parent1")
