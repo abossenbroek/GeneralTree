@@ -21,9 +21,20 @@ test_that("add child to empty tree works", {
 })
 
 test_that("adding a child with an non existing parent results in failure", {
-  require(GeneralTree)
+  root <- GeneralTree$new(0, "parent1")
+  expect_error(root$add_node(2, 1, "child1"))
+})
 
- root <- GeneralTree$new(0, "parent1")
- expect_error(root$add_node(2, 1, "child1"))
+test_that("have_siblign action functions is working as expected", {
+  nodes <- list()
+
+  nodes[["root"]] <- GeneralTree$new(0, "parent1")
+
+  expect_identical(nodes[["root"]]$have_siblings, FALSE)
+  expect_identical(nodes[["root"]]$have_child, FALSE)
+
+  nodes[["child1"]] <- nodes[["root"]]$add_node(0, 1, "child1")
+
+  expect_identical(nodes[["root"]]$have_child, TRUE)
 })
 

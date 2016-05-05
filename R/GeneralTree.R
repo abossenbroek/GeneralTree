@@ -108,6 +108,12 @@ GeneralTree <- R6Class('GeneralTree',
     },
     id = function() {
       invisible(private$.id)
+    },
+    have_child = function() {
+      !is.null(private$.left_child)
+    },
+    have_siblings = function() {
+      !is.null(private$.siblings)
     }
   )
 )
