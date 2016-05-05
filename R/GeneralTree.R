@@ -164,6 +164,9 @@ GeneralTree <- R6Class('GeneralTree',
     },
     data = function() {
       return(private$.data)
+    },
+    is_root = function() {
+      is.null(private$.root)
     }
   )
 )
