@@ -4,17 +4,17 @@
 GeneralTree <- R6Class('GeneralTree',
   lock_objects = FALSE,
   private = list(
-    data = NULL,
-    left_child = NULL,
-    siblings = NULL,
-    root = NULL,
-    id = NULL,
-    tree_depth = 0
+    .data = NULL,
+    .left_child = NULL,
+    .siblings = NULL,
+    .root = NULL,
+    .id = NULL,
+    .tree_depth = 0
   ),
   public = list(
    initialize = function(id, data) {
-     private$id = id
-     private$data = data
+     private$.id = id
+     private$.data = data
 
      invisible(self)
    },
@@ -26,28 +26,35 @@ GeneralTree <- R6Class('GeneralTree',
      #        ii.b.    parent has child
      # iii. tree does not contain parent
 
-     if (is.null(private$root) && is.null(private$siblings) &&
-         is.null(private$left_child)) {
-       if (parent_id != private$id) {
+     if (is.null(private$.root) && is.null(private$.siblings) &&
+         is.null(private$.left_child)) {
+       if (parent_id != private$.id) {
          stop("parent_id could not be found in the tree")
        } else {
          # Add the child and set up all the references in the child correctly.
-         private$left_child = GeneralTree$new(id, data)
-         private$left_child$set_root(self)
-         added_node = private$left_child
+         private$.left_child = GeneralTree$new(id, data)
+         private$.left_child$set_root(self)
+         added_node = private$.left_child
        }
      }
      invisible(added_node)
    },
-   set_root = function(node) {
-     private$root = node
    },
-   get_root = function(node) {
-     invisible(private$root)
+   set_root = function(node) {
+     private$.root = node
    }
   ),
   active = list(
     depth = function() {
+    },
+    root = function() {
+      invisible(private$.root)
+    },
+    left_child = function() {
+      invisible(private$.left_child)
+    },
+    left_siblings= function() {
+      invisible(private$.left_siblings)
     }
   )
 )
