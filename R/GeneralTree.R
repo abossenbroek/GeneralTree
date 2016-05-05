@@ -1,4 +1,5 @@
-#'
+#' GeneralTree is a R6 implementation of a tree that can have multiple child
+#' per parent.
 #' @export GeneralTree
 #' @importFrom R6 R6Class
 GeneralTree <- R6Class('GeneralTree',
