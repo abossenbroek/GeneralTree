@@ -7,4 +7,5 @@ after_success:
   - Rscript -e 'covr::codecov()'
 notifications:
   slack: generaltree:6yjZnjvxvpRFGEJeVxWBQ33N
-
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
