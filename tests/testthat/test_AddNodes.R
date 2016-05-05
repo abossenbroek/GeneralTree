@@ -61,9 +61,35 @@ test_that('add multiple childeren as part of child', {
 
 
   nodes[['child3.5']] <- nodes[['child2.4']]$add_node(3, 5, 'child3.5')
-  nodes[['child3.5']] <- nodes[['child2.4']]$add_node(3, 5, 'child3.5')
 
   expect_identical(nodes[['child2.4']]$search_id(5)$data, 'child3.5')
   expect_identical(nodes[['child1']]$search_id(5)$data, 'child3.5')
+})
+
+test_that('add multiple childeren as part of child with char id', {
+  nodes <- list()
+
+  nodes[['root']] <- GeneralTree$new(0, 'parent1')
+  nodes[['child.a']] <- nodes[['root']]$add_node(0, 'a', 'child.a')
+  nodes[['child.b']] <- nodes[['root']]$add_node(0, 'b', 'child.b')
+
+  nodes[['child.b.c']] <- nodes[['root']]$add_node('b', 'c', 'child.b.c')
+
+  nodes[['child.b.d']] <- nodes[['root']]$add_node('b', 'd', 'child.b.d')
+
+
+  nodes[['child.c.e']] <- nodes[['child.b.d']]$add_node('c', 'e', 'child.c.e')
+  nodes[['child.c.f']] <- nodes[['child.b.d']]$add_node('c', 'f', 'child.c.e')
+
+  expect_identical(nodes[['child.b.d']]$search_id('e')$data, 'child.c.e')
+  expect_identical(nodes[['child.a']]$search_id('e')$data, 'child.c.e')
+})
+
+test_that('multiple childeren will yield error', {
+  nodes <- list()
+  nodes[['root']] <- GeneralTree$new(0, 'parent1')
+  nodes[['child.0.1']] <- nodes[['root']]$add_node(0, 1, 'child.0.1')
+
+  expect_error(nodes[['root']]$set_left_child(GeneralTree$new(1, 'child.0.1')))
 })
 
