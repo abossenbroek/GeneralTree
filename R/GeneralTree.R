@@ -1,7 +1,23 @@
-#' GeneralTree is a R6 implementation of a tree that can have multiple child
-#' per parent.
-#' @export GeneralTree
+#' GeneralTree is a R6 implementation of a tree that can have multiple
+#' childeren per parent.
+#' @docType class
 #' @importFrom R6 R6Class
+#' @export GeneralTree
+#' @return Object of \code{\link{R6Class}} with methods for creating a general
+#' tree.
+#' @format \code{\link{R6Class}} object.
+#' @examples
+#' root <- GeneralTree$new(0, 'root')
+#' child1 <- root$add_node(0, 1, 'child.0.1')
+#' child2 <- root$add_node(0, 2, 'child.0.2')
+#' child3 <- root$add_node(0, 3, 'child.0.3')
+#' child4 <- root$add_node(3, 4, 'child.3.4')
+#' root$search(4)
+#' @section Methods:
+#' \describe{
+#'  \item{\code{add_node(parent_id, id, data)}}{Add a new node to the tree. The
+#'  new node will be a child of parent_id and have an id and data.}
+#' }
 GeneralTree <- R6Class('GeneralTree',
   lock_objects = FALSE,
   private = list(
