@@ -15,19 +15,12 @@ install:
 build_script:
   - travis-tool.sh install_deps
 
-after_test:
-  - 7z a all-Rout.zip *.Rcheck\**\*.Rout *.Rcheck\**\*.fail
-
 test_script:
   - travis-tool.sh run_tests
-  - Rscript --verbose -e 'library(devtools);devtools::install_github("jimhester/covr");library(covr);codecov();coveralls()'
 
 on_failure:
   - 7z a failure.zip *.Rcheck\*
-  - appveyor PushArtifact failure.zip  
-
-environment:
-  R_VERSION: 3.3.0
+  - appveyor PushArtifact failure.zip
 
 artifacts:
   - path: '*.Rcheck\**\*.log'
