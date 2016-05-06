@@ -26,20 +26,9 @@ environment:
     R_ARCH: x64
     GCC_PATH: mingw_64
 
-  - R_VERSION: release
+  - R_VERSION: 3.3.0
     R_ARCH: x64
-
-  - R_VERSION: stable
-
-  - R_VERSION: patched
-
-  - R_VERSION: oldrel
-    RTOOLS_VERSION: 32
-    CRAN: http://cran.rstudio.com
-
-  - R_VERSION: 3.0.3
-    RTOOLS_VERSION: 31
-    CRAN: http://cran.rstudio.com
+    GCC_PATH: mingw_64
 
 build_script:
   - travis-tool.sh install_deps
