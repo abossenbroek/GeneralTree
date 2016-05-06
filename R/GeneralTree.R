@@ -26,7 +26,8 @@ GeneralTree <- R6Class('GeneralTree',
     .siblings = NULL,
     .root = NULL,
     .id = NULL,
-    .tree_depth = 0
+    .tree_depth = 0,
+    .parent = NULL
   ),
   public = list(
    initialize = function(id, data) {
@@ -68,7 +69,9 @@ GeneralTree <- R6Class('GeneralTree',
          stop("Could not find matching parent node with parent id ", parent_id)
        }
      }
-     #browser()
+
+     if (!is.null(new_node)) new_node$set_parent(parent_node)
+
      invisible(new_node)
    },
    add_sibling = function(node) {
@@ -139,6 +142,11 @@ GeneralTree <- R6Class('GeneralTree',
    },
    set_data = function(data) {
      private$.data = data
+   },
+   set_parent = function(node) {
+     private$.parent = node
+   },
+   print = function() {
    }
   ),
   active = list(
@@ -167,6 +175,9 @@ GeneralTree <- R6Class('GeneralTree',
     },
     is_root = function() {
       is.null(private$.root)
+    },
+    parent = function() {
+      return(private$.parent)
     }
   )
 )
