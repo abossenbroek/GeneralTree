@@ -8,14 +8,14 @@
 #' @format \code{\link{R6Class}} object.
 #' @examples
 #' root <- GeneralTree$new(0, 'root')
-#' child1 <- root$add_node(0, 1, 'child.0.1')
-#' child2 <- root$add_node(0, 2, 'child.0.2')
-#' child3 <- root$add_node(0, 3, 'child.0.3')
-#' child4 <- root$add_node(3, 4, 'child.3.4')
+#' child1 <- root$addNode(0, 1, 'child.0.1')
+#' child2 <- root$addNode(0, 2, 'child.0.2')
+#' child3 <- root$addNode(0, 3, 'child.0.3')
+#' child4 <- root$addNode(3, 4, 'child.3.4')
 #' root$search(4)
 #' @section Methods:
 #' \describe{
-#'  \item{\code{add_node(parent_id, id, data)}}{Add a new node to the tree. The
+#'  \item{\code{addNode(parent_id, id, data)}}{Add a new node to the tree. The
 #'  new node will be a child of parent_id and have an id and data.}
 #' }
 GeneralTree <- R6Class('GeneralTree',
@@ -36,11 +36,11 @@ GeneralTree <- R6Class('GeneralTree',
 
      invisible(self)
    },
-   add_node = function(parent_id, id, data) {
+   addNode = function(parent_id, id, data) {
      new_node = NULL
 
      # Find the parent node.
-     parent_node = self$search_node(parent_id)
+     parent_node = self$searchNode(parent_id)
 
      if (is.null(parent_node)) stop("Could not find the parent node with id ", id)
 
@@ -60,7 +60,7 @@ GeneralTree <- R6Class('GeneralTree',
 
          # Verify whether any childs are already present.
          if (parent_node$have_child) {
-           parent_node$left_child$add_sibling(new_node)
+           parent_node$left_child$addSibling(new_node)
          } else {
            parent_node$set_left_child(new_node)
            new_node$set_root(parent_node$root)
@@ -74,7 +74,7 @@ GeneralTree <- R6Class('GeneralTree',
 
      invisible(new_node)
    },
-   add_sibling = function(node) {
+   addSibling = function(node) {
      if (!self$have_parent) stop("Cannot add sibling to root")
 
      private$.siblings = c(private$.siblings, list(node))
@@ -83,18 +83,18 @@ GeneralTree <- R6Class('GeneralTree',
      invisible(node)
    },
    search = function(id) {
-     self$search_node(id)$data
+     self$searchNode(id)$data
    },
-   search_node = function(id) {
+   searchNode = function(id) {
      # Determine whether search was called at the root node.
      if (is.null(private$.root))
-       result = self$search_node_starting_at_node(id)
+       result = self$searchNode_starting_at_node(id)
      else
-       result = private$.root$search_node_starting_at_node(id)
+       result = private$.root$searchNode_starting_at_node(id)
 
      invisible(result)
    },
-   search_node_starting_at_node = function(id) {
+   searchNode_starting_at_node = function(id) {
      result = NULL
      # Verify whether the current node matches the id.
      if (identical(id, private$.id)) {
@@ -103,7 +103,7 @@ GeneralTree <- R6Class('GeneralTree',
 
      if (!is.null(private$.siblings) && is.null(result)) {
        for (s in private$.siblings) {
-         result = s$search_node_starting_at_node(id)
+         result = s$searchNode_starting_at_node(id)
          if (!is.null(result)) break
        }
      }
@@ -111,7 +111,7 @@ GeneralTree <- R6Class('GeneralTree',
      if (is.null(result)) {
        # Search the left child if it is present.
        if (!is.null(private$.left_child)) {
-         result = private$.left_child$search_node_starting_at_node(id)
+         result = private$.left_child$searchNode_starting_at_node(id)
        } else {
          result = NULL
        }
@@ -190,7 +190,7 @@ GeneralTree <- R6Class('GeneralTree',
      return(child_data)
    },
    deleteId = function(id) {
-     node = self$search_node(id)
+     node = self$searchNode(id)
      node$delete()
    },
    delete = function() {
