@@ -150,6 +150,16 @@ GeneralTree <- R6Class('GeneralTree',
 
      return(sibling_data)
    },
+   getSiblingId = function() {
+     sibling_ids = NULL
+     if (self$have_siblings) {
+       sibling_ids = lapply(self$getSiblingNodes(), function(x) {
+                               if (!identical(x, self)) x$id
+         })
+     }
+
+     return(sibling_ids)
+   },
    getChildNodes = function() {
      child_nodes = NULL
      if (self$have_child) {

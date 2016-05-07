@@ -13,6 +13,10 @@ test_that("Verify correct sibling data is returned", {
 
   expect_identical(tree$search_node('e')$getSiblingData(),
                    list('child.c.f', 'child.c.g'))
+  expect_identical(tree$search_node('e')$getSiblingId(),
+                   list('f', 'g'))
   expect_identical(tree$search_node('c')$getSiblingData(),
                    list('child.b.d'))
+  expect_identical(tree$search_node('c')$getSiblingId(),
+                   list('d'))
 })
