@@ -149,6 +149,38 @@ GeneralTree <- R6Class('GeneralTree',
      }
 
      return(sibling_data)
+   },
+   getSiblingId = function() {
+     sibling_ids = NULL
+     if (self$have_siblings) {
+       sibling_ids = lapply(self$getSiblingNodes(), function(x) {
+                               if (!identical(x, self)) x$id
+         })
+     }
+
+     return(sibling_ids)
+   },
+   getChildNodes = function() {
+     child_nodes = NULL
+     if (self$have_child) {
+       child_nodes = c(list(self$left_child), self$left_child$siblings)
+     }
+   },
+   getChildData = function() {
+     child_data = NULL
+     if (self$have_child) {
+       child_data = lapply(self$getChildNodes(), function(x) x$data)
+     }
+
+     return(child_data)
+   },
+   getChildId = function() {
+     child_data = NULL
+     if (self$have_child) {
+       child_data = lapply(self$getChildNodes(), function(x) x$id)
+     }
+
+     return(child_data)
    }
   ),
   active = list(
