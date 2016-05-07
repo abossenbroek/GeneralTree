@@ -26,7 +26,7 @@ GeneralTree <- R6Class('GeneralTree',
     .siblings = NULL,
     .root = NULL,
     .id = NULL,
-    .tree_depth = 0,
+    .tree_depth = 1,
     .parent = NULL
   ),
   public = list(
@@ -53,6 +53,7 @@ GeneralTree <- R6Class('GeneralTree',
          private$.left_child = GeneralTree$new(id, data)
          private$.left_child$set_root(parent_node)
          new_node = private$.left_child
+         parent_node$setTreeDepth(parent_node$tree_depth + 1)
        }
      } else {
        if (!is.null(parent_node)) {
@@ -64,6 +65,7 @@ GeneralTree <- R6Class('GeneralTree',
          } else {
            parent_node$set_left_child(new_node)
            new_node$set_root(parent_node$root)
+           parent_node$setTreeDepth(parent_node$tree_depth + 1)
          }
        } else {
          stop("Could not find matching parent node with parent id ", parent_id)
@@ -219,8 +221,19 @@ GeneralTree <- R6Class('GeneralTree',
          siblings = siblings[!own_position]
          self$parent$left_child$setSiblings(siblings)
        }
-     } else {
+     } else if (self$have_parent) {
+       suppressWarnings({
+         self$parent$set_left_child(NULL)
+       })
+     } else{
        stop("Did not know how to remove myself")
+     }
+   },
+   setTreeDepth = function(depth) {
+     if (self$is_root) {
+       private$.tree_depth <- depth
+     } else {
+       self$root$setTreeDepth(depth)
      }
    }
   ),
@@ -243,6 +256,7 @@ GeneralTree <- R6Class('GeneralTree',
       !is.null(private$.left_child)
     },
     have_siblings = function() {
+      #TODO: add that current leaf should not count itself as a sibling.
       if (is.null(self$parent))
         return(FALSE)
       else
@@ -262,6 +276,13 @@ GeneralTree <- R6Class('GeneralTree',
     },
     parent = function() {
       return(private$.parent)
+    },
+    tree_depth = function() {
+      if (self$is_root) {
+        return(private$.tree_depth)
+      } else {
+        return(self$root$tree_depth)
+      }
     }
   )
 )
