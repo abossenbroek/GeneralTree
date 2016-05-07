@@ -27,12 +27,9 @@ environment:
 
     - R_VERSINO: release
       R_ARCH: i386
-    #
-    #- R_VERSION: devel
-    #R_ARCH: x64
 
-  - R_VERSION: 3.2.4
-    R_ARCH: x64
+    - R_VERSION: 3.2.4
+      R_ARCH: x64
 
 build_script:
   - travis-tool.sh install_deps
