@@ -77,6 +77,6 @@ test_that('multiple childeren will yield error', {
   nodes[['root']] <- GeneralTree$new(0, 'parent1')
   nodes[['child.0.1']] <- nodes[['root']]$add_node(0, 1, 'child.0.1')
 
-  expect_error(nodes[['root']]$set_left_child(GeneralTree$new(1, 'child.0.1')))
+  expect_warning(nodes[['root']]$set_left_child(GeneralTree$new(1, 'child.0.1')))
 })
 
