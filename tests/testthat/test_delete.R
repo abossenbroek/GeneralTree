@@ -29,6 +29,18 @@ test_that('delete node that is left child', {
   expect_identical(tree$search_node(3)$data, 'child.3')
 })
 
+test_that('Delete a child without siblings', {
+  tree <- GeneralTree$new(0, 'parent1')
+
+  tree$add_node(0, 1, 'child.1')
+  tree$add_node(0, 2, 'child.2')
+  tree$add_node(0, 3, 'child.3')
+  tree$add_node(1, 4, 'child.1.4')
+  tree$deleteId(4)
+
+  expect_identical(tree$search_node(4), NULL)
+})
+
 test_that('delete node that is three levels deep and sibling', {
   tree <- GeneralTree$new(0, 'parent1')
 
