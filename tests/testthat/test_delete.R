@@ -1,8 +1,6 @@
 context('Test delete')
 
 test_that('delete node that is sibling', {
-  nodes <- list()
-
   tree <- GeneralTree$new(0, 'parent1')
 
   expect_identical(tree$have_siblings, FALSE)
@@ -17,8 +15,6 @@ test_that('delete node that is sibling', {
 })
 
 test_that('delete node that is left child', {
-  nodes <- list()
-
   tree <- GeneralTree$new(0, 'parent1')
 
   expect_identical(tree$have_siblings, FALSE)
@@ -34,8 +30,6 @@ test_that('delete node that is left child', {
 })
 
 test_that('delete node that is three levels deep and sibling', {
-  nodes <- list()
-
   tree <- GeneralTree$new(0, 'parent1')
 
   expect_identical(tree$have_siblings, FALSE)
@@ -56,8 +50,6 @@ test_that('delete node that is three levels deep and sibling', {
 })
 
 test_that('delete node that is three levels deep and left child', {
-  nodes <- list()
-
   tree <- GeneralTree$new(0, 'parent1')
 
   expect_identical(tree$have_siblings, FALSE)
