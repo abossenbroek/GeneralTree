@@ -21,19 +21,6 @@ test_that('adding a child with an non existing parent results in failure', {
   expect_error(root$add_node(2, 1, 'child1'))
 })
 
-test_that('have_siblign and have_child action functions is working as expected', {
-  nodes <- list()
-
-  nodes[['root']] <- GeneralTree$new(0, 'parent1')
-
-  expect_identical(nodes[['root']]$have_siblings, FALSE)
-  expect_identical(nodes[['root']]$have_child, FALSE)
-
-  nodes[['child1']] <- nodes[['root']]$add_node(0, 1, 'child1')
-
-  expect_identical(nodes[['root']]$have_child, TRUE)
-})
-
 test_that('add multiple childeren', {
   nodes <- list()
 
@@ -43,9 +30,9 @@ test_that('add multiple childeren', {
 
   nodes[['child2.3']] <- nodes[['root']]$add_node(2, 3, 'child2.3')
 
-  nodes[['root']]$search_id(3)$data
+  nodes[['root']]$search_node(3)$data
 
-  expect_identical(nodes[['root']]$search_id(3)$data, 'child2.3')
+  expect_identical(nodes[['root']]$search_node(3)$data, 'child2.3')
 })
 
 test_that('add multiple childeren as part of child', {
@@ -62,8 +49,8 @@ test_that('add multiple childeren as part of child', {
 
   nodes[['child3.5']] <- nodes[['child2.4']]$add_node(3, 5, 'child3.5')
 
-  expect_identical(nodes[['child2.4']]$search_id(5)$data, 'child3.5')
-  expect_identical(nodes[['child1']]$search_id(5)$data, 'child3.5')
+  expect_identical(nodes[['child2.4']]$search_node(5)$data, 'child3.5')
+  expect_identical(nodes[['child1']]$search_node(5)$data, 'child3.5')
 })
 
 test_that('add multiple childeren as part of child with char id', {
@@ -81,8 +68,8 @@ test_that('add multiple childeren as part of child with char id', {
   nodes[['child.c.e']] <- nodes[['child.b.d']]$add_node('c', 'e', 'child.c.e')
   nodes[['child.c.f']] <- nodes[['child.b.d']]$add_node('c', 'f', 'child.c.e')
 
-  expect_identical(nodes[['child.b.d']]$search_id('e')$data, 'child.c.e')
-  expect_identical(nodes[['child.a']]$search_id('e')$data, 'child.c.e')
+  expect_identical(nodes[['child.b.d']]$search_node('e')$data, 'child.c.e')
+  expect_identical(nodes[['child.a']]$search_node('e')$data, 'child.c.e')
 })
 
 test_that('multiple childeren will yield error', {
