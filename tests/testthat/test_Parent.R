@@ -22,10 +22,10 @@ test_that('Parent stays consistent with multiple children', {
 
   nodes[['child2.3']] <- nodes[['root']]$add_node(2, 3, 'child2.3')
 
-  nodes[['root']]$search_id(3)$data
+  nodes[['root']]$search_node(3)$data
 
-  expect_identical(nodes[['child1']]$search_id(1)$parent$data, 'parent1')
-  expect_identical(nodes[['root']]$search_id(3)$parent$data, 'child2')
+  expect_identical(nodes[['child1']]$search_node(1)$parent$data, 'parent1')
+  expect_identical(nodes[['root']]$search_node(3)$parent$data, 'child2')
 })
 
 test_that('add multiple childeren as part of child', {
@@ -42,6 +42,6 @@ test_that('add multiple childeren as part of child', {
 
   nodes[['child3.5']] <- nodes[['child2.4']]$add_node(3, 5, 'child3.5')
 
-  expect_identical(nodes[['child2.4']]$search_id(5)$parent$data, 'child2.3')
-  expect_identical(nodes[['child1']]$search_id(3)$parent$data, 'child2')
+  expect_identical(nodes[['child2.4']]$search_node(5)$parent$data, 'child2.3')
+  expect_identical(nodes[['child1']]$search_node(3)$parent$data, 'child2')
 })
