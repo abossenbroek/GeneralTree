@@ -40,7 +40,7 @@ GeneralTree <- R6Class('GeneralTree',
      new_node = NULL
 
      # Find the parent node.
-     parent_node = self$search_id(parent_id)
+     parent_node = self$search_node(parent_id)
 
      if (is.null(parent_node)) stop("Could not find the parent node with id ", id)
 
@@ -81,18 +81,18 @@ GeneralTree <- R6Class('GeneralTree',
      invisible(node)
    },
    search = function(id) {
-     self$search_id(id)$data
+     self$search_node(id)$data
    },
-   search_id = function(id) {
+   search_node = function(id) {
      # Determine whether search was called at the root node.
      if (is.null(private$.root))
-       result = self$search_id_starting_at_node(id)
+       result = self$search_node_starting_at_node(id)
      else
-       result = private$.root$search_id_starting_at_node(id)
+       result = private$.root$search_node_starting_at_node(id)
 
      invisible(result)
    },
-   search_id_starting_at_node = function(id) {
+   search_node_starting_at_node = function(id) {
      result = NULL
      # Verify whether the current node matches the id.
      if (identical(id, private$.id)) {
@@ -101,7 +101,7 @@ GeneralTree <- R6Class('GeneralTree',
 
      if (!is.null(private$.siblings) && is.null(result)) {
        for (s in private$.siblings) {
-         result = s$search_id_starting_at_node(id)
+         result = s$search_node_starting_at_node(id)
          if (!is.null(result)) break
        }
      }
@@ -109,24 +109,9 @@ GeneralTree <- R6Class('GeneralTree',
      if (is.null(result)) {
        # Search the left child if it is present.
        if (!is.null(private$.left_child)) {
-         result = private$.left_child$search_id_starting_at_node(id)
+         result = private$.left_child$search_node_starting_at_node(id)
        } else {
          result = NULL
-       }
-     }
-
-     invisible(result)
-   },
-   get_sibling = function(id) {
-     result = NULL
-
-     if (self$have_siblings) {
-       # Find whether any id in the siblings matches the one we are looking
-       # for.
-       find_sibling <- sapply(private$.siblings, identical, id)
-
-       if (any(find_sibling)) {
-         result = private$.siblings[[find_sibling]]
        }
      }
 
@@ -146,7 +131,24 @@ GeneralTree <- R6Class('GeneralTree',
    set_parent = function(node) {
      private$.parent = node
    },
-   print = function() {
+   getSiblingNodes = function() {
+     sibling_nodes = NULL
+
+     if (self$have_siblings) {
+       sibling_nodes = self$parent$left_child$siblings
+     }
+
+     invisible(sibling_nodes)
+   },
+   getSiblingData = function() {
+     sibling_data = NULL
+     if (self$have_siblings) {
+       sibling_data = lapply(self$getSiblingNodes(), function(x) {
+                               if (!identical(x, self)) x$data
+         })
+     }
+
+     return(sibling_data)
    }
   ),
   active = list(
@@ -168,6 +170,12 @@ GeneralTree <- R6Class('GeneralTree',
       !is.null(private$.left_child)
     },
     have_siblings = function() {
+      if (is.null(self$parent))
+        return(FALSE)
+      else
+        self$parent$left_child$have_private_siblings
+    },
+    have_private_siblings = function() {
       !is.null(private$.siblings)
     },
     data = function() {
