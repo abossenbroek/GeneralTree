@@ -10,8 +10,6 @@ test_that('tree_depth reports the correct depth when creating a tree', {
 })
 
 test_that('treeDepth reports the correct depth when creating a tree with two levels deep', {
-  nodes <- list()
-
   tree <- GeneralTree$new(0, 'parent1')
 
   tree$add_node(0, 1, 'child.1')
@@ -23,8 +21,6 @@ test_that('treeDepth reports the correct depth when creating a tree with two lev
 
 
 test_that('treeDepth reports the correct depth when deleting a child', {
-  nodes <- list()
-
   tree <- GeneralTree$new(0, 'parent1')
 
   tree$add_node(0, 1, 'child.1')
@@ -37,8 +33,6 @@ test_that('treeDepth reports the correct depth when deleting a child', {
 })
 
 test_that('treeDepth reports the correct depth when deleting a child', {
-  nodes <- list()
-
   tree <- GeneralTree$new(0, 'parent1')
 
   tree$add_node(0, 1, 'child.1')

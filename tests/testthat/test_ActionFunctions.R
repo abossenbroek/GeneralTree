@@ -1,8 +1,6 @@
 context('Test action functions')
 
 test_that('have_siblign is working as expected', {
-  nodes <- list()
-
   tree <- GeneralTree$new(0, 'parent1')
 
   expect_identical(tree$have_siblings, FALSE)
