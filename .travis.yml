@@ -1,6 +1,10 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
-language: R
+language: r
+r:
+  - release
+  - devel
+  - 3.2.4
 sudo: false
 cache: packages
 r_github_packages:
