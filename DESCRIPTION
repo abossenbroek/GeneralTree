@@ -1,9 +1,9 @@
 Package: GeneralTree
 Title: An implementation of a General Tree in R
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: person("Anton", "Bossenbroek", email = "anton.bossenbroek@me.com", role = c("aut", "cre"))
 Description: An implementation of a general tree data structure in R.
-Depends: R (>= 3.2.5),
+Depends: R (>= 3.2.4),
     R6 (>= 2.1.2)
 License: MIT + file LICENSE
 Encoding: UTF-8
