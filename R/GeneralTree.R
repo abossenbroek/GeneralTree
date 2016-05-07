@@ -132,6 +132,24 @@ GeneralTree <- R6Class('GeneralTree',
      private$.parent = node
    },
    print = function() {
+   getSiblingNodes = function() {
+     sibling_nodes = NULL
+
+     if (self$have_siblings) {
+       sibling_nodes = self$parent$left_child$siblings
+     }
+
+     invisible(sibling_nodes)
+   },
+   getSiblingData = function() {
+     sibling_data = NULL
+     if (self$have_siblings) {
+       sibling_data = lapply(self$getSiblingNodes(), function(x) {
+                               if (!identical(x, self)) x$data
+         })
+     }
+
+     return(sibling_data)
    }
   ),
   active = list(
