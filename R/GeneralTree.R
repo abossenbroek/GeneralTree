@@ -26,7 +26,7 @@ GeneralTree <- R6Class('GeneralTree',
     .siblings = NULL,
     .root = NULL,
     .id = NULL,
-    .tree_depth = 0,
+    .tree_depth = 1,
     .parent = NULL
   ),
   public = list(
@@ -75,6 +75,8 @@ GeneralTree <- R6Class('GeneralTree',
      invisible(new_node)
    },
    add_sibling = function(node) {
+     if (!self$have_parent) stop("Cannot add sibling to root")
+
      private$.siblings = c(private$.siblings, list(node))
      node$set_root(self$root)
 
@@ -121,7 +123,7 @@ GeneralTree <- R6Class('GeneralTree',
      private$.root = node
    },
    set_left_child = function(node) {
-     if (self$have_child) stop("Already have left child!")
+     if (self$have_child) warning("Already have left child!")
 
      private$.left_child = node
    },
@@ -131,11 +133,16 @@ GeneralTree <- R6Class('GeneralTree',
    set_parent = function(node) {
      private$.parent = node
    },
+   setSiblings = function(siblings) {
+     private$.siblings = siblings
+   },
    getSiblingNodes = function() {
      sibling_nodes = NULL
 
      if (self$have_siblings) {
        sibling_nodes = self$parent$left_child$siblings
+       identical_to_self <- function(x) identical(x, self)
+       sibling_nodes = Filter(Negate(identical_to_self), sibling_nodes)
      }
 
      invisible(sibling_nodes)
@@ -181,11 +188,48 @@ GeneralTree <- R6Class('GeneralTree',
      }
 
      return(child_data)
+   },
+   deleteId = function(id) {
+     node = self$search_node(id)
+     node$delete()
+   },
+   delete = function() {
+     if (self$have_child) {
+       self$left_child$delete()
+     }
+
+     # If we have siblings we need to make sure that only we get deleted and
+     # nothing else. In case we have siblings there are two possibilities,
+     # 1. we are the most left child, and,
+     # 2. we are not the most left child.
+     if (self$have_siblings && self$have_parent) {
+       # Handle the first case described above.
+       if (identical(self$parent$left_child$id, self$id)) {
+         # Set the left child of the parent to the first sibling.
+         suppressWarnings({
+           self$parent$set_left_child(self$siblings[[1]])
+         })
+         remaining_siblings = self$siblings
+         # Remove the first sibling.
+         remaining_siblings[[1]] = NULL
+         # Set the remaining siblings.
+         self$parent$left_child$setSiblings(remaining_siblings)
+       } else {
+         siblings = self$parent$left_child$siblings
+         own_position = sapply(siblings, function(x) identical(x, self))
+         siblings = siblings[!own_position]
+         self$parent$left_child$setSiblings(siblings)
+       }
+     } else if (self$have_parent) {
+       suppressWarnings({
+         self$parent$set_left_child(NULL)
+       })
+     } else{
+       stop("Did not know how to remove myself")
+     }
    }
   ),
   active = list(
-    depth = function() {
-    },
     root = function() {
       invisible(private$.root)
     },
@@ -210,6 +254,9 @@ GeneralTree <- R6Class('GeneralTree',
     have_private_siblings = function() {
       !is.null(private$.siblings)
     },
+    have_parent = function() {
+      !is.null(private$.parent)
+    },
     data = function() {
       return(private$.data)
     },
@@ -218,6 +265,30 @@ GeneralTree <- R6Class('GeneralTree',
     },
     parent = function() {
       return(private$.parent)
+    },
+    tree_depth = function() {
+      depth = 1
+      if (!self$is_root) {
+        depth = self$root$tree_depth
+      } else {
+        depth = self$branch_depth
+      }
+
+      return(depth)
+    },
+    branch_depth = function() {
+      depth = 1
+
+      if (self$have_child) {
+        depth = max(depth, self$left_child$branch_depth + 1)
+      }
+
+      if (self$have_private_siblings) {
+        sibling_depth = max(depth, sapply(self$siblings, function(x)
+                                          x$branch_depth))
+      }
+
+      return(depth)
     }
   )
 )
