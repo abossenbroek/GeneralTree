@@ -53,7 +53,6 @@ GeneralTree <- R6Class('GeneralTree',
          private$.left_child = GeneralTree$new(id, data)
          private$.left_child$set_root(parent_node)
          new_node = private$.left_child
-         parent_node$setTreeDepth(parent_node$tree_depth + 1)
        }
      } else {
        if (!is.null(parent_node)) {
@@ -65,7 +64,6 @@ GeneralTree <- R6Class('GeneralTree',
          } else {
            parent_node$set_left_child(new_node)
            new_node$set_root(parent_node$root)
-           parent_node$setTreeDepth(parent_node$tree_depth + 1)
          }
        } else {
          stop("Could not find matching parent node with parent id ", parent_id)
@@ -143,7 +141,8 @@ GeneralTree <- R6Class('GeneralTree',
 
      if (self$have_siblings) {
        sibling_nodes = self$parent$left_child$siblings
-       #TODO: add removeall of own node.
+       identical_to_self <- function(x) identical(x, self)
+       sibling_nodes = Filter(Negate(identical_to_self), sibling_nodes)
      }
 
      invisible(sibling_nodes)
@@ -228,18 +227,9 @@ GeneralTree <- R6Class('GeneralTree',
      } else{
        stop("Did not know how to remove myself")
      }
-   },
-   setTreeDepth = function(depth) {
-     if (self$is_root) {
-       private$.tree_depth <- depth
-     } else {
-       self$root$setTreeDepth(depth)
-     }
    }
   ),
   active = list(
-    depth = function() {
-    },
     root = function() {
       invisible(private$.root)
     },
@@ -256,7 +246,6 @@ GeneralTree <- R6Class('GeneralTree',
       !is.null(private$.left_child)
     },
     have_siblings = function() {
-      #TODO: add that current leaf should not count itself as a sibling.
       if (is.null(self$parent))
         return(FALSE)
       else
@@ -278,11 +267,28 @@ GeneralTree <- R6Class('GeneralTree',
       return(private$.parent)
     },
     tree_depth = function() {
-      if (self$is_root) {
-        return(private$.tree_depth)
+      depth = 1
+      if (!self$is_root) {
+        depth = self$root$tree_depth
       } else {
-        return(self$root$tree_depth)
+        depth = self$branch_depth
       }
+
+      return(depth)
+    },
+    branch_depth = function() {
+      depth = 1
+
+      if (self$have_child) {
+        depth = max(depth, self$left_child$branch_depth + 1)
+      }
+
+      if (self$have_private_siblings) {
+        sibling_depth = max(depth, sapply(self$siblings, function(x)
+                                          x$branch_depth))
+      }
+
+      return(depth)
     }
   )
 )
