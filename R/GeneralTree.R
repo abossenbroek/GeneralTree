@@ -51,7 +51,7 @@ GeneralTree <- R6Class('GeneralTree',
        } else {
          # Add the child and set up all the references in the child correctly.
          private$.left_child = GeneralTree$new(id, data)
-         private$.left_child$set_root(parent_node)
+         private$.left_child$setRoot(parent_node)
          new_node = private$.left_child
        }
      } else {
@@ -62,15 +62,15 @@ GeneralTree <- R6Class('GeneralTree',
          if (parent_node$have_child) {
            parent_node$left_child$addSibling(new_node)
          } else {
-           parent_node$set_left_child(new_node)
-           new_node$set_root(parent_node$root)
+           parent_node$setLeftChild(new_node)
+           new_node$setRoot(parent_node$root)
          }
        } else {
          stop("Could not find matching parent node with parent id ", parent_id)
        }
      }
 
-     if (!is.null(new_node)) new_node$set_parent(parent_node)
+     if (!is.null(new_node)) new_node$setParent(parent_node)
 
      invisible(new_node)
    },
@@ -78,7 +78,7 @@ GeneralTree <- R6Class('GeneralTree',
      if (!self$have_parent) stop("Cannot add sibling to root")
 
      private$.siblings = c(private$.siblings, list(node))
-     node$set_root(self$root)
+     node$setRoot(self$root)
 
      invisible(node)
    },
@@ -88,13 +88,13 @@ GeneralTree <- R6Class('GeneralTree',
    searchNode = function(id) {
      # Determine whether search was called at the root node.
      if (is.null(private$.root))
-       result = self$searchNode_starting_at_node(id)
+       result = self$searchNodeStartingAtNode(id)
      else
-       result = private$.root$searchNode_starting_at_node(id)
+       result = private$.root$searchNodeStartingAtNode(id)
 
      invisible(result)
    },
-   searchNode_starting_at_node = function(id) {
+   searchNodeStartingAtNode = function(id) {
      result = NULL
      # Verify whether the current node matches the id.
      if (identical(id, private$.id)) {
@@ -103,7 +103,7 @@ GeneralTree <- R6Class('GeneralTree',
 
      if (!is.null(private$.siblings) && is.null(result)) {
        for (s in private$.siblings) {
-         result = s$searchNode_starting_at_node(id)
+         result = s$searchNodeStartingAtNode(id)
          if (!is.null(result)) break
        }
      }
@@ -111,7 +111,7 @@ GeneralTree <- R6Class('GeneralTree',
      if (is.null(result)) {
        # Search the left child if it is present.
        if (!is.null(private$.left_child)) {
-         result = private$.left_child$searchNode_starting_at_node(id)
+         result = private$.left_child$searchNodeStartingAtNode(id)
        } else {
          result = NULL
        }
@@ -119,18 +119,18 @@ GeneralTree <- R6Class('GeneralTree',
 
      invisible(result)
    },
-   set_root = function(node) {
+   setRoot = function(node) {
      private$.root = node
    },
-   set_left_child = function(node) {
+   setLeftChild = function(node) {
      if (self$have_child) warning("Already have left child!")
 
      private$.left_child = node
    },
-   set_data = function(data) {
+   setData = function(data) {
      private$.data = data
    },
-   set_parent = function(node) {
+   setParent = function(node) {
      private$.parent = node
    },
    setSiblings = function(siblings) {
@@ -207,7 +207,7 @@ GeneralTree <- R6Class('GeneralTree',
        if (identical(self$parent$left_child$id, self$id)) {
          # Set the left child of the parent to the first sibling.
          suppressWarnings({
-           self$parent$set_left_child(self$siblings[[1]])
+           self$parent$setLeftChild(self$siblings[[1]])
          })
          remaining_siblings = self$siblings
          # Remove the first sibling.
@@ -222,7 +222,7 @@ GeneralTree <- R6Class('GeneralTree',
        }
      } else if (self$have_parent) {
        suppressWarnings({
-         self$parent$set_left_child(NULL)
+         self$parent$setLeftChild(NULL)
        })
      } else{
        stop("Did not know how to remove myself")
@@ -267,7 +267,6 @@ GeneralTree <- R6Class('GeneralTree',
       return(private$.parent)
     },
     tree_depth = function() {
-      depth = 1
       if (!self$is_root) {
         depth = self$root$tree_depth
       } else {
