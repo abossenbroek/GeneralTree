@@ -1,7 +1,6 @@
 .Rproj.user
 .Rhistory
 .RData
-.R~
 inst/doc
-/R/*.R~
-/R/*.swp
+**/*.R~
+**/*.swp
