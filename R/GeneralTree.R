@@ -131,7 +131,6 @@ GeneralTree <- R6Class('GeneralTree',
    set_parent = function(node) {
      private$.parent = node
    },
-   print = function() {
    getSiblingNodes = function() {
      sibling_nodes = NULL
 
