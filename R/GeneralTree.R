@@ -174,9 +174,11 @@ GeneralTree <- R6Class('GeneralTree',
      if (self$have_child) {
        child_nodes = c(list(self$left_child), self$left_child$siblings)
        if (recursive) {
-         child_nodes = lapply(child_nodes, function(x) x$getChildNodes())
+         child_nodes = c(child_nodes, sapply(child_nodes, function(x) x$getChildNodes(recursive)))
+         child_nodes = unlist(child_nodes)
        }
      }
+     return(child_nodes)
    },
    getChildData = function() {
      child_data = NULL
