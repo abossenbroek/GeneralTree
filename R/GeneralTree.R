@@ -27,7 +27,8 @@ GeneralTree <- R6Class('GeneralTree',
     .root = NULL,
     .id = NULL,
     .tree_depth = 1,
-    .parent = NULL
+    .parent = NULL,
+    .is_discovered = FALSE
   ),
   public = list(
    initialize = function(id, data) {
@@ -227,6 +228,60 @@ GeneralTree <- R6Class('GeneralTree',
      } else{
        stop("Did not know how to remove myself")
      }
+   },
+   nextElem = function() {
+     if (self$is_root) {
+       self$resetDiscoveredOnBranch()
+     }
+
+     next_element = NULL
+
+     # Firt verify whether there is a child and whether it is not discovered.
+     if (self$have_child)
+       if (!self$left_child$isDiscovered)
+        next_element = self$left_child
+
+     # If child was not found verify whether there is a next sibling that is
+     # available.
+     if (is.null(next_element))
+       if (self$have_siblings) {
+         my_siblings = self$parent$siblings
+
+         i = 1
+
+         for (sibling in my_siblings) {
+           if (identical(sibling, self))
+             break
+           else
+             i = i + 1
+         }
+
+         if ((i + 1) <= length(my_siblings)) {
+           if (!my_siblings[[i + 1]]$isDiscovered)
+             next_element = my_siblings[[i + 1]]
+         } else {
+           next_element = self$parent$nextElem()
+         }
+     }
+
+     if (!is.null(next_element))
+        next_element$setDiscovered(TRUE)
+
+     return(next_element)
+
+   },
+   resetDiscoveredOnBranch = function() {
+     self$setDiscovered(FALSE)
+
+     if (self$have_child)
+       self$left_child$resetDiscoveredOnBranch()
+
+     if (self$have_siblings)
+       for (sibling in self$siblings)
+         sibling$resetDiscoveredOnBranch()
+   },
+   setDiscovered = function(is_discovered) {
+     private$is_discovered = is_discovered
    }
   ),
   active = list(
@@ -274,6 +329,9 @@ GeneralTree <- R6Class('GeneralTree',
       }
 
       return(depth)
+    },
+    isDiscovered = function() {
+      return(private$.is_discovered)
     },
     branch_depth = function() {
       depth = 1
