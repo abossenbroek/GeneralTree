@@ -1,6 +1,6 @@
 context('Test tree walker')
 
-test_that('test that the tree walker walks depth first', {
+test_that('test that the tree_walker walks depth first', {
   tree <- GeneralTree$new(1, 'parent1')
   tree$addNode(1, 2, 'child.1.2')
   tree$addNode(2, 3, 'child.2.3')
@@ -21,7 +21,10 @@ test_that('test that the tree walker walks depth first', {
   require(foreach)
   itx <- iter(tree, by = "id")
   numbers_in_tree <- foreach(i = itx, .combine = c) %do% c(i)
-
   expect_identical(numbers_in_tree, as.numeric(1 : 13))
 
+  itx <- iter(tree, by = "data")
+  data_in_tree <- foreach(i = itx, .combine = c) %do% c(i)
+
+  expect_equal(length(data_in_tree), 13)
 })

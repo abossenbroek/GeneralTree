@@ -252,7 +252,6 @@ GeneralTree <- R6Class('GeneralTree',
      }
    },
    nextElem = function() {
-     #browser()
      next_element = NULL
      candidates = NULL
 
@@ -290,8 +289,7 @@ GeneralTree <- R6Class('GeneralTree',
      if (is.null(next_element))
        stop("StopIteration")
 
-     return(next_element)
-
+     invisible(next_element)
    },
    resetDiscoveredOnBranch = function() {
      self$setDiscovered(FALSE)
@@ -423,6 +421,7 @@ iter.GeneralTree <- function(obj, by = c("data", "id"),
   state <- new.env()
   state$i <- 0L
   state$obj <- obj
+  obj$resetDiscoveredOnBranch()
   n <- length(obj$getChildNodes(recursive = TRUE))
   it <- list(state = state, by = by, length = n, checkFunc = checkFunc,
              recycle = recycle)
@@ -446,6 +445,6 @@ getIterVal.generaltreeiter <- function (obj, plus = 0L, check = TRUE, ...) {
     n <- obj$length
     if (i > n)
         stop("StopIteration", call. = FALSE)
-    switch(obj$by, data = obj$state$obj$data, obj$state$obj$id)
+    switch(obj$by, 'data' = obj$state$obj$data, obj$state$obj$id)
 }
 
