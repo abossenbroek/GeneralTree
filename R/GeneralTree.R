@@ -287,6 +287,9 @@ GeneralTree <- R6Class('GeneralTree',
      if (is.null(next_element) && self$is_root)
        self$setRootDiscovered(FALSE)
 
+     if (is.null(next_element))
+       stop("StopIteration")
+
      return(next_element)
 
    },
@@ -378,6 +381,71 @@ GeneralTree <- R6Class('GeneralTree',
 
 
 #' @export
-nextElem.GeneralTree  <- function(obj, ...) {
-  obj$nextElem(...)
+nextElem.generaltreeiter <- function(obj, ...) {
+  repeat {
+    tryCatch({
+      if (obj$checkFunc(getIterVal(obj, 1L))) {
+        obj$state$obj <- obj$state$obj$nextElem()
+        obj$state$i <- obj$state$i + 1L
+        return(getIterVal(obj))
+      }
+      obj$state$obj <- obj$state$obj$nextElem()
+      obj$state$i <- obj$state$i + 1L
+    }, error = function(e) {
+      if (any(nzchar(e$message))) {
+        if (identical(e$message, "StopIteration")) {
+          if (obj$recycle) {
+            obj$state$i <- 0L
+          }
+          else {
+            stop("StopIteration", call. = FALSE)
+          }
+        }
+        else {
+          stop(e$message, call. = FALSE)
+        }
+      }
+      else {
+        stop("Abort", call. = e)
+      }
+    })
+  }
 }
+
+#' Internal function heavily inspired by iterators package.
+#' @keywords internal
+#' @export
+iter.GeneralTree <- function(obj, by = c("data", "id"),
+                             checkFunc = function(...) TRUE,
+                             recycle = FALSE,
+                              ...) {
+  by <- match.arg(by)
+  state <- new.env()
+  state$i <- 0L
+  state$obj <- obj
+  n <- length(obj$getChildNodes(recursive = TRUE))
+  it <- list(state = state, by = by, length = n, checkFunc = checkFunc,
+             recycle = recycle)
+  class(it) <- c("generaltreeiter", "iter")
+  it
+}
+
+#' Function heavily inspired by iterators package.
+#' @keywords internal
+#' @export
+getIterVal <- function (obj, plus, ...)
+{
+    UseMethod("getIterVal")
+}
+
+#' Function heavily inspired by iterators package.
+#' @keywords internal
+#' @export
+getIterVal.generaltreeiter <- function (obj, plus = 0L, check = TRUE, ...) {
+    i <- obj$state$i + plus
+    n <- obj$length
+    if (i > n)
+        stop("StopIteration", call. = FALSE)
+    switch(obj$by, data = obj$state$obj$data, obj$state$obj$id)
+}
+
