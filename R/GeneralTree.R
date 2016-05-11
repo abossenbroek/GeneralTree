@@ -28,7 +28,8 @@ GeneralTree <- R6Class('GeneralTree',
     .id = NULL,
     .tree_depth = 1,
     .parent = NULL,
-    .is_discovered = FALSE
+    .is_discovered = FALSE,
+    .is_root_discovered = FALSE
   ),
   public = list(
    initialize = function(id, data) {
@@ -168,10 +169,13 @@ GeneralTree <- R6Class('GeneralTree',
 
      return(sibling_ids)
    },
-   getChildNodes = function() {
+   getChildNodes = function(recursive = FALSE) {
      child_nodes = NULL
      if (self$have_child) {
        child_nodes = c(list(self$left_child), self$left_child$siblings)
+       if (recursive) {
+         child_nodes = lapply(child_nodes, function(x) x$getChildNodes())
+       }
      }
    },
    getChildData = function() {
@@ -230,42 +234,40 @@ GeneralTree <- R6Class('GeneralTree',
      }
    },
    nextElem = function() {
-     if (self$is_root) {
-       self$resetDiscoveredOnBranch()
-     }
-
+     #browser()
      next_element = NULL
+     candidates = NULL
 
-     # Firt verify whether there is a child and whether it is not discovered.
-     if (self$have_child)
-       if (!self$left_child$isDiscovered)
-        next_element = self$left_child
-
-     # If child was not found verify whether there is a next sibling that is
-     # available.
-     if (is.null(next_element))
-       if (self$have_siblings) {
-         my_siblings = self$parent$siblings
-
-         i = 1
-
-         for (sibling in my_siblings) {
-           if (identical(sibling, self))
-             break
-           else
-             i = i + 1
-         }
-
-         if ((i + 1) <= length(my_siblings)) {
-           if (!my_siblings[[i + 1]]$isDiscovered)
-             next_element = my_siblings[[i + 1]]
-         } else {
-           next_element = self$parent$nextElem()
-         }
+     if (self$is_root) {
+       if (!self$isRootDiscovered) {
+         next_element = self
+         self$resetDiscoveredOnBranch()
+         self$setRootDiscovered(TRUE)
+       } else {
+         candidates <- self$getChildNodes(recursive = TRUE)
+       }
+     } else {
+       candidates <- c(list(self$left_child), self$getSiblingNodes())
      }
+
+     if (is.null(next_element) && !is.null(candidates)) {
+       # Remove all NULL values.
+       candidates <- Filter(Negate(is.null), candidates)
+       # Remove all nodes that were already discovered.
+       not_discovered <- Filter(Negate(function(x) x$isDiscovered), candidates)
+       if (length(not_discovered) > 0)
+         next_element = not_discovered[[1]]
+     }
+
+     if (is.null(next_element) && !self$is_root && self$have_parent)
+       next_element = self$parent$nextElem()
 
      if (!is.null(next_element))
         next_element$setDiscovered(TRUE)
+
+     # If this was the last node, reset the root discovery.
+     if (is.null(next_element) && self$is_root)
+       self$setRootDiscovered(FALSE)
 
      return(next_element)
 
@@ -281,7 +283,10 @@ GeneralTree <- R6Class('GeneralTree',
          sibling$resetDiscoveredOnBranch()
    },
    setDiscovered = function(is_discovered) {
-     private$is_discovered = is_discovered
+     private$.is_discovered = is_discovered
+   },
+   setRootDiscovered = function(is_root_discovered) {
+     private$.is_root_discovered = is_root_discovered
    }
   ),
   active = list(
@@ -333,6 +338,9 @@ GeneralTree <- R6Class('GeneralTree',
     isDiscovered = function() {
       return(private$.is_discovered)
     },
+    isRootDiscovered = function() {
+      return(private$.is_root_discovered)
+    },
     branch_depth = function() {
       depth = 1
 
@@ -350,3 +358,8 @@ GeneralTree <- R6Class('GeneralTree',
   )
 )
 
+
+#' @export
+nextElem.GeneralTree  <- function(obj, ...) {
+  obj$nextElem(...)
+}
