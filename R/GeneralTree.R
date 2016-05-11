@@ -377,7 +377,8 @@ GeneralTree <- R6Class('GeneralTree',
   )
 )
 
-
+#' Internal function heavily inspired by iterators package.
+#' @keywords internal
 #' @export
 nextElem.generaltreeiter <- function(obj, ...) {
   repeat {
