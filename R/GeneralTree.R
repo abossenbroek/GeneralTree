@@ -414,11 +414,10 @@ nextElem.generaltreeiter <- function(obj, ...) {
 #' Internal function heavily inspired by iterators package.
 #' @keywords internal
 #' @export
-iter.GeneralTree <- function(obj, by = c("data", "id"),
+iter.GeneralTree <- function(obj, by = c('data'),
                              checkFunc = function(...) TRUE,
                              recycle = FALSE,
                               ...) {
-  by <- match.arg(by)
   state <- new.env()
   state$i <- 0L
   state$obj <- obj
@@ -446,6 +445,7 @@ getIterVal.generaltreeiter <- function (obj, plus = 0L, check = TRUE, ...) {
     n <- obj$length
     if (i > n)
         stop("StopIteration", call. = FALSE)
-    switch(obj$by, 'data' = obj$state$obj$data, obj$state$obj$id)
+    switch(obj$by, 'data' = obj$state$obj$data, 'id' = obj$state$obj$id,
+           eval(parse(file = NULL, text = paste0('obj$state$obj$', obj$by))))
 }
 
