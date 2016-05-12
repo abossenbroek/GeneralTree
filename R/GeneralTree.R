@@ -258,7 +258,6 @@ GeneralTree <- R6Class('GeneralTree',
      if (self$is_root) {
        if (!self$isRootDiscovered) {
          next_element = self
-         self$resetDiscoveredOnBranch()
          self$setRootDiscovered(TRUE)
        } else {
          candidates <- self$getChildNodes(recursive = TRUE)
@@ -290,6 +289,14 @@ GeneralTree <- R6Class('GeneralTree',
        stop("StopIteration")
 
      invisible(next_element)
+   },
+   iterator = function() {
+     if (self$is_root) {
+       self$resetDiscoveredOnBranch()
+       return(self$nextElem())
+     } else {
+       return(self$root$iterator())
+     }
    },
    resetDiscoveredOnBranch = function() {
      self$setDiscovered(FALSE)
@@ -395,6 +402,7 @@ nextElem.generaltreeiter <- function(obj, ...) {
         if (identical(e$message, "StopIteration")) {
           if (obj$recycle) {
             obj$state$i <- 0L
+            obj$state$resetDiscoveredOnBranch()
           }
           else {
             stop("StopIteration", call. = FALSE)
@@ -418,11 +426,16 @@ iter.GeneralTree <- function(obj, by = c('data'),
                              checkFunc = function(...) TRUE,
                              recycle = FALSE,
                               ...) {
+  if (!(by %in% gsub("([a-zA-Z0-9]*):.*", "\\1",
+                     R6:::object_summaries(obj, exclude = ".__enclos_env__"))))
+    stop("Could not find", by, "as a member of ", setdiff(class(obj), "R6"))
+
   state <- new.env()
   state$i <- 0L
   state$obj <- obj
   obj$resetDiscoveredOnBranch()
-  n <- length(obj$getChildNodes(recursive = TRUE))
+  # Add one to compensate for parent node.
+  n <- length(obj$getChildNodes(recursive = TRUE)) + 1
   it <- list(state = state, by = by, length = n, checkFunc = checkFunc,
              recycle = recycle)
   class(it) <- c("generaltreeiter", "iter")
