@@ -14,7 +14,8 @@ Suggests: testthat,
     knitr,
     DiagrammeR,
     iterators,
-    foreach
+    foreach,
+    tools
 RoxygenNote: 5.0.1
 VignetteBuilder: knitr
 NeedsCompilation: no
