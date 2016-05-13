@@ -293,6 +293,7 @@ GeneralTree <- R6Class('GeneralTree',
    iterator = function() {
      if (self$is_root) {
        self$resetDiscoveredOnBranch()
+       self$setRootDiscovered(FALSE)
        return(self$nextElem())
      } else {
        return(self$root$iterator())
