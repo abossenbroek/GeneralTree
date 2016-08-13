@@ -19,7 +19,7 @@ cache:
 
 environment:
   global:
-    - WARNINGS_ARE_ERRORS: 1
+      WARNINGS_ARE_ERRORS: 1
       USE_RTOOLS: true
 
   matrix:
@@ -40,9 +40,9 @@ environment:
       RTOOLS_VERSION: 32
 
 build_script:
-  - travis-tool.sh install_github hadley/devtools
+  #- travis-tool.sh install_github hadley/devtools
   - travis-tool.sh install_deps
-    #- travis-tool.sh install_r knitr
+  - travis-tool.sh install_r knitr
 
 test_script:
   - travis-tool.sh run_tests
