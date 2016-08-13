@@ -42,6 +42,7 @@ environment:
 build_script:
   - travis-tool.sh install_github hadley/devtools
   - travis-tool.sh install_deps
+    #- travis-tool.sh install_r knitr
 
 test_script:
   - travis-tool.sh run_tests
