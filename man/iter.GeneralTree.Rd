@@ -4,7 +4,7 @@
 \alias{iter.GeneralTree}
 \title{Internal function heavily inspired by iterators package.}
 \usage{
-iter.GeneralTree(obj, by = c("data", "id"), checkFunc = function(...) TRUE,
+iter.GeneralTree(obj, by = c("data"), checkFunc = function(...) TRUE,
   recycle = FALSE, ...)
 }
 \description{
