@@ -8,10 +8,6 @@ plot.GeneralTree <- function(obj, ...) {
 }
 
 generate_grViz <- function(obj, what = c('id', 'data'), ...) {
-
-  if (!('DiagrammeR' %in% installed.packages(c(.Library.site, .Library))))
-    stop('Could not find DiagrammeR installed in .Library.site or .Library, please install first')
-
   i <- tree$iterator()
   what <- match.arg(what, several.ok = TRUE)
   get_id <- any('id' %in% what)
