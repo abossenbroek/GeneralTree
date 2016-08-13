@@ -42,7 +42,6 @@ GeneralTree <- R6Class('GeneralTree',
     .siblings = NULL,
     .root = NULL,
     .id = NULL,
-    .tree_depth = 1,
     .parent = NULL,
     .is_discovered = FALSE,
     .is_root_discovered = FALSE
@@ -60,40 +59,34 @@ GeneralTree <- R6Class('GeneralTree',
      # Find the parent node.
      parent_node = self$searchNode(parent_id)
 
-     if (is.null(parent_node)) stop("Could not find the parent node with id ", id)
+     if (is.null(parent_node)) stop("Could not find the parent node with id ", parent_id)
 
-     if (is.null(private$.root) && is.null(private$.siblings) &&
-         is.null(private$.left_child)) {
-       if (parent_id != private$.id) {
-         stop("parent_id could not be found in the tree")
-       } else {
+     new_node = GeneralTree$new(id, data)
+
+     if (self$isSingletonTree ) {
          # Add the child and set up all the references in the child correctly.
-         private$.left_child = GeneralTree$new(id, data)
+         private$.left_child = new_node
          private$.left_child$setRoot(parent_node)
-         new_node = private$.left_child
-       }
+         private$.left_child$setParent(parent_node)
      } else {
-       if (!is.null(parent_node)) {
-         new_node = GeneralTree$new(id, data)
-
-         # Verify whether any childs are already present.
-         if (parent_node$have_child) {
-           parent_node$left_child$addSibling(new_node)
-         } else {
-           parent_node$setLeftChild(new_node)
-           new_node$setRoot(parent_node$root)
-         }
-       } else {
-         stop("Could not find matching parent node with parent id ", parent_id)
-       }
+         new_node = parent_node$addChild(new_node)
      }
-
-     if (!is.null(new_node)) new_node$setParent(parent_node)
 
      invisible(new_node)
    },
+   addChild = function(node) {
+     node$setParent(self)
+     node$setRoot(self$root)
+
+     if (self$have_child) {
+       self$left_child$addSibling(node)
+     } else {
+       self$setLeftChild(node)
+     }
+     invisible(node)
+   },
    addSibling = function(node) {
-     if (!self$have_parent) stop("Cannot add sibling to root")
+     if (self$is_root) stop("Cannot add sibling to root")
 
      private$.siblings = c(private$.siblings, list(node))
      node$setRoot(self$root)
@@ -381,6 +374,10 @@ GeneralTree <- R6Class('GeneralTree',
       }
 
       return(depth)
+    },
+    isSingletonTree = function() {
+      return(is.null(private$.root) && is.null(private$.siblings) &&
+         is.null(private$.left_child))
     }
   )
 )
