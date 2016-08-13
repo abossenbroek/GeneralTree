@@ -1,5 +1,5 @@
 context('Plotting tree with grViz')
-test_that('creating an empty tree works', {
+test_that('plotting a tree works', {
 
   if (!('htmlwidgets' %in% installed.packages(c(.Library.site, .Library)))) {
     tree <- GeneralTree$new(1, 'parent1')

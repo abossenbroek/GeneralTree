@@ -1,14 +1,14 @@
 #' Plot a GeneralTree object.
 #' @export
-plot.GeneralTree <- function(obj, ...) {
-  tree_grGraph <- generate_grViz(obj, ...)
+plot.GeneralTree <- function(x, ...) {
+  tree_grGraph <- generate_grViz(x, ...)
 
   DiagrammeR::grViz(tree_grGraph, ...)
   invisible(tree_grGraph)
 }
 
 generate_grViz <- function(obj, what = c('id', 'data'), ...) {
-  i <- tree$iterator()
+  i <- obj$iterator()
   what <- match.arg(what, several.ok = TRUE)
   get_id <- any('id' %in% what)
   get_data <- any('data' %in% what)
