@@ -2,6 +2,8 @@
 
 [![Coverage Status](https://img.shields.io/codecov/c/github/abossenbroek/GeneralTree/master.svg)](https://codecov.io/github/abossenbroek/GeneralTree?branch=master)
 
+[![Coverage Status](https://coveralls.io/repos/github/abossenbroek/GeneralTree/badge.svg?branch=master)](https://coveralls.io/github/abossenbroek/GeneralTree?branch=master)
+
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/abossenbroek/GeneralTree?branch=master&svg=true)](https://ci.appveyor.com/project/abossenbroek/GeneralTree)
 
 # GeneralTree
