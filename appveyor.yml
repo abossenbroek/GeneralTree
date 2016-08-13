@@ -14,32 +14,33 @@ install:
 
 # Adapt as necessary starting from here
 
+cache:
+  - C:\RLibrary
+
 environment:
   global:
     WARNINGS_ARE_ERRORS: 1
+      USE_RTOOLS: true
 
   matrix:
     - R_VERSION: devel
       R_ARCH: x64
       GCC_PATH: mingw_64
-      USE_RTOOLS: true
 
     - R_VERSION: release
       R_ARCH: x64
       GCC_PATH: mingw_64
-      USE_RTOOLS: true
 
     - R_VERSION: release
       R_ARCH: i386
       GCC_PATH: mingw_32
-      USE_RTOOLS: true
 
     - R_VERSION: 3.2.4
       R_ARCH: x64
       RTOOLS_VERSION: 32
-      USE_RTOOLS: true
 
 build_script:
+  - travis-tool.sh install_github hadley/devtools
   - travis-tool.sh install_deps
 
 test_script:
