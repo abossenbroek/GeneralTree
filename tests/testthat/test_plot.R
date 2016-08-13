@@ -17,7 +17,7 @@ test_that('creating an empty tree works', {
     tree$addNode(8, 14, 'child.8.14')
     tree$addNode(2, 6, 'child.2.6')
 
-    htmlwidgets::saveWidget(DiagrammeR::grViz(generate_grViz(tree)$dot_code), "new_tree.html", selfcontained = TRUE)
+    htmlwidgets::saveWidget(DiagrammeR::grViz(plot(tree)$dot_code), "new_tree.html", selfcontained = TRUE)
     expect_that(equals(tools::md5sum("new_tree.html"), c("new_tree.html" = "a15c4de45afa254362a4ef4f62627070")))
   }
 })
