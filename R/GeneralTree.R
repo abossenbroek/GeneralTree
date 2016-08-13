@@ -369,7 +369,7 @@ GeneralTree <- R6Class('GeneralTree',
       }
 
       if (self$have_private_siblings) {
-        sibling_depth = max(depth, sapply(self$siblings, function(x)
+        depth = max(depth, sapply(self$siblings, function(x)
                                           x$branch_depth))
       }
 
