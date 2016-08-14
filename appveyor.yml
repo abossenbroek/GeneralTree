@@ -40,9 +40,18 @@ environment:
       RTOOLS_VERSION: 32
 
 build_script:
-  - travis-tool.sh install_github hadley/devtools
+  #- travis-tool.sh install_github hadley/devtools
   - travis-tool.sh install_deps
-    #- travis-tool.sh install_r knitr
+  - travis-tool.sh install_r knitr
+  - travis-tool.sh install_r testthat
+  - travis-tool.sh install_r covr,
+  - travis-tool.sh install_r knitr,
+  - travis-tool.sh install_r DiagrammeR,
+  - travis-tool.sh install_r iterators,
+  - travis-tool.sh install_r foreach,
+  - travis-tool.sh install_r tools
+  - travis-tool.sh install_r DiagrammeRsvg
+
 
 test_script:
   - travis-tool.sh run_tests
