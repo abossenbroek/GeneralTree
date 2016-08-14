@@ -307,6 +307,41 @@ GeneralTree <- R6Class('GeneralTree',
    },
    setRootDiscovered = function(is_root_discovered) {
      private$.is_root_discovered = is_root_discovered
+   },
+   toString = function(string_prepend = '') {
+
+     initiateEmptyString = function(length = 1) {
+       paste0(rep(' ', length), collapse = '')
+     }
+
+     if (self$is_root) {
+       string = as.character(self$id)
+       if (self$have_child) {
+         space = nchar(self$id)
+         child_nodes = self$getChildNodes(recursive = FALSE)
+         string_prepend = initiateEmptyString(length = space)
+         result = paste0(sapply(child_nodes, function(x) x$toString(string_prepend)), collapse = '\n')
+         string = paste0(string, result)
+       }
+     } else {
+       tree_sep = string_prepend
+       max_space = max(sapply(self$parent$getChildId(), function(x)
+                              nchar(as.character(x))))
+       #string_prepend = paste0(string_prepend, '|', initiateEmptyString(length
+       #= max_space))
+
+       if (identical(self$parent$left_child, self)) {
+         tree_sep = paste0(' --> ')
+       } else if (self$is_last_sibling) {
+         tree_sep = paste0(tree_sep, ' \\-> ')
+       } else {
+         tree_sep = paste0(tree_sep, ' |-> ')
+       }
+
+       string = paste0(tree_sep, as.character(self$id))
+     }
+
+     return(string)
    }
   ),
   active = list(
@@ -330,6 +365,13 @@ GeneralTree <- R6Class('GeneralTree',
         return(FALSE)
       else
         self$parent$left_child$have_private_siblings
+    },
+    is_last_sibling = function() {
+      if (self$have_siblings) {
+        siblings = self$parent$left_child$getSiblingNodes()
+        return(identical(siblings[[length(siblings)]], self))
+      }
+      return(FALSE)
     },
     have_private_siblings = function() {
       !is.null(private$.siblings)
