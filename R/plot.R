@@ -5,13 +5,24 @@
 plot.GeneralTree <- function(x, ...) {
   tree_grGraph <- generate_grViz(x, ...)
 
-  DiagrammeR::grViz(tree_grGraph$dot_code, ...)
-  invisible(tree_grGraph)
+  dots <- list(...)
+  if ("what" %in% names(dots))
+    dots$what <- NULL
+  if ("color" %in% names(dots))
+    dots$color <- NULL
+  if ("shape" %in% names(dots))
+    dots$shape <- NULL
+  if ("style" %in% names(dots))
+    dots$style <- NULL
+
+  dots$diagram <- tree_grGraph$dot_code
+
+  do.call(DiagrammeR::grViz, dots)
 }
 
 generate_grViz <- function(obj, what = c('id', 'data'), ...) {
   i <- obj$iterator()
-  what <- match.arg(what, several.ok = TRUE)
+  what <- match.arg(what, several.ok = FALSE)
   get_id <- any('id' %in% what)
   get_data <- any('data' %in% what)
 
@@ -44,26 +55,21 @@ generate_grViz <- function(obj, what = c('id', 'data'), ...) {
   if (get_data && !get_id)
     node_ids <- data
   else
-    node_id <- ids
+    node_ids <- ids
 
-  if (xor(get_id, get_data)) {
-  nodes <- DiagrammeR::create_nodes(
-                nodes = node_id,
-                label = TRUE,
-                type = 'lower',
-                style = 'filled',
-                color = 'aqua',
-                shape = 'circle')
-  } else {
-    nodes <- DiagrammeR::create_nodes(
-                nodes = node_id,
-                label = FALSE,
-                type = 'lower',
-                style = 'filled',
-                color = 'aqua',
-                shape = 'circle',
-                data = paste(ids, data, sep = '|'))
-  }
+  dots <- list(...)
+  if (!("style" %in% names(dots))) dots$style <- "filled"
+  if (!("color" %in% names(dots))) dots$color <- "gray"
+  if (!("shape" %in% names(dots))) dots$shape <- "rectangle"
+
+  create_nodes_call <- dots
+  create_nodes_call$nodes <- node_ids
+  create_nodes_call$label <- TRUE
+  create_nodes_call$type <- "lower"
+
+
+  nodes <- do.call(DiagrammeR::create_nodes, create_nodes_call)
+
 
   edges <- DiagrammeR::create_edges(
                 from = edges_from,
