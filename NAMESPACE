@@ -2,6 +2,7 @@
 
 S3method(getIterVal,generaltreeiter)
 S3method(plot,GeneralTree)
+S3method(print,GeneralTree)
 export(GeneralTree)
 export(getIterVal)
 export(iter.GeneralTree)

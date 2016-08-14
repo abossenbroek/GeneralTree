@@ -1,7 +1,8 @@
 context('Plotting tree with grViz')
-test_that('creating an empty tree works', {
+test_that('plotting a tree works', {
 
-  if (!('htmlwidgets' %in% installed.packages(c(.Library.site, .Library)))) {
+  if (all(c('DiagrammeRsvg', 'htmltools') %in%
+        rownames(installed.packages(c(.Library.site, .Library))))) {
     tree <- GeneralTree$new(1, 'parent1')
     tree$addNode(1, 2, 'child.1.2')
     tree$addNode(2, 3, 'child.2.3')
@@ -17,8 +18,11 @@ test_that('creating an empty tree works', {
     tree$addNode(8, 14, 'child.8.14')
     tree$addNode(2, 6, 'child.2.6')
 
-    htmlwidgets::saveWidget(DiagrammeR::grViz(generate_grViz(tree)$dot_code), "new_tree.html", selfcontained = TRUE)
-    expect_that(equals(tools::md5sum("new_tree.html"), c("new_tree.html" = "a15c4de45afa254362a4ef4f62627070")))
+    svg_diagram <-
+      DiagrammeRsvg::export_svg(DiagrammeR::grViz(plot(tree)$dot_code))
+    html_file <- htmltools::html_print(htmltools::HTML(svg_diagram))
+
+    expect_equal(tools::md5sum(html_file)[[1]], "658fcfdf8333339399460fb9394b302b")
   }
 })
 
