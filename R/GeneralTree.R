@@ -308,19 +308,42 @@ GeneralTree <- R6Class('GeneralTree',
    setRootDiscovered = function(is_root_discovered) {
      private$.is_root_discovered = is_root_discovered
    },
-   toString = function(string_prepend = '') {
+   nodeInfoToString = function(what = c('id', 'data')) {
+     what = match.arg(what, several.ok = TRUE)
+
+     get_id = any('id' %in% what)
+     get_data = any('data' %in% what)
+
+     node_id = ''
+     if (get_id)
+       node_id = as.character(self$id)
+
+     node_data = ''
+     if (get_data)
+       node_data = as.character(self$data)
+
+     sep = ''
+     if(get_id && get_data) {
+       sep = ' : '
+     }
+     node_string = paste(node_id, node_data, sep = sep)
+
+     return(node_string)
+   },
+   toString = function(what = c('id', 'data'), string_prepend = '') {
+     what = match.arg(what, several.ok = TRUE)
 
      initiateEmptyString = function(length = 1) {
        paste0(rep(' ', length), collapse = '')
      }
 
      if (self$is_root) {
-       string = as.character(self$id)
+       string = self$nodeInfoToString(what)
        if (self$have_child) {
-         space = nchar(self$id)
+         space = nchar(string)
          child_nodes = self$getChildNodes(recursive = FALSE)
          string_prepend = initiateEmptyString(length = space)
-         result = paste0(sapply(child_nodes, function(x) x$toString(string_prepend)), collapse = '\n')
+         result = paste0(sapply(child_nodes, function(x) x$toString(what, string_prepend)), collapse = '\n')
          string = paste0(string, result)
        }
      } else {
@@ -335,15 +358,15 @@ GeneralTree <- R6Class('GeneralTree',
        }
 
        if (self$have_child) {
-         max_space = max(sapply(self$parent$getChildId(), function(x)
-                                nchar(as.character(x))))
+         max_space = max(sapply(self$parent$getChildNodes(), function(x)
+                                nchar(x$nodeInfoToString(what))))
          tree_sep = paste0(tree_sep, ' |   ', initiateEmptyString(length = max_space))
 
          child_nodes = self$getChildNodes(recursive = FALSE)
-         result = paste0(sapply(child_nodes, function(x) x$toString(tree_sep)), collapse = '\n')
-         string = paste0(node_sep, as.character(self$id), result, collapse = '\n')
+         result = paste0(sapply(child_nodes, function(x) x$toString(what, tree_sep)), collapse = '\n')
+         string = paste0(node_sep, self$nodeInfoToString(what), result, collapse = '\n')
        } else {
-         string = paste0(node_sep, as.character(self$id))
+         string = paste0(node_sep, self$nodeInfoToString(what))
        }
      }
 

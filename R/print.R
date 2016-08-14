@@ -3,8 +3,7 @@
 #' @param ... arguments passed to underlying functions.
 #' @export
 print.GeneralTree <- function(x, ...) {
-
-  cat(x$toString())
+  cat(x$toString(what = 'id'))
 }
 
 
