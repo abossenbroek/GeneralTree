@@ -15,8 +15,7 @@ Suggests: testthat,
     DiagrammeR,
     iterators,
     foreach,
-    tools,
-    DiagrammeRsvg
+    tools
 RoxygenNote: 5.0.1
 VignetteBuilder: knitr
 NeedsCompilation: no
