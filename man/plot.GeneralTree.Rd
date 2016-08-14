@@ -6,6 +6,11 @@
 \usage{
 \method{plot}{GeneralTree}(x, ...)
 }
+\arguments{
+\item{x}{tree to plot.}
+
+\item{...}{arguments passed to underlying functions.}
+}
 \description{
 Plot a GeneralTree object.
 }
