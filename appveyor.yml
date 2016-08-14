@@ -35,7 +35,7 @@ environment:
       R_ARCH: i386
       GCC_PATH: mingw_32
 
-    - R_VERSION: 3.2.4
+    - R_VERSION: 3.2.5
       R_ARCH: x64
       RTOOLS_VERSION: 32
 
