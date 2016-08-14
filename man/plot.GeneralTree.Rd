@@ -4,7 +4,12 @@
 \alias{plot.GeneralTree}
 \title{Plot a GeneralTree object.}
 \usage{
-\method{plot}{GeneralTree}(obj, ...)
+\method{plot}{GeneralTree}(x, ...)
+}
+\arguments{
+\item{x}{tree to plot.}
+
+\item{...}{arguments passed to underlying functions.}
 }
 \description{
 Plot a GeneralTree object.
