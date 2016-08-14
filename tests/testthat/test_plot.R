@@ -1,8 +1,8 @@
 context('Plotting tree with grViz')
 test_that('plotting a tree works', {
 
-  if (!(all(c('DiagrammeRsvg', 'htmltools') %in%
-        rownames(installed.packages(c(.Library.site, .Library)))))) {
+  if (all(c('DiagrammeRsvg', 'htmltools') %in%
+        rownames(installed.packages(c(.Library.site, .Library))))) {
     tree <- GeneralTree$new(1, 'parent1')
     tree$addNode(1, 2, 'child.1.2')
     tree$addNode(2, 3, 'child.2.3')
