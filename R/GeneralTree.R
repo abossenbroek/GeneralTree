@@ -325,20 +325,26 @@ GeneralTree <- R6Class('GeneralTree',
        }
      } else {
        tree_sep = string_prepend
-       max_space = max(sapply(self$parent$getChildId(), function(x)
-                              nchar(as.character(x))))
-       #string_prepend = paste0(string_prepend, '|', initiateEmptyString(length
-       #= max_space))
 
        if (identical(self$parent$left_child, self)) {
-         tree_sep = paste0(' --> ')
+         node_sep = paste0(' --> ')
        } else if (self$is_last_sibling) {
-         tree_sep = paste0(tree_sep, ' \\-> ')
+         node_sep = paste0(tree_sep, ' \\-> ')
        } else {
-         tree_sep = paste0(tree_sep, ' |-> ')
+         node_sep = paste0(tree_sep, ' |-> ')
        }
 
-       string = paste0(tree_sep, as.character(self$id))
+       if (self$have_child) {
+         max_space = max(sapply(self$parent$getChildId(), function(x)
+                                nchar(as.character(x))))
+         tree_sep = paste0(tree_sep, ' |   ', initiateEmptyString(length = max_space))
+
+         child_nodes = self$getChildNodes(recursive = FALSE)
+         result = paste0(sapply(child_nodes, function(x) x$toString(tree_sep)), collapse = '\n')
+         string = paste0(node_sep, as.character(self$id), result, collapse = '\n')
+       } else {
+         string = paste0(node_sep, as.character(self$id))
+       }
      }
 
      return(string)
