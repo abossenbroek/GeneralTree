@@ -1,9 +1,11 @@
 #' Plot a GeneralTree object.
+#' @param x tree to plot.
+#' @param ... arguments passed to underlying functions.
 #' @export
 plot.GeneralTree <- function(x, ...) {
   tree_grGraph <- generate_grViz(x, ...)
 
-  DiagrammeR::grViz(tree_grGraph, ...)
+  DiagrammeR::grViz(tree_grGraph$dot_code, ...)
   invisible(tree_grGraph)
 }
 

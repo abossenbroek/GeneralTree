@@ -50,6 +50,7 @@ build_script:
   - travis-tool.sh install_r iterators,
   - travis-tool.sh install_r foreach,
   - travis-tool.sh install_r tools
+  - travis-tool.sh install_r DiagrammeRsvg
 
 
 test_script:
