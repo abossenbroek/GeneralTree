@@ -5,7 +5,8 @@ Version: 0.0.0.9001
 Authors@R: person("Anton", "Bossenbroek", email = "anton.bossenbroek@me.com", role = c("aut", "cre"))
 Description: An implementation of a general tree data structure in R.
 Depends: R (>= 3.2.4),
-    R6 (>= 2.1.2)
+    R6 (>= 2.1.2),
+    utils (>= 2.3.0)
 License: Apache License (== 2.0)
 Encoding: UTF-8
 LazyData: true
