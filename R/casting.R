@@ -54,7 +54,7 @@ as.GeneralTree.data.frame <- function(x, id = "id", data = "data",
 
     while(length(idx_to_push) > 0) {
       if (i == idx_to_push[1]) {
-        stop("Could not parent: ", x$parent[i])
+        stop("Could not find parent: ", remaining_data$parent[i])
       }
       i = idx_to_push[1]
       current_id = remaining_data$id[i]
@@ -69,7 +69,17 @@ as.GeneralTree.data.frame <- function(x, id = "id", data = "data",
       # the stack of nodes that needed to be added.
       if (!is.null(new_node)) {
         idx_to_push = idx_to_push[-1]
+      } else {
+        # Swap the element that we could not add with the a pivot. We take the
+        # pivot as the center, plus one to ensure that we have only two
+        # elements left, the next element in the list will be used.
+        pivot = ceiling(length(idx_to_push) / 2) + 1
+        tmp_idx = idx_to_push[1]
+        idx_to_push[1] = idx_to_push[pivot]
+        idx_to_push[pivot] = tmp_idx
       }
+
+
     }
   }
 

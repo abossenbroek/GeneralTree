@@ -63,3 +63,19 @@ test_that("Cast more complex tree from data frame to tree", {
                    tree$toString(what = c('id', 'data')))
 })
 
+test_that("Cast more complex tree from data frame to tree", {
+  tree <- GeneralTree$new("root", "parent1")
+  tree$addNode("root", "child3", "data1.3")
+  tree$addNode("child3", "child1", "data3.1")
+  tree$addNode("root", "child2", "data1.2")
+
+  test_tree <- data.frame(
+    id = c("root", "child1", "child2", "child3"),
+    data = c("parent1", "data3.1", "data1.2", "data1.3"),
+    parent = c(NA, "child3", "root", "root"), stringsAsFactors = FALSE)
+
+
+  expect_identical(as.GeneralTree(test_tree)$toString(what = c('id', 'data')),
+                   tree$toString(what = c('id', 'data')))
+})
+
