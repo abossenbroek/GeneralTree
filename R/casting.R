@@ -144,7 +144,7 @@ as.GeneralTree.data.frame <- function(x, ...) {
 #' @export
 as.GeneralTree.expression <- function(x, ...) {
 
-  parsed_data = getParseData(x)
+  parsed_data = utils::getParseData(x)
 
   parsed_data$parent[parsed_data$parent == 0] <- NA
 
