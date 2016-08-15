@@ -59,6 +59,8 @@ test_that("plotting a tree works", {
   \"12\"->\"13\" 
 }"
 
+
+  
   expect_identical(plot(tree)$x$diagram, diagram)
 
   diagram_data_cyan_circle <- "digraph {\n
@@ -90,7 +92,11 @@ test_that("plotting a tree works", {
   \"child.8.9\"->\"child.9.12\" 
   \"child.9.12\"->\"child.12.13\" 
 }"
-  
+ 
+  tree_grGraph <- GeneralTree:::generate_grViz(tree, what = "data", color =
+                                               "cyan", shape = "circle")
+  diagram <- DiagrammeR::grViz(tree_grGraph$dot_code)
+  expect_identical(diagram$x$diagram, diagram_data_cyan_circle)
   expect_identical(plot(tree, what = "data", color = "cyan", shape =
                         "circle")$x$diagram, diagram_data_cyan_circle)
 
