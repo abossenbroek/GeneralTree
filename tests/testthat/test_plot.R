@@ -26,7 +26,7 @@ test_that("plotting a tree works", {
     html_file <- htmltools::html_print(htmltools::HTML(svg_diagram))
 
     expect_equal(tools::md5sum(html_file)[[1]],
-                 "658fcfdf8333339399460fb9394b302b")
+                 "225ad80d85aeebfa087ac64b91112dde")
   }
 
   diagram <- "digraph {\n
