@@ -91,7 +91,7 @@ as.GeneralTree.data.frame <- function(x, ...) {
 
     while(length(idx_to_push) > 0) {
       if (i == idx_to_push[1]) {
-        stop("Could not find parent: ", remaining_data$parent[i])
+        stop("Could not find parent: ", remaining_data[parent_colname][i, 1])
       }
       i = idx_to_push[1]
       current_id = remaining_data[id_colname][i, 1]
@@ -119,7 +119,7 @@ as.GeneralTree.data.frame <- function(x, ...) {
         # Swap the element that we could not add with the a pivot. We take the
         # pivot as the center, plus one to ensure that we have only two
         # elements left, the next element in the list will be used.
-        pivot = ceiling(length(idx_to_push) / 2) + 1
+        pivot = min(ceiling(length(idx_to_push) / 2) + 1, length(idx_to_push))
         if (pivot %in% idx_not_found && length(setdiff(idx_to_push, idx_not_found)) > 0)
           pivot = setdiff(idx_to_push, idx_not_found)[1]
         tmp_idx = idx_to_push[1]

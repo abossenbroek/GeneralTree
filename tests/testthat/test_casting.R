@@ -129,6 +129,14 @@ test_that("Test for appropriate errors and warnings", {
   expect_error(as.GeneralTree(test_tree_df, id = "ID", data = "DATA", parent = "PARENT"))
 
   test_tree_df <- data.frame(
+    ID = c("root", "child1"),
+    DATA = c("parent1", "data3.1"),
+    PARENT = c(NA, "child3"), stringsAsFactors = FALSE)
+
+  expect_error(as.GeneralTree(test_tree_df, id = "ID", data = "DATA", parent = "PARENT"))
+
+
+  test_tree_df <- data.frame(
     ID = c("root"),
     DATA = c("parent1"),
     PARENT = c(NA), stringsAsFactors = TRUE)
