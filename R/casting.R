@@ -42,5 +42,36 @@ as.GeneralTree.data.frame <- function(x, id = "id", data = "data",
 
   new_tree = GeneralTree$new(root_id, root_data)
 
+  # Select the remaining data that needs to be converted into the tree.
+  remaining_data = x[!is.na(x$parent),]
+
+  ids_in_tree <- NULL
+
+  if (nrow(remaining_data) > 0) {
+    idx_to_push <- 1 : nrow(remaining_data)
+
+    i = 0
+
+    while(length(idx_to_push) > 0) {
+      if (i == idx_to_push[1]) {
+        stop("Could not parent: ", x$parent[i])
+      }
+      i = idx_to_push[1]
+      current_id = remaining_data$id[i]
+      current_data = remaining_data$data[i]
+      current_parent = remaining_data$parent[i]
+
+      new_node = tryCatch(new_tree$addNode(current_parent, current_id,
+                                        current_data), 
+                           error = function(e) NULL)
+
+      # The new node was successfully added so we remove the current node from
+      # the stack of nodes that needed to be added.
+      if (!is.null(new_node)) {
+        idx_to_push = idx_to_push[-1]
+      }
+    }
+  }
+
   return(new_tree)
 }
