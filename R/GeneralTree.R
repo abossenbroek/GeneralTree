@@ -496,6 +496,13 @@ nextElem.generaltreeiter <- function(obj, ...) {
 #' Internal function heavily inspired by iterators package.
 #' @keywords internal
 #' @export
+nextElem.GeneralTree <- function(obj, ...) {
+  obj$nextElem()
+}
+
+#' Internal function heavily inspired by iterators package.
+#' @keywords internal
+#' @export
 iter.GeneralTree <- function(obj, by = c('data'),
                              checkFunc = function(...) TRUE,
                              recycle = FALSE,
