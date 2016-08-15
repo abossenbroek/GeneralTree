@@ -1,5 +1,11 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
-
+before_install:
+  - tlmgr install index
+addons:
+  apt: 
+    packages:
+      - libxml2-dev
+#      libv8-3.14-dev
 language: r
 r:
   - release
@@ -9,6 +15,8 @@ sudo: false
 cache: packages
 r_github_packages:
   - jimhester/covr
+r_packages:
+  - xml2
 after_success:
   - Rscript -e 'covr::codecov()'
   - Rscript -e 'covr::coveralls()'

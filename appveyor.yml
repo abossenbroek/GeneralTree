@@ -14,9 +14,13 @@ install:
 
 # Adapt as necessary starting from here
 
+cache:
+  - C:\RLibrary
+
 environment:
   global:
-    WARNINGS_ARE_ERRORS: 1
+      WARNINGS_ARE_ERRORS: 1
+      USE_RTOOLS: true
 
   matrix:
     - R_VERSION: devel
@@ -31,12 +35,23 @@ environment:
       R_ARCH: i386
       GCC_PATH: mingw_32
 
-    - R_VERSION: 3.2.4
+    - R_VERSION: 3.2.5
       R_ARCH: x64
       RTOOLS_VERSION: 32
 
 build_script:
+  #- travis-tool.sh install_github hadley/devtools
   - travis-tool.sh install_deps
+  - travis-tool.sh install_r knitr
+  - travis-tool.sh install_r testthat
+  - travis-tool.sh install_r covr,
+  - travis-tool.sh install_r knitr,
+  - travis-tool.sh install_r DiagrammeR,
+  - travis-tool.sh install_r iterators,
+  - travis-tool.sh install_r foreach,
+  - travis-tool.sh install_r tools
+  - travis-tool.sh install_r DiagrammeRsvg
+
 
 test_script:
   - travis-tool.sh run_tests

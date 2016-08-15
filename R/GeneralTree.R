@@ -1,3 +1,19 @@
+#
+# Copyright (c) 2016-2016 Anton Bossenbroek
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 #' GeneralTree is a R6 implementation of a tree that can have multiple
 #' childeren per parent.
 #' @docType class
@@ -26,8 +42,9 @@ GeneralTree <- R6Class('GeneralTree',
     .siblings = NULL,
     .root = NULL,
     .id = NULL,
-    .tree_depth = 1,
-    .parent = NULL
+    .parent = NULL,
+    .is_discovered = FALSE,
+    .is_root_discovered = FALSE
   ),
   public = list(
    initialize = function(id, data) {
@@ -42,40 +59,34 @@ GeneralTree <- R6Class('GeneralTree',
      # Find the parent node.
      parent_node = self$searchNode(parent_id)
 
-     if (is.null(parent_node)) stop("Could not find the parent node with id ", id)
+     if (is.null(parent_node)) stop("Could not find the parent node with id ", parent_id)
 
-     if (is.null(private$.root) && is.null(private$.siblings) &&
-         is.null(private$.left_child)) {
-       if (parent_id != private$.id) {
-         stop("parent_id could not be found in the tree")
-       } else {
+     new_node = GeneralTree$new(id, data)
+
+     if (self$isSingletonTree ) {
          # Add the child and set up all the references in the child correctly.
-         private$.left_child = GeneralTree$new(id, data)
+         private$.left_child = new_node
          private$.left_child$setRoot(parent_node)
-         new_node = private$.left_child
-       }
+         private$.left_child$setParent(parent_node)
      } else {
-       if (!is.null(parent_node)) {
-         new_node = GeneralTree$new(id, data)
-
-         # Verify whether any childs are already present.
-         if (parent_node$have_child) {
-           parent_node$left_child$addSibling(new_node)
-         } else {
-           parent_node$setLeftChild(new_node)
-           new_node$setRoot(parent_node$root)
-         }
-       } else {
-         stop("Could not find matching parent node with parent id ", parent_id)
-       }
+         new_node = parent_node$addChild(new_node)
      }
-
-     if (!is.null(new_node)) new_node$setParent(parent_node)
 
      invisible(new_node)
    },
+   addChild = function(node) {
+     node$setParent(self)
+     node$setRoot(self$root)
+
+     if (self$have_child) {
+       self$left_child$addSibling(node)
+     } else {
+       self$setLeftChild(node)
+     }
+     invisible(node)
+   },
    addSibling = function(node) {
-     if (!self$have_parent) stop("Cannot add sibling to root")
+     if (self$is_root) stop("Cannot add sibling to root")
 
      private$.siblings = c(private$.siblings, list(node))
      node$setRoot(self$root)
@@ -167,11 +178,16 @@ GeneralTree <- R6Class('GeneralTree',
 
      return(sibling_ids)
    },
-   getChildNodes = function() {
+   getChildNodes = function(recursive = FALSE) {
      child_nodes = NULL
      if (self$have_child) {
        child_nodes = c(list(self$left_child), self$left_child$siblings)
+       if (recursive) {
+         child_nodes = c(child_nodes, sapply(child_nodes, function(x) x$getChildNodes(recursive)))
+         child_nodes = unlist(child_nodes)
+       }
      }
+     return(child_nodes)
    },
    getChildData = function() {
      child_data = NULL
@@ -227,6 +243,139 @@ GeneralTree <- R6Class('GeneralTree',
      } else{
        stop("Did not know how to remove myself")
      }
+   },
+   nextElem = function() {
+     next_element = NULL
+     candidates = NULL
+
+     if (self$is_root) {
+       if (!self$isRootDiscovered) {
+         next_element = self
+         self$setRootDiscovered(TRUE)
+       } else {
+         candidates <- self$getChildNodes(recursive = TRUE)
+       }
+     } else {
+       candidates <- c(list(self$left_child), self$getSiblingNodes())
+     }
+
+     if (is.null(next_element) && !is.null(candidates)) {
+       # Remove all NULL values.
+       candidates <- Filter(Negate(is.null), candidates)
+       # Remove all nodes that were already discovered.
+       not_discovered <- Filter(Negate(function(x) x$isDiscovered), candidates)
+       if (length(not_discovered) > 0)
+         next_element = not_discovered[[1]]
+     }
+
+     if (is.null(next_element) && !self$is_root && self$have_parent)
+       next_element = self$parent$nextElem()
+
+     if (!is.null(next_element))
+        next_element$setDiscovered(TRUE)
+
+     # If this was the last node, reset the root discovery.
+     if (is.null(next_element) && self$is_root)
+       self$setRootDiscovered(FALSE)
+
+     if (is.null(next_element))
+       stop("StopIteration")
+
+     invisible(next_element)
+   },
+   iterator = function() {
+     if (self$is_root) {
+       self$resetDiscoveredOnBranch()
+       self$setRootDiscovered(FALSE)
+       return(self$nextElem())
+     } else {
+       return(self$root$iterator())
+     }
+   },
+   resetDiscoveredOnBranch = function() {
+     self$setDiscovered(FALSE)
+
+     if (self$have_child)
+       self$left_child$resetDiscoveredOnBranch()
+
+     if (self$have_siblings)
+       for (sibling in self$siblings)
+         sibling$resetDiscoveredOnBranch()
+   },
+   setDiscovered = function(is_discovered) {
+     private$.is_discovered = is_discovered
+   },
+   setRootDiscovered = function(is_root_discovered) {
+     private$.is_root_discovered = is_root_discovered
+   },
+   nodeInfoToString = function(what = c('id', 'data')) {
+     what = match.arg(what, several.ok = TRUE)
+
+     get_id = any('id' %in% what)
+     get_data = any('data' %in% what)
+
+     node_id = ''
+     if (get_id)
+       node_id = as.character(self$id)
+
+     node_data = ''
+     if (get_data)
+       node_data = as.character(self$data)
+
+     sep = ''
+     if(get_id && get_data) {
+       sep = ' : '
+     }
+     node_string = paste(node_id, node_data, sep = sep)
+
+     return(node_string)
+   },
+   toString = function(what = c('id', 'data'), string_prepend = '') {
+     what = match.arg(what, several.ok = TRUE)
+
+     initiateEmptyString = function(length = 1) {
+       paste0(rep(' ', length), collapse = '')
+     }
+
+     if (self$is_root) {
+       string = self$nodeInfoToString(what)
+       if (self$have_child) {
+         space = nchar(string)
+         child_nodes = self$getChildNodes(recursive = FALSE)
+         string_prepend = initiateEmptyString(length = space)
+         result = paste0(sapply(child_nodes, function(x) x$toString(what, string_prepend)), collapse = '\n')
+         string = paste0(string, result)
+       }
+     } else {
+       tree_sep = string_prepend
+
+       if (identical(self$parent$left_child, self)) {
+         node_sep = paste0(' --> ')
+       } else if (self$is_last_sibling) {
+         node_sep = paste0(tree_sep, ' \\-> ')
+       } else {
+         node_sep = paste0(tree_sep, ' |-> ')
+       }
+
+       if (self$have_child) {
+         max_space = max(sapply(self$parent$getChildNodes(), function(x)
+                                nchar(x$nodeInfoToString(what))))
+
+         branch_symbol = "|"
+         if (self$is_last_sibling)
+           branch_symbol = " "
+
+         tree_sep = paste0(tree_sep, ' ', branch_symbol, '   ', initiateEmptyString(length = max_space))
+
+         child_nodes = self$getChildNodes(recursive = FALSE)
+         result = paste0(sapply(child_nodes, function(x) x$toString(what, tree_sep)), collapse = '\n')
+         string = paste0(node_sep, self$nodeInfoToString(what), result, collapse = '\n')
+       } else {
+         string = paste0(node_sep, self$nodeInfoToString(what))
+       }
+     }
+
+     return(string)
    }
   ),
   active = list(
@@ -250,6 +399,13 @@ GeneralTree <- R6Class('GeneralTree',
         return(FALSE)
       else
         self$parent$left_child$have_private_siblings
+    },
+    is_last_sibling = function() {
+      if (self$have_siblings) {
+        siblings = self$parent$left_child$getSiblingNodes()
+        return(identical(siblings[[length(siblings)]], self))
+      }
+      return(FALSE)
     },
     have_private_siblings = function() {
       !is.null(private$.siblings)
@@ -275,6 +431,12 @@ GeneralTree <- R6Class('GeneralTree',
 
       return(depth)
     },
+    isDiscovered = function() {
+      return(private$.is_discovered)
+    },
+    isRootDiscovered = function() {
+      return(private$.is_root_discovered)
+    },
     branch_depth = function() {
       depth = 1
 
@@ -283,12 +445,94 @@ GeneralTree <- R6Class('GeneralTree',
       }
 
       if (self$have_private_siblings) {
-        sibling_depth = max(depth, sapply(self$siblings, function(x)
+        depth = max(depth, sapply(self$siblings, function(x)
                                           x$branch_depth))
       }
 
       return(depth)
+    },
+    isSingletonTree = function() {
+      return(is.null(private$.root) && is.null(private$.siblings) &&
+         is.null(private$.left_child))
     }
   )
 )
+
+#' Internal function heavily inspired by iterators package.
+#' @keywords internal
+#' @export
+nextElem.generaltreeiter <- function(obj, ...) {
+  repeat {
+    tryCatch({
+      if (obj$checkFunc(getIterVal(obj, 1L))) {
+        obj$state$obj <- obj$state$obj$nextElem()
+        obj$state$i <- obj$state$i + 1L
+        return(getIterVal(obj))
+      }
+      obj$state$obj <- obj$state$obj$nextElem()
+      obj$state$i <- obj$state$i + 1L
+    }, error = function(e) {
+      if (any(nzchar(e$message))) {
+        if (identical(e$message, "StopIteration")) {
+          if (obj$recycle) {
+            obj$state$i <- 0L
+            obj$state$resetDiscoveredOnBranch()
+          }
+          else {
+            stop("StopIteration", call. = FALSE)
+          }
+        }
+        else {
+          stop(e$message, call. = FALSE)
+        }
+      }
+      else {
+        stop("Abort", call. = e)
+      }
+    })
+  }
+}
+
+#' Internal function heavily inspired by iterators package.
+#' @keywords internal
+#' @export
+iter.GeneralTree <- function(obj, by = c('data'),
+                             checkFunc = function(...) TRUE,
+                             recycle = FALSE,
+                              ...) {
+  if (!(by %in% gsub("([a-zA-Z0-9]*):.*", "\\1",
+                     R6:::object_summaries(obj, exclude = ".__enclos_env__"))))
+    stop("Could not find", by, "as a member of ", setdiff(class(obj), "R6"))
+
+  state <- new.env()
+  state$i <- 0L
+  state$obj <- obj
+  obj$resetDiscoveredOnBranch()
+  # Add one to compensate for parent node.
+  n <- length(obj$getChildNodes(recursive = TRUE)) + 1
+  it <- list(state = state, by = by, length = n, checkFunc = checkFunc,
+             recycle = recycle)
+  class(it) <- c("generaltreeiter", "iter")
+  it
+}
+
+#' Function heavily inspired by iterators package.
+#' @keywords internal
+#' @export
+getIterVal <- function (obj, plus, ...)
+{
+    UseMethod("getIterVal")
+}
+
+#' Function heavily inspired by iterators package.
+#' @keywords internal
+#' @export
+getIterVal.generaltreeiter <- function (obj, plus = 0L, check = TRUE, ...) {
+    i <- obj$state$i + plus
+    n <- obj$length
+    if (i > n)
+        stop("StopIteration", call. = FALSE)
+    switch(obj$by, 'data' = obj$state$obj$data, 'id' = obj$state$obj$id,
+           eval(parse(file = NULL, text = paste0('obj$state$obj$', obj$by))))
+}
 
