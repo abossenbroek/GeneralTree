@@ -38,3 +38,12 @@ test_that("Cast more complex tree", {
   expect_identical(as.data.frame(tree), result)
 })
 
+test_that("Cast singelton tree from data frame to tree", {
+  tree <- GeneralTree$new("root", "parent1")
+
+  test_tree <- data.frame(id = "root", data = "parent1", parent = NA)
+
+
+  expect_identical(as.GeneralTree(test_tree)$toString(what = c('id', 'data')),
+                   tree$toString(what = c('id', 'data')))
+})
