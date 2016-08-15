@@ -1,6 +1,10 @@
 #' Convert a GeneralTree to a data frame.
+#' @param x GeneralTree to convert to a data frame.
+#' @param row.names Ignored.
+#' @param optional Ignored.
+#' @param ... Ignored.
 #' @export
-as.data.frame.GeneralTree <- function(x) {
+as.data.frame.GeneralTree <- function(x, row.names = NULL, optional = NULL, ...) {
   i <- x$iterator()
 
   id <- list()
@@ -25,13 +29,22 @@ as.data.frame.GeneralTree <- function(x) {
 
 #' Convert an object to a GeneralTree.
 #' @param x The object that should be converted.
+#' @param ... passed to underlying functions.
 #' @export
-as.GeneralTree <- function(x) UseMethod("as.GeneralTree", x)
+as.GeneralTree <- function(x, ...) UseMethod("as.GeneralTree")
 
 #' Convert a data frame to a GeneralTree.
+#' @param x       The data frame that should be converted to a tree.
+#' @param ...     id      The column name of the column that holds the ids of each node.
+#'                data    The column name of the column that holds the data of
+#'                        each node.
+#'                parent  The column name of the column that holds the parent
+#'                        of each node, NA indicates a node is the root.
 #' @export
-as.GeneralTree.data.frame <- function(x, id = "id", data = "data",
-                                      parent = "parent") {
+as.GeneralTree.data.frame <- function(x, ...) {
+
+  #TODO: support for different id, data and parent column.
+  #TODO: add warning if data.frame uses factors.
 
   if (sum(is.na(x$parent)) != 1)
     stop(paste0("Multiple entries with NA parent where found.",

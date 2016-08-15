@@ -4,10 +4,12 @@
 \alias{as.GeneralTree}
 \title{Convert an object to a GeneralTree.}
 \usage{
-as.GeneralTree(x)
+as.GeneralTree(x, ...)
 }
 \arguments{
 \item{x}{The object that should be converted.}
+
+\item{...}{passed to underlying functions.}
 }
 \description{
 Convert an object to a GeneralTree.

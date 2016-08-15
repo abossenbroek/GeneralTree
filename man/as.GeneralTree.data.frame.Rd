@@ -4,8 +4,16 @@
 \alias{as.GeneralTree.data.frame}
 \title{Convert a data frame to a GeneralTree.}
 \usage{
-\method{as.GeneralTree}{data.frame}(x, id = "id", data = "data",
-  parent = "parent")
+\method{as.GeneralTree}{data.frame}(x, ...)
+}
+\arguments{
+\item{x}{The data frame that should be converted to a tree.}
+
+\item{...}{id      The column name of the column that holds the ids of each node.
+data    The column name of the column that holds the data of
+        each node.
+parent  The column name of the column that holds the parent
+        of each node, NA indicates a node is the root.}
 }
 \description{
 Convert a data frame to a GeneralTree.
