@@ -1,3 +1,10 @@
+
+ | Branch             | CI Tool        | Status      |
+ |:-------------------|:---------------|:------------|
+ |Develop             | Travis         |[![Build Status](https://travis-ci.org/abossenbroek/GeneralTree.svg?branch=develop)](https://travis-ci.org/abossenbroek/GeneralTree) |
+ |                    | AppVeyor       |[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/abossenbroek/GeneralTree?branch=develop&svg=true)](https://ci.appveyor.com/project/abossenbroek/GeneralTree)|
+
+
 ### develop 
  * Travis [![Build Status](https://travis-ci.org/abossenbroek/GeneralTree.svg?branch=develop)](https://travis-ci.org/abossenbroek/GeneralTree)
 
