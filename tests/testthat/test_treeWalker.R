@@ -108,7 +108,7 @@ test_that('test that the tree_walker with while loop', {
   while (!is.null(i)) {
     ids <- c(ids, i$id)
     i <- tryCatch(nextElem(i), error = function(e) {
-       NULL
+      NULL
     })
   }
 

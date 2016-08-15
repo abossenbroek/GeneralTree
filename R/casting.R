@@ -116,12 +116,12 @@ as.GeneralTree.data.frame <- function(x, ...) {
         if (identical(intersect(idx_to_push, idx_not_found), idx_to_push))
           break
 
-        # Swap the element that we could not add with the a pivot. We take the
-        # pivot as the center, plus one to ensure that we have only two
-        # elements left, the next element in the list will be used.
-        pivot = min(ceiling(length(idx_to_push) / 2) + 1, length(idx_to_push))
-        if (pivot %in% idx_not_found && length(setdiff(idx_to_push, idx_not_found)) > 0)
-          pivot = setdiff(idx_to_push, idx_not_found)[1]
+        if (!(current_parent %in% remaining_data[parent_colname][,1]))
+          stop("Could not find parent ", current_parent)
+
+        parent_location = which(remaining_data[id_colname][,1] %in% current_parent)
+        pivot = match(parent_location, idx_to_push)
+
         tmp_idx = idx_to_push[1]
         idx_to_push[1] = idx_to_push[pivot]
         idx_to_push[pivot] = tmp_idx
