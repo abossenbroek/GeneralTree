@@ -3,7 +3,12 @@
 #' @param ... arguments passed to underlying functions.
 #' @export
 print.GeneralTree <- function(x, ...) {
-  cat(x$toString(what = 'id'))
+  dots = list(...)
+
+  if (!("what" %in% names(dots)))
+    dots$what = "id"
+
+  cat(x$toString(...))
 }
 
 

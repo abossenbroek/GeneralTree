@@ -144,4 +144,53 @@ test_that("Test for appropriate errors and warnings", {
   expect_warning(as.GeneralTree(test_tree_df, id = "ID", data = "DATA", parent = "PARENT"))
 })
 
+test_that("For casting parsed source to GeneralTree", {
+   p <- parse(text = "test_that('test that the tree_walker with while loop', {
+
+             tree <- GeneralTree$new(1, 'parent1')
+             tree$addNode(1, 2, 'child.1.2')
+             tree$addNode(2, 3, 'child.2.3')
+             })
+             ",
+           keep.source = TRUE)
+
+  result <- "92 :  --> 3 :  --> 1 : test_that
+      |-> 2 : (
+      |-> 6 :  --> 4 : 'test that the tree_walker with while loop'
+      |-> 5 : ,
+      |-> 88 :  --> 9 : {
+      |          |-> 33 :  --> 14 :  --> 12 : tree
+      |          |          |-> 13 : <-
+      |          |          \\-> 31 :  --> 19 :  --> 17 :  --> 15 : GeneralTree
+      |          |                      |          |-> 16 : $
+      |          |                      |          \\-> 18 : new
+      |          |                      |-> 20 : (
+      |          |                      |-> 22 :  --> 21 : 1
+      |          |                      |-> 23 : ,
+      |          |                      |-> 28 :  --> 26 : 'parent1'
+      |          |                      \\-> 27 : )
+      |          |-> 57 :  --> 40 :  --> 38 :  --> 36 : tree
+      |          |          |          |-> 37 : $
+      |          |          |          \\-> 39 : addNode
+      |          |          |-> 41 : (
+      |          |          |-> 43 :  --> 42 : 1
+      |          |          |-> 44 : ,
+      |          |          |-> 48 :  --> 47 : 2
+      |          |          |-> 49 : ,
+      |          |          |-> 54 :  --> 52 : 'child.1.2'
+      |          |          \\-> 53 : )
+      |          |-> 82 :  --> 65 :  --> 63 :  --> 61 : tree
+      |          |          |          |-> 62 : $
+      |          |          |          \\-> 64 : addNode
+      |          |          |-> 66 : (
+      |          |          |-> 68 :  --> 67 : 2
+      |          |          |-> 69 : ,
+      |          |          |-> 73 :  --> 72 : 3
+      |          |          |-> 74 : ,
+      |          |          |-> 79 :  --> 77 : 'child.2.3'
+      |          |          \\-> 78 : )
+      |          \\-> 86 : }
+      \\-> 89 : )"
+  expect_identical(as.GeneralTree(p)$toString(), result)
+})
 

@@ -137,3 +137,33 @@ as.GeneralTree.data.frame <- function(x, ...) {
 
   return(new_tree)
 }
+
+#' Convert an object to a GeneralTree.
+#' @param x The object that should be converted.
+#' @param ... passed to underlying functions.
+#' @export
+as.GeneralTree.expression <- function(x, ...) {
+
+  parsed_data = getParseData(x)
+
+  parsed_data$parent[parsed_data$parent == 0] <- NA
+
+  dots <- list(...)
+
+  what = "text"
+  if ("what" %in% names(dots)) {
+    if (all(dots$what == "token")) {
+      what = "token"
+    } else if (all(dots$what == "text")) {
+      what = "text"
+    } else if (all(dots$what %in% c("text", "token"))) {
+      parsed_data$DATA <- paste(parsed_data$token, parsed_data$text, sep = ": ")
+      what = "DATA"
+    } else {
+      stop("Do not know how to process ", dots$what)
+    }
+  }
+
+
+  return(GeneralTree::as.GeneralTree(parsed_data, data = what))
+}
