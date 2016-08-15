@@ -360,7 +360,12 @@ GeneralTree <- R6Class('GeneralTree',
        if (self$have_child) {
          max_space = max(sapply(self$parent$getChildNodes(), function(x)
                                 nchar(x$nodeInfoToString(what))))
-         tree_sep = paste0(tree_sep, ' |   ', initiateEmptyString(length = max_space))
+
+         branch_symbol = "|"
+         if (self$is_last_sibling)
+           branch_symbol = " "
+
+         tree_sep = paste0(tree_sep, ' ', branch_symbol, '   ', initiateEmptyString(length = max_space))
 
          child_nodes = self$getChildNodes(recursive = FALSE)
          result = paste0(sapply(child_nodes, function(x) x$toString(what, tree_sep)), collapse = '\n')
