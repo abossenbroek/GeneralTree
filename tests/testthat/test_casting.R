@@ -142,8 +142,6 @@ test_that("Test for appropriate errors and warnings", {
     PARENT = c(NA), stringsAsFactors = TRUE)
 
   expect_warning(as.GeneralTree(test_tree_df, id = "ID", data = "DATA", parent = "PARENT"))
-
-
 })
 
 
