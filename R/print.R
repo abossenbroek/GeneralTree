@@ -26,5 +26,3 @@ print.GeneralTree <- function(x, ...) {
 
   cat(x$toString(...))
 }
-
-

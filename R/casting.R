@@ -15,6 +15,7 @@
 #
 
 #' Convert a GeneralTree to a data frame.
+#'
 #' @param x GeneralTree to convert to a data frame.
 #' @param row.names Ignored.
 #' @param optional Ignored.

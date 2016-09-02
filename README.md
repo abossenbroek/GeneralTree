@@ -8,3 +8,71 @@
 
 
 # GeneralTree
+This R package allows you to create trees with an arbitrary number of child
+nodes per parent node. It includes an depth first iterator, a function to plot
+the tree and a function to print the tree.
+
+The current main benefit is that it allows to convert a R parsed object to a
+tree.
+
+## Example
+
+### General use
+```{r}
+require(GeneralTree)
+# Initialize the tree.
+tree <- GeneralTree$new('root', '1.1')
+
+# Add nodes.
+tree$addNode('root', 'child1', '2.1')
+tree$addNode('root', 'child2', '2.2')
+tree$addNode('root', 'child3', '2.3')
+
+# Print the tree
+tree
+```
+
+The output would be:
+```
+root : 1.1 --> child1 : 2.1
+           |-> child2 : 2.2
+           \-> child3 : 2.3
+```
+
+### Iteration
+There are two ways to iterate through the tree depth first. The first uses an
+internal mechanism whereas the second allows the data structure to be hooked in
+the foreach and iterator packages.
+
+#### Internal
+The benefit of this approach is that you do not require dependencies on foreach
+and iterator.
+```{r}
+i <- tree$iterator()
+while (!is.null(i)) {
+    print(i$id)
+    i <- tryCatch(i$nextElem(), error = function(e) NULL)
+}
+```
+
+#### Foreach
+Using the foreach and iterator packages permits you to write shorter code, as
+the following example shows:
+
+```{r}
+require(iterators)
+require(foreach)
+itx <- iter(tree, by = "id")
+numbers_in_tree <- foreach(i = itx, .combine = c) %do% c(i)
+```
+
+_Note that the package has not yet been tested in a parallel environment._
+
+# How to install
+The easiest way to install the package is by means of the devtools,
+
+```{r}
+require(codetools)
+install_github('GeneralTree', username = 'abossenbroek')
+```
+
