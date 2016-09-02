@@ -104,7 +104,7 @@ tree
 
 #
 # Example how to iterate through the tree in a depth first iteration.
-i <- root$iterator()
+i <- tree$iterator()
 while (!is.null(i)) {
    i$setData(paste("id:", i$id, " : data", i$data))
    i <- tryCatch(i$nextElem(), error = function(e) NULL)

@@ -38,9 +38,10 @@ plot.GeneralTree <- function(x, ...) {
 
 #' Create a DiagrammeR graph that represents the tree.
 #'
+#' @param obj  the tree that should be converted to a DiagrammeR graph.
 #' @param what select what to draw in the tree.
 #' @param ... Additional arguments passed to create_nodes
-#' @seealso \code{\link{DiagrammeR::create_nodes}}
+#' @seealso \code{\link[DiagrammeR]{create_nodes}}
 generate_grViz <- function(obj, what = c("id", "data"), ...) {
   i <- obj$iterator()
   what <- match.arg(what, several.ok = FALSE)

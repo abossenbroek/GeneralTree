@@ -7,6 +7,8 @@
 generate_grViz(obj, what = c("id", "data"), ...)
 }
 \arguments{
+\item{obj}{the tree that should be converted to a DiagrammeR graph.}
+
 \item{what}{select what to draw in the tree.}
 
 \item{...}{Additional arguments passed to create_nodes}
@@ -15,6 +17,6 @@ generate_grViz(obj, what = c("id", "data"), ...)
 Create a DiagrammeR graph that represents the tree.
 }
 \seealso{
-\code{\link{DiagrammeR::create_nodes}}
+\code{\link[DiagrammeR]{create_nodes}}
 }
 

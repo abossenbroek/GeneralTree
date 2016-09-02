@@ -17,10 +17,10 @@ Convert a R parsed expression to a GeneralTree.
 }
 \examples{
 p <- parse(text = "
-           tree <- GeneralTree$new(1, 'parent1')
-           tree$addNode(1, 2, 'child.1.2')
-           tree$addNode(2, 3, 'child.2.3')",
-      keep.source = TRUE)
+                   tree <- GeneralTree$new(1, 'parent1')
+                   tree$addNode(1, 2, 'child.1.2')
+                   tree$addNode(2, 3, 'child.2.3')",
+           keep.source = TRUE)
 as.GeneralTree(p, what = "token")
 as.GeneralTree(p, what = "text")
 as.GeneralTree(p, what = c("text", "token"))

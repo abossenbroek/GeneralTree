@@ -108,7 +108,7 @@
 #'
 #' #
 #' # Example how to iterate through the tree in a depth first iteration.
-#' i <- root$iterator()
+#' i <- tree$iterator()
 #' while (!is.null(i)) {
 #'    i$setData(paste("id:", i$id, " : data", i$data))
 #'    i <- tryCatch(i$nextElem(), error = function(e) NULL)
@@ -546,7 +546,7 @@ GeneralTree <- R6Class("GeneralTree",
 #' Internal function heavily inspired by iterators package.
 #' @keywords internal
 #' @export
-nextElem.generaltreeiter <- function(obj, ...) {
+nextElem.GeneralTreeIter <- function(obj, ...) {
   repeat {
     tryCatch({
       if (obj$checkFunc(getIterVal(obj, 1L))) {
@@ -585,6 +585,7 @@ nextElem.GeneralTree <- function(obj, ...) {
   obj$nextElem()
 }
 
+
 #' Internal function heavily inspired by iterators package.
 #' @keywords internal
 #' @export
@@ -604,7 +605,7 @@ iter.GeneralTree <- function(obj, by = c("data"),
   n <- length(obj$getChildNodes(recursive = TRUE)) + 1
   it <- list(state = state, by = by, length = n, checkFunc = checkFunc,
              recycle = recycle)
-  class(it) <- c("generaltreeiter", "iter")
+  class(it) <- c("GeneralTreeIter", "iter")
   it
 }
 
@@ -619,7 +620,7 @@ getIterVal <- function (obj, plus, ...)
 #' Function heavily inspired by iterators package.
 #' @keywords internal
 #' @export
-getIterVal.generaltreeiter <- function (obj, plus = 0L, check = TRUE, ...) {
+getIterVal.GeneralTreeIter <- function (obj, plus = 0L, check = TRUE, ...) {
     i <- obj$state$i + plus
     n <- obj$length
     if (i > n)
@@ -627,4 +628,3 @@ getIterVal.generaltreeiter <- function (obj, plus = 0L, check = TRUE, ...) {
     switch(obj$by, "data" = obj$state$obj$data, "id" = obj$state$obj$id,
            eval(parse(file = NULL, text = paste0("obj$state$obj$", obj$by))))
 }
-
