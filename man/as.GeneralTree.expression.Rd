@@ -2,16 +2,27 @@
 % Please edit documentation in R/casting.R
 \name{as.GeneralTree.expression}
 \alias{as.GeneralTree.expression}
-\title{Convert an object to a GeneralTree.}
+\title{Convert a R parsed expression to a GeneralTree.}
 \usage{
 \method{as.GeneralTree}{expression}(x, ...)
 }
 \arguments{
-\item{x}{The object that should be converted.}
+\item{x}{The expression that should be converted.}
 
-\item{...}{passed to underlying functions.}
+\item{...}{what = "token" fill the tree with tokens as the data field.
+what = "text" fill the tree with text as the data field.}
 }
 \description{
-Convert an object to a GeneralTree.
+Convert a R parsed expression to a GeneralTree.
+}
+\examples{
+p <- parse(text = "
+           tree <- GeneralTree$new(1, 'parent1')
+           tree$addNode(1, 2, 'child.1.2')
+           tree$addNode(2, 3, 'child.2.3')",
+      keep.source = TRUE)
+as.GeneralTree(p, what = "token")
+as.GeneralTree(p, what = "text")
+as.GeneralTree(p, what = c("text", "token"))
 }
 
