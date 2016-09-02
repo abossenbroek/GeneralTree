@@ -57,17 +57,21 @@ as.GeneralTree <- function(x, ...) UseMethod("as.GeneralTree")
 #'                        each node.
 #'                parent  The column name of the column that holds the parent
 #'                        of each node, NA indicates a node is the root.
+#' @examples
+#'   test_tree_df <- data.frame(
+#'       ID = c("root", "child1", "child2", "child3"),
+#'       DATA = c("parent1", "data3.1", "data1.2", "data1.3"),
+#'      PARENT = c(NA, "child3", "root", "root"), stringsAsFactors = FALSE)
+#' as.GeneralTree(test_tree_df, id = "ID", data = "DATA", parent = "PARENT")
+#'
 #' @export
 as.GeneralTree.data.frame <- function(x, ...) {
-
-  #TODO: support for different id, data and parent column.
-  #TODO: add warning if data.frame uses factors.
-
   dots <- list(...)
 
   id_colname = "id"
   data_colname = "data"
   parent_colname = "parent"
+  parent_node = NULL
 
   if ("id" %in% names(dots))
     id_colname = dots$id
@@ -75,6 +79,9 @@ as.GeneralTree.data.frame <- function(x, ...) {
     data_colname = dots$data
   if ("parent" %in% names(dots))
     parent_colname = dots$parent
+  if ("parent_node" %in% names(dots))
+    parent_node = dots$parent_node
+
 
   if (!(id_colname %in% names(x)))
       stop("Could not find id column ", id_colname)
@@ -86,14 +93,28 @@ as.GeneralTree.data.frame <- function(x, ...) {
   if (any(sapply(x[c(id_colname, data_colname, parent_colname)], is.factor)))
     warning("Some columns are encoded as factors which could lead to errors.")
 
-  if (sum(is.na(x[parent_colname][, 1])) != 1)
+  if ((sum(is.na(x[parent_colname][, 1])) != 1) && is.null(parent_node))
     stop(paste0("Multiple entries with NA parent where found.",
                 "Make sure to have only one entry with parent NA."))
 
-  root_id = x[id_colname][is.na(x[parent_colname]), 1]
-  root_data = x[data_colname][is.na(x[parent_colname]), 1]
+  new_tree = NULL
 
-  new_tree = GeneralTree$new(root_id, root_data)
+  if (is.null(parent_node)) {
+    root_id = x[id_colname][is.na(x[parent_colname]), 1]
+    root_data = x[data_colname][is.na(x[parent_colname]), 1]
+
+    new_tree = GeneralTree$new(root_id, root_data)
+  } else {
+    if (inherits(parent_node, "GeneralTree")) {
+        if (parent_node$isSingletonTree) {
+            new_tree = parent_node
+        } else {
+            stop("the passed parent_node is not a singleton tree.")
+        }
+    } else {
+        stop("the passed parent_node was not a GeneralTree object.")
+    }
+  }
 
   # Select the remaining data that needs to be converted into the tree.
   remaining_data = x[!is.na(x[parent_colname])[, 1],]
@@ -156,15 +177,23 @@ as.GeneralTree.data.frame <- function(x, ...) {
   return(new_tree)
 }
 
-#' Convert an object to a GeneralTree.
-#' @param x The object that should be converted.
-#' @param ... passed to underlying functions.
+#' Convert a R parsed expression to a GeneralTree.
+#' @param x The expression that should be converted.
+#' @param ...  what = "token" fill the tree with tokens as the data field.
+#'             what = "text" fill the tree with text as the data field.
+#' @examples
+#' p <- parse(text = "
+#'            tree <- GeneralTree$new(1, 'parent1')
+#'            tree$addNode(1, 2, 'child.1.2')
+#'            tree$addNode(2, 3, 'child.2.3')",
+#'       keep.source = TRUE)
+#' as.GeneralTree(p, what = "token")
+#' as.GeneralTree(p, what = "text")
+#' as.GeneralTree(p, what = c("text", "token"))
 #' @export
 as.GeneralTree.expression <- function(x, ...) {
 
   parsed_data = utils::getParseData(x)
-
-  parsed_data$parent[parsed_data$parent == 0] <- NA
 
   dots <- list(...)
 
@@ -182,6 +211,8 @@ as.GeneralTree.expression <- function(x, ...) {
     }
   }
 
+  tree = GeneralTree$new(0L, "BaseEnvironment")
 
-  return(GeneralTree::as.GeneralTree(parsed_data, data = what))
+  return(GeneralTree::as.GeneralTree(parsed_data, data = what,
+                                     parent_node = tree))
 }
