@@ -23,18 +23,18 @@
 #' tree.
 #' @format \code{\link{R6Class}} object.
 #' @examples
-#' root <- GeneralTree$new(0, 'root')
-#' child1 <- root$addNode(0, 1, 'child.0.1')
-#' child2 <- root$addNode(0, 2, 'child.0.2')
-#' child3 <- root$addNode(0, 3, 'child.0.3')
-#' child4 <- root$addNode(3, 4, 'child.3.4')
+#' root <- GeneralTree$new(0, "root")
+#' root$addNode(0, 1, "child.0.1")
+#' root$addNode(0, 2, "child.0.2")
+#' root$addNode(0, 3, "child.0.3")
+#' root$addNode(3, 4, "child.3.4")
 #' root$search(4)
 #' @section Methods:
 #' \describe{
 #'  \item{\code{addNode(parent_id, id, data)}}{Add a new node to the tree. The
 #'  new node will be a child of parent_id and have an id and data.}
 #' }
-GeneralTree <- R6Class('GeneralTree',
+GeneralTree <- R6Class("GeneralTree",
   lock_objects = FALSE,
   private = list(
     .data = NULL,
@@ -308,33 +308,33 @@ GeneralTree <- R6Class('GeneralTree',
    setRootDiscovered = function(is_root_discovered) {
      private$.is_root_discovered = is_root_discovered
    },
-   nodeInfoToString = function(what = c('id', 'data')) {
+   nodeInfoToString = function(what = c("id", "data")) {
      what = match.arg(what, several.ok = TRUE)
 
-     get_id = any('id' %in% what)
-     get_data = any('data' %in% what)
+     get_id = any("id" %in% what)
+     get_data = any("data" %in% what)
 
-     node_id = ''
+     node_id = ""
      if (get_id)
        node_id = as.character(self$id)
 
-     node_data = ''
+     node_data = ""
      if (get_data)
        node_data = as.character(self$data)
 
-     sep = ''
+     sep = ""
      if(get_id && get_data) {
-       sep = ' : '
+       sep = " : "
      }
      node_string = paste(node_id, node_data, sep = sep)
 
      return(node_string)
    },
-   toString = function(what = c('id', 'data'), string_prepend = '') {
+   toString = function(what = c("id", "data"), string_prepend = "") {
      what = match.arg(what, several.ok = TRUE)
 
      initiateEmptyString = function(length = 1) {
-       paste0(rep(' ', length), collapse = '')
+       paste0(rep(" ", length), collapse = "")
      }
 
      if (self$is_root) {
@@ -343,18 +343,18 @@ GeneralTree <- R6Class('GeneralTree',
          space = nchar(string)
          child_nodes = self$getChildNodes(recursive = FALSE)
          string_prepend = initiateEmptyString(length = space)
-         result = paste0(sapply(child_nodes, function(x) x$toString(what, string_prepend)), collapse = '\n')
+         result = paste0(sapply(child_nodes, function(x) x$toString(what, string_prepend)), collapse = "\n")
          string = paste0(string, result)
        }
      } else {
        tree_sep = string_prepend
 
        if (identical(self$parent$left_child, self)) {
-         node_sep = paste0(' --> ')
+         node_sep = paste0(" --> ")
        } else if (self$is_last_sibling) {
-         node_sep = paste0(tree_sep, ' \\-> ')
+         node_sep = paste0(tree_sep, " \\-> ")
        } else {
-         node_sep = paste0(tree_sep, ' |-> ')
+         node_sep = paste0(tree_sep, " |-> ")
        }
 
        if (self$have_child) {
@@ -365,11 +365,11 @@ GeneralTree <- R6Class('GeneralTree',
          if (self$is_last_sibling)
            branch_symbol = " "
 
-         tree_sep = paste0(tree_sep, ' ', branch_symbol, '   ', initiateEmptyString(length = max_space))
+         tree_sep = paste0(tree_sep, " ", branch_symbol, "   ", initiateEmptyString(length = max_space))
 
          child_nodes = self$getChildNodes(recursive = FALSE)
-         result = paste0(sapply(child_nodes, function(x) x$toString(what, tree_sep)), collapse = '\n')
-         string = paste0(node_sep, self$nodeInfoToString(what), result, collapse = '\n')
+         result = paste0(sapply(child_nodes, function(x) x$toString(what, tree_sep)), collapse = "\n")
+         string = paste0(node_sep, self$nodeInfoToString(what), result, collapse = "\n")
        } else {
          string = paste0(node_sep, self$nodeInfoToString(what))
        }
@@ -503,7 +503,7 @@ nextElem.GeneralTree <- function(obj, ...) {
 #' Internal function heavily inspired by iterators package.
 #' @keywords internal
 #' @export
-iter.GeneralTree <- function(obj, by = c('data'),
+iter.GeneralTree <- function(obj, by = c("data"),
                              checkFunc = function(...) TRUE,
                              recycle = FALSE,
                               ...) {
@@ -539,7 +539,7 @@ getIterVal.generaltreeiter <- function (obj, plus = 0L, check = TRUE, ...) {
     n <- obj$length
     if (i > n)
         stop("StopIteration", call. = FALSE)
-    switch(obj$by, 'data' = obj$state$obj$data, 'id' = obj$state$obj$id,
-           eval(parse(file = NULL, text = paste0('obj$state$obj$', obj$by))))
+    switch(obj$by, "data" = obj$state$obj$data, "id" = obj$state$obj$id,
+           eval(parse(file = NULL, text = paste0("obj$state$obj$", obj$by))))
 }
 
