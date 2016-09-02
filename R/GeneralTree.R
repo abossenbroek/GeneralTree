@@ -1,40 +1,113 @@
-#
-# Copyright (c) 2016-2016 Anton Bossenbroek
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-
-#' GeneralTree is a R6 implementation of a tree that can have multiple
-#' childeren per parent.
+#' A tree that can have multiple childeren per parent.
+#'
+#' This class allows to create a tree with multiple childs per node. The data
+#' as well as the id are left totally to the choice of the user and can even be
+#' different.
+#'
 #' @docType class
 #' @importFrom R6 R6Class
 #' @export GeneralTree
 #' @return Object of \code{\link{R6Class}} with methods for creating a general
 #' tree.
 #' @format \code{\link{R6Class}} object.
-#' @examples
-#' root <- GeneralTree$new(0, 'root')
-#' child1 <- root$addNode(0, 1, 'child.0.1')
-#' child2 <- root$addNode(0, 2, 'child.0.2')
-#' child3 <- root$addNode(0, 3, 'child.0.3')
-#' child4 <- root$addNode(3, 4, 'child.3.4')
-#' root$search(4)
 #' @section Methods:
 #' \describe{
 #'  \item{\code{addNode(parent_id, id, data)}}{Add a new node to the tree. The
 #'  new node will be a child of parent_id and have an id and data.}
+#'  \item{\code{search(id)}}{Search an node in the tree that has an id equal to
+#'  \code{id}. This method returns the data associated with the node.}
+#'  \item{\code{searchNode(id)}}{Search an node in the tree that has an id
+#'  equal to \code{id}. This method returns the node.}
+#'  \item{\code{searchBranch(id)}}{Search for a node in a particular branch of
+#'  the tree. The function returns a node.}
+#'  \item{\code{getSiblingNodes()}}{Get all the siblings of this node in a list.
+#'  The results will not include the node itself.}
+#'  \item{\code{getSiblingId()}}{Get all the sibling ids in a list. The results
+#'   will not include the node itself.}
+#'  \item{\code{getSiblingData()}}{Get all the sibling data in a list. The results
+#'   will not include the node itself.}
+#'  \item{\code{getChildNodes(recursive = FALSE)}}{Get the child nodes from the
+#'   current branch. On default the function will only return one level deep.
+#'   If \code{recursive} is set to \code{TRUE}, also childs in nested branches
+#'   will be returned. The childs will all be returned in a list.}
+#'  \item{\code{getChildId(recursive = FALSE)}}{Get the ids from all the
+#'   child nodes. If \code{recursive} is set to \code{TRUE}, also ids from childs in
+#'   nested branches will be returned. The ids will all be returned in a
+#'   list.}
+#'  \item{\code{getChildData(recursive = FALSE)}}{Get the data from all the
+#'   child nodes. If \code{recursive} is set to \code{TRUE}, also data from childs in
+#'   nested branches will be returned. The data will all be returned in a
+#'   list.}
+#'  \item{\code{deleteId(id)}}{Delete a node with id equal to \code{id}. All
+#'   child nodes will also be deleted.}
+#'  \item{\code{delete()}}{Delete the current node and all childs. Should not
+#'   be called directly.}
+#'  \item{\code{iterator()}}{Get an iterator to iterate through the tree in a
+#'   depth first search.}
+#'  \item{\code{nextElem()}}{Get the next element in a depth first search.
+#'   Before using this function always create an iterator.}
+#'  \item{\code{toString(what = c("id", "data"), string_prepend = "")}}{Creates
+#'    a string representation of the node. Note that id and data should work
+#'    with paste to work correctly. All branches will also be returned to the
+#'    string.}
+#'  }
+#' @section Active methods:
+#' \describe{
+#'  \item{\code{root}}{Returns the root of a node.}
+#'  \item{\code{left_child}}{Returns the left child of a node.}
+#'  \item{\code{siblings}}{Returns the left sibling of a node.}
+#'  \item{\code{id}}{Returns the id of a node.}
+#'  \item{\code{have_child}}{Returns \code{TRUE} if the node has childs and
+#'   \code{FALSE} otherwise.}
+#'  \item{\code{have_siblings}}{Returns \code{TRUE} if the node has siblings and
+#'   \code{FALSE} otherwise.}
+#'  \item{\code{is_last_sibling}}{Returns \code{TRUE} if the node is the last siblings and
+#'   \code{FALSE} otherwise.}
+#'  \item{\code{have_private_siblings}}{Returns \code{TRUE} if the node has a
+#'    private field siblings set and \code{FALSE} otherwise.}
+#'  \item{\code{have_parent}}{Returns \code{TRUE} if the node has a
+#'    parent field set and \code{FALSE} otherwise.}
+#'  \item{\code{data}}{Returns the data of the node.}
+#'  \item{\code{id}}{Returns the id of the node.}
+#'  \item{\code{is_root}}{Returns \code{TRUE} if the node is the
+#'    root and \code{FALSE} otherwise.}
+#'  \item{\code{parent}}{Return the parent of the node.}
+#'  \item{\code{tree_depth}}{Returns the depth of the tree.}
+#'  \item{\code{branch_depth}}{Returns the depth of the branch.}
+#'  \item{\code{isSingletonTree}}{Returns \code{TRUE} if the tree contains only
+#'    a single element and \code{FALSE} otherwise.}
 #' }
-GeneralTree <- R6Class('GeneralTree',
+#' @examples
+#' # Create a tree
+#' tree <- GeneralTree$new(0, "root")
+#' tree$addNode(0, 1, "child.0.1")
+#' tree$addNode(0, 2, "child.0.2")
+#' tree$addNode(0, 3, "child.0.3")
+#' tree$addNode(3, 4, "child.3.4")
+#' tree$search(4)
+#'
+#' #
+#' # Print the tree
+#' tree
+#'
+#' #
+#' # Example how to iterate through the tree in a depth first iteration.
+#' i <- tree$iterator()
+#' while (!is.null(i)) {
+#'    i$setData(paste("id:", i$id, " : data", i$data))
+#'    i <- tryCatch(i$nextElem(), error = function(e) NULL)
+#' }
+#'
+#' # An example with the foreach package.
+#' require(iterators)
+#' require(foreach)
+#' itx <- iter(tree, by = "id")
+#' numbers_in_tree <- foreach(i = itx, .combine = c) %do% c(i)
+#'
+#' itx <- iter(tree, by = "data")
+#' data_in_tree <- foreach(i = itx, .combine = c) %do% c(i)
+#'
+GeneralTree <- R6Class("GeneralTree",
   lock_objects = FALSE,
   private = list(
     .data = NULL,
@@ -99,13 +172,13 @@ GeneralTree <- R6Class('GeneralTree',
    searchNode = function(id) {
      # Determine whether search was called at the root node.
      if (is.null(private$.root))
-       result = self$searchNodeStartingAtNode(id)
+       result = self$searchBranch(id)
      else
-       result = private$.root$searchNodeStartingAtNode(id)
+       result = private$.root$searchBranch(id)
 
      invisible(result)
    },
-   searchNodeStartingAtNode = function(id) {
+   searchBranch = function(id) {
      result = NULL
      # Verify whether the current node matches the id.
      if (identical(id, private$.id)) {
@@ -114,7 +187,7 @@ GeneralTree <- R6Class('GeneralTree',
 
      if (!is.null(private$.siblings) && is.null(result)) {
        for (s in private$.siblings) {
-         result = s$searchNodeStartingAtNode(id)
+         result = s$searchBranch(id)
          if (!is.null(result)) break
        }
      }
@@ -122,7 +195,7 @@ GeneralTree <- R6Class('GeneralTree',
      if (is.null(result)) {
        # Search the left child if it is present.
        if (!is.null(private$.left_child)) {
-         result = private$.left_child$searchNodeStartingAtNode(id)
+         result = private$.left_child$searchBranch(id)
        } else {
          result = NULL
        }
@@ -161,9 +234,7 @@ GeneralTree <- R6Class('GeneralTree',
    getSiblingData = function() {
      sibling_data = NULL
      if (self$have_siblings) {
-       sibling_data = lapply(self$getSiblingNodes(), function(x) {
-                               if (!identical(x, self)) x$data
-         })
+       sibling_data = lapply(self$getSiblingNodes(), function(x) x$data)
      }
 
      return(sibling_data)
@@ -171,9 +242,7 @@ GeneralTree <- R6Class('GeneralTree',
    getSiblingId = function() {
      sibling_ids = NULL
      if (self$have_siblings) {
-       sibling_ids = lapply(self$getSiblingNodes(), function(x) {
-                               if (!identical(x, self)) x$id
-         })
+       sibling_ids = lapply(self$getSiblingNodes(), function(x) x$id)
      }
 
      return(sibling_ids)
@@ -189,18 +258,18 @@ GeneralTree <- R6Class('GeneralTree',
      }
      return(child_nodes)
    },
-   getChildData = function() {
+   getChildData = function(recursive = FALSE) {
      child_data = NULL
      if (self$have_child) {
-       child_data = lapply(self$getChildNodes(), function(x) x$data)
+       child_data = lapply(self$getChildNodes(recursive), function(x) x$data)
      }
 
      return(child_data)
    },
-   getChildId = function() {
+   getChildId = function(recursive = FALSE) {
      child_data = NULL
      if (self$have_child) {
-       child_data = lapply(self$getChildNodes(), function(x) x$id)
+       child_data = lapply(self$getChildNodes(recursive), function(x) x$id)
      }
 
      return(child_data)
@@ -308,33 +377,33 @@ GeneralTree <- R6Class('GeneralTree',
    setRootDiscovered = function(is_root_discovered) {
      private$.is_root_discovered = is_root_discovered
    },
-   nodeInfoToString = function(what = c('id', 'data')) {
+   nodeInfoToString = function(what = c("id", "data")) {
      what = match.arg(what, several.ok = TRUE)
 
-     get_id = any('id' %in% what)
-     get_data = any('data' %in% what)
+     get_id = any("id" %in% what)
+     get_data = any("data" %in% what)
 
-     node_id = ''
+     node_id = ""
      if (get_id)
        node_id = as.character(self$id)
 
-     node_data = ''
+     node_data = ""
      if (get_data)
        node_data = as.character(self$data)
 
-     sep = ''
+     sep = ""
      if(get_id && get_data) {
-       sep = ' : '
+       sep = " : "
      }
      node_string = paste(node_id, node_data, sep = sep)
 
      return(node_string)
    },
-   toString = function(what = c('id', 'data'), string_prepend = '') {
+   toString = function(what = c("id", "data"), string_prepend = "") {
      what = match.arg(what, several.ok = TRUE)
 
      initiateEmptyString = function(length = 1) {
-       paste0(rep(' ', length), collapse = '')
+       paste0(rep(" ", length), collapse = "")
      }
 
      if (self$is_root) {
@@ -343,18 +412,18 @@ GeneralTree <- R6Class('GeneralTree',
          space = nchar(string)
          child_nodes = self$getChildNodes(recursive = FALSE)
          string_prepend = initiateEmptyString(length = space)
-         result = paste0(sapply(child_nodes, function(x) x$toString(what, string_prepend)), collapse = '\n')
+         result = paste0(sapply(child_nodes, function(x) x$toString(what, string_prepend)), collapse = "\n")
          string = paste0(string, result)
        }
      } else {
        tree_sep = string_prepend
 
        if (identical(self$parent$left_child, self)) {
-         node_sep = paste0(' --> ')
+         node_sep = paste0(" --> ")
        } else if (self$is_last_sibling) {
-         node_sep = paste0(tree_sep, ' \\-> ')
+         node_sep = paste0(tree_sep, " \\-> ")
        } else {
-         node_sep = paste0(tree_sep, ' |-> ')
+         node_sep = paste0(tree_sep, " |-> ")
        }
 
        if (self$have_child) {
@@ -362,14 +431,14 @@ GeneralTree <- R6Class('GeneralTree',
                                 nchar(x$nodeInfoToString(what))))
 
          branch_symbol = "|"
-         if (self$is_last_sibling)
+         if (self$is_last_sibling || !self$have_siblings)
            branch_symbol = " "
 
-         tree_sep = paste0(tree_sep, ' ', branch_symbol, '   ', initiateEmptyString(length = max_space))
+         tree_sep = paste0(tree_sep, " ", branch_symbol, "   ", initiateEmptyString(length = max_space))
 
          child_nodes = self$getChildNodes(recursive = FALSE)
-         result = paste0(sapply(child_nodes, function(x) x$toString(what, tree_sep)), collapse = '\n')
-         string = paste0(node_sep, self$nodeInfoToString(what), result, collapse = '\n')
+         result = paste0(sapply(child_nodes, function(x) x$toString(what, tree_sep)), collapse = "\n")
+         string = paste0(node_sep, self$nodeInfoToString(what), result, collapse = "\n")
        } else {
          string = paste0(node_sep, self$nodeInfoToString(what))
        }
@@ -457,82 +526,3 @@ GeneralTree <- R6Class('GeneralTree',
     }
   )
 )
-
-#' Internal function heavily inspired by iterators package.
-#' @keywords internal
-#' @export
-nextElem.generaltreeiter <- function(obj, ...) {
-  repeat {
-    tryCatch({
-      if (obj$checkFunc(getIterVal(obj, 1L))) {
-        obj$state$obj <- obj$state$obj$nextElem()
-        obj$state$i <- obj$state$i + 1L
-        return(getIterVal(obj))
-      }
-      obj$state$obj <- obj$state$obj$nextElem()
-      obj$state$i <- obj$state$i + 1L
-    }, error = function(e) {
-      if (any(nzchar(e$message))) {
-        if (identical(e$message, "StopIteration")) {
-          if (obj$recycle) {
-            obj$state$i <- 0L
-            obj$state$resetDiscoveredOnBranch()
-          }
-          else {
-            stop("StopIteration", call. = FALSE)
-          }
-        }
-        else {
-          stop(e$message, call. = FALSE)
-        }
-      }
-      else {
-        stop("Abort", call. = e)
-      }
-    })
-  }
-}
-
-#' Internal function heavily inspired by iterators package.
-#' @keywords internal
-#' @export
-iter.GeneralTree <- function(obj, by = c('data'),
-                             checkFunc = function(...) TRUE,
-                             recycle = FALSE,
-                              ...) {
-  if (!(by %in% gsub("([a-zA-Z0-9]*):.*", "\\1",
-                     R6:::object_summaries(obj, exclude = ".__enclos_env__"))))
-    stop("Could not find", by, "as a member of ", setdiff(class(obj), "R6"))
-
-  state <- new.env()
-  state$i <- 0L
-  state$obj <- obj
-  obj$resetDiscoveredOnBranch()
-  # Add one to compensate for parent node.
-  n <- length(obj$getChildNodes(recursive = TRUE)) + 1
-  it <- list(state = state, by = by, length = n, checkFunc = checkFunc,
-             recycle = recycle)
-  class(it) <- c("generaltreeiter", "iter")
-  it
-}
-
-#' Function heavily inspired by iterators package.
-#' @keywords internal
-#' @export
-getIterVal <- function (obj, plus, ...)
-{
-    UseMethod("getIterVal")
-}
-
-#' Function heavily inspired by iterators package.
-#' @keywords internal
-#' @export
-getIterVal.generaltreeiter <- function (obj, plus = 0L, check = TRUE, ...) {
-    i <- obj$state$i + plus
-    n <- obj$length
-    if (i > n)
-        stop("StopIteration", call. = FALSE)
-    switch(obj$by, 'data' = obj$state$obj$data, 'id' = obj$state$obj$id,
-           eval(parse(file = NULL, text = paste0('obj$state$obj$', obj$by))))
-}
-

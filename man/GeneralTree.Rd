@@ -3,8 +3,7 @@
 \docType{class}
 \name{GeneralTree}
 \alias{GeneralTree}
-\title{GeneralTree is a R6 implementation of a tree that can have multiple
-childeren per parent.}
+\title{A tree that can have multiple childeren per parent.}
 \format{\code{\link{R6Class}} object.}
 \usage{
 GeneralTree
@@ -14,23 +13,112 @@ Object of \code{\link{R6Class}} with methods for creating a general
 tree.
 }
 \description{
-GeneralTree is a R6 implementation of a tree that can have multiple
-childeren per parent.
+This class allows to create a tree with multiple childs per node. The data
+as well as the id are left totally to the choice of the user and can even be
+different.
 }
 \section{Methods}{
 
 \describe{
  \item{\code{addNode(parent_id, id, data)}}{Add a new node to the tree. The
  new node will be a child of parent_id and have an id and data.}
+ \item{\code{search(id)}}{Search an node in the tree that has an id equal to
+ \code{id}. This method returns the data associated with the node.}
+ \item{\code{searchNode(id)}}{Search an node in the tree that has an id
+ equal to \code{id}. This method returns the node.}
+ \item{\code{searchBranch(id)}}{Search for a node in a particular branch of
+ the tree. The function returns a node.}
+ \item{\code{getSiblingNodes()}}{Get all the siblings of this node in a list.
+ The results will not include the node itself.}
+ \item{\code{getSiblingId()}}{Get all the sibling ids in a list. The results
+  will not include the node itself.}
+ \item{\code{getSiblingData()}}{Get all the sibling data in a list. The results
+  will not include the node itself.}
+ \item{\code{getChildNodes(recursive = FALSE)}}{Get the child nodes from the
+  current branch. On default the function will only return one level deep.
+  If \code{recursive} is set to \code{TRUE}, also childs in nested branches
+  will be returned. The childs will all be returned in a list.}
+ \item{\code{getChildId(recursive = FALSE)}}{Get the ids from all the
+  child nodes. If \code{recursive} is set to \code{TRUE}, also ids from childs in
+  nested branches will be returned. The ids will all be returned in a
+  list.}
+ \item{\code{getChildData(recursive = FALSE)}}{Get the data from all the
+  child nodes. If \code{recursive} is set to \code{TRUE}, also data from childs in
+  nested branches will be returned. The data will all be returned in a
+  list.}
+ \item{\code{deleteId(id)}}{Delete a node with id equal to \code{id}. All
+  child nodes will also be deleted.}
+ \item{\code{delete()}}{Delete the current node and all childs. Should not
+  be called directly.}
+ \item{\code{iterator()}}{Get an iterator to iterate through the tree in a
+  depth first search.}
+ \item{\code{nextElem()}}{Get the next element in a depth first search.
+  Before using this function always create an iterator.}
+ \item{\code{toString(what = c("id", "data"), string_prepend = "")}}{Creates
+   a string representation of the node. Note that id and data should work
+   with paste to work correctly. All branches will also be returned to the
+   string.}
+ }
+}
+
+\section{Active methods}{
+
+\describe{
+ \item{\code{root}}{Returns the root of a node.}
+ \item{\code{left_child}}{Returns the left child of a node.}
+ \item{\code{siblings}}{Returns the left sibling of a node.}
+ \item{\code{id}}{Returns the id of a node.}
+ \item{\code{have_child}}{Returns \code{TRUE} if the node has childs and
+  \code{FALSE} otherwise.}
+ \item{\code{have_siblings}}{Returns \code{TRUE} if the node has siblings and
+  \code{FALSE} otherwise.}
+ \item{\code{is_last_sibling}}{Returns \code{TRUE} if the node is the last siblings and
+  \code{FALSE} otherwise.}
+ \item{\code{have_private_siblings}}{Returns \code{TRUE} if the node has a
+   private field siblings set and \code{FALSE} otherwise.}
+ \item{\code{have_parent}}{Returns \code{TRUE} if the node has a
+   parent field set and \code{FALSE} otherwise.}
+ \item{\code{data}}{Returns the data of the node.}
+ \item{\code{id}}{Returns the id of the node.}
+ \item{\code{is_root}}{Returns \code{TRUE} if the node is the
+   root and \code{FALSE} otherwise.}
+ \item{\code{parent}}{Return the parent of the node.}
+ \item{\code{tree_depth}}{Returns the depth of the tree.}
+ \item{\code{branch_depth}}{Returns the depth of the branch.}
+ \item{\code{isSingletonTree}}{Returns \code{TRUE} if the tree contains only
+   a single element and \code{FALSE} otherwise.}
 }
 }
 \examples{
-root <- GeneralTree$new(0, 'root')
-child1 <- root$addNode(0, 1, 'child.0.1')
-child2 <- root$addNode(0, 2, 'child.0.2')
-child3 <- root$addNode(0, 3, 'child.0.3')
-child4 <- root$addNode(3, 4, 'child.3.4')
-root$search(4)
+# Create a tree
+tree <- GeneralTree$new(0, "root")
+tree$addNode(0, 1, "child.0.1")
+tree$addNode(0, 2, "child.0.2")
+tree$addNode(0, 3, "child.0.3")
+tree$addNode(3, 4, "child.3.4")
+tree$search(4)
+
+#
+# Print the tree
+tree
+
+#
+# Example how to iterate through the tree in a depth first iteration.
+i <- tree$iterator()
+while (!is.null(i)) {
+   i$setData(paste("id:", i$id, " : data", i$data))
+   i <- tryCatch(i$nextElem(), error = function(e) NULL)
+}
+
+# An example with the foreach package.
+require(iterators)
+require(foreach)
+itx <- iter(tree, by = "id")
+numbers_in_tree <- foreach(i = itx, .combine = c) \%do\% c(i)
+
+itx <- iter(tree, by = "data")
+data_in_tree <- foreach(i = itx, .combine = c) \%do\% c(i)
+
 }
 \keyword{datasets}
 

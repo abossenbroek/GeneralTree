@@ -1,10 +1,28 @@
+#
+# Copyright (c) 2016-2016 Anton Bossenbroek
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 #' Convert a GeneralTree to a data frame.
+#'
 #' @param x GeneralTree to convert to a data frame.
 #' @param row.names Ignored.
 #' @param optional Ignored.
 #' @param ... Ignored.
 #' @export
-as.data.frame.GeneralTree <- function(x, row.names = NULL, optional = NULL, ...) {
+as.data.frame.GeneralTree <- function(x, row.names = NULL, optional = NULL,
+                                      ...) {
   i <- x$iterator()
 
   id <- list()
@@ -40,17 +58,21 @@ as.GeneralTree <- function(x, ...) UseMethod("as.GeneralTree")
 #'                        each node.
 #'                parent  The column name of the column that holds the parent
 #'                        of each node, NA indicates a node is the root.
+#' @examples
+#'   test_tree_df <- data.frame(
+#'       ID = c("root", "child1", "child2", "child3"),
+#'       DATA = c("parent1", "data3.1", "data1.2", "data1.3"),
+#'      PARENT = c(NA, "child3", "root", "root"), stringsAsFactors = FALSE)
+#' as.GeneralTree(test_tree_df, id = "ID", data = "DATA", parent = "PARENT")
+#'
 #' @export
 as.GeneralTree.data.frame <- function(x, ...) {
-
-  #TODO: support for different id, data and parent column.
-  #TODO: add warning if data.frame uses factors.
-
   dots <- list(...)
 
   id_colname = "id"
   data_colname = "data"
   parent_colname = "parent"
+  parent_node = NULL
 
   if ("id" %in% names(dots))
     id_colname = dots$id
@@ -58,6 +80,9 @@ as.GeneralTree.data.frame <- function(x, ...) {
     data_colname = dots$data
   if ("parent" %in% names(dots))
     parent_colname = dots$parent
+  if ("parent_node" %in% names(dots))
+    parent_node = dots$parent_node
+
 
   if (!(id_colname %in% names(x)))
       stop("Could not find id column ", id_colname)
@@ -69,17 +94,31 @@ as.GeneralTree.data.frame <- function(x, ...) {
   if (any(sapply(x[c(id_colname, data_colname, parent_colname)], is.factor)))
     warning("Some columns are encoded as factors which could lead to errors.")
 
-  if (sum(is.na(x[parent_colname][,1])) != 1)
+  if ((sum(is.na(x[parent_colname][, 1])) != 1) && is.null(parent_node))
     stop(paste0("Multiple entries with NA parent where found.",
                 "Make sure to have only one entry with parent NA."))
 
-  root_id = x[id_colname][is.na(x[parent_colname]), 1]
-  root_data = x[data_colname][is.na(x[parent_colname]), 1]
+  new_tree = NULL
 
-  new_tree = GeneralTree$new(root_id, root_data)
+  if (is.null(parent_node)) {
+    root_id = x[id_colname][is.na(x[parent_colname]), 1]
+    root_data = x[data_colname][is.na(x[parent_colname]), 1]
+
+    new_tree = GeneralTree$new(root_id, root_data)
+  } else {
+    if (inherits(parent_node, "GeneralTree")) {
+        if (parent_node$isSingletonTree) {
+            new_tree = parent_node
+        } else {
+            stop("the passed parent_node is not a singleton tree.")
+        }
+    } else {
+        stop("the passed parent_node was not a GeneralTree object.")
+    }
+  }
 
   # Select the remaining data that needs to be converted into the tree.
-  remaining_data = x[!is.na(x[parent_colname])[,1],]
+  remaining_data = x[!is.na(x[parent_colname])[, 1],]
 
   ids_in_tree <- NULL
 
@@ -116,12 +155,13 @@ as.GeneralTree.data.frame <- function(x, ...) {
         if (identical(intersect(idx_to_push, idx_not_found), idx_to_push))
           break
 
-        # Swap the element that we could not add with the a pivot. We take the
-        # pivot as the center, plus one to ensure that we have only two
-        # elements left, the next element in the list will be used.
-        pivot = min(ceiling(length(idx_to_push) / 2) + 1, length(idx_to_push))
-        if (pivot %in% idx_not_found && length(setdiff(idx_to_push, idx_not_found)) > 0)
-          pivot = setdiff(idx_to_push, idx_not_found)[1]
+        if (!(current_parent %in% remaining_data[parent_colname][, 1]))
+          stop("Could not find parent ", current_parent)
+
+        parent_location = which(remaining_data[id_colname][, 1] %in%
+                                current_parent)
+        pivot = match(parent_location, idx_to_push)
+
         tmp_idx = idx_to_push[1]
         idx_to_push[1] = idx_to_push[pivot]
         idx_to_push[pivot] = tmp_idx
@@ -136,4 +176,44 @@ as.GeneralTree.data.frame <- function(x, ...) {
   }
 
   return(new_tree)
+}
+
+#' Convert a R parsed expression to a GeneralTree.
+#' @param x The expression that should be converted.
+#' @param ...  what = "token" fill the tree with tokens as the data field.
+#'             what = "text" fill the tree with text as the data field.
+#' @examples
+#' p <- parse(text = "
+#'                    tree <- GeneralTree$new(1, 'parent1')
+#'                    tree$addNode(1, 2, 'child.1.2')
+#'                    tree$addNode(2, 3, 'child.2.3')",
+#'            keep.source = TRUE)
+#' as.GeneralTree(p, what = "token")
+#' as.GeneralTree(p, what = "text")
+#' as.GeneralTree(p, what = c("text", "token"))
+#' @export
+as.GeneralTree.expression <- function(x, ...) {
+
+  parsed_data = utils::getParseData(x)
+
+  dots <- list(...)
+
+  what = "text"
+  if ("what" %in% names(dots)) {
+    if (all(dots$what == "token")) {
+      what = "token"
+    } else if (all(dots$what == "text")) {
+      what = "text"
+    } else if (all(dots$what %in% c("text", "token"))) {
+      parsed_data$DATA <- paste(parsed_data$token, parsed_data$text, sep = ": ")
+      what = "DATA"
+    } else {
+      stop("Do not know how to process ", dots$what)
+    }
+  }
+
+  tree = GeneralTree$new(0L, "BaseEnvironment")
+
+  return(GeneralTree::as.GeneralTree(parsed_data, data = what,
+                                     parent_node = tree))
 }

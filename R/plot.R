@@ -1,3 +1,19 @@
+#
+# Copyright (c) 2016-2016 Anton Bossenbroek
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 #' Plot a GeneralTree object.
 #' @param x tree to plot.
 #' @param ... arguments passed to underlying functions.
@@ -20,11 +36,17 @@ plot.GeneralTree <- function(x, ...) {
   do.call(DiagrammeR::grViz, dots)
 }
 
-generate_grViz <- function(obj, what = c('id', 'data'), ...) {
+#' Create a DiagrammeR graph that represents the tree.
+#'
+#' @param obj  the tree that should be converted to a DiagrammeR graph.
+#' @param what select what to draw in the tree.
+#' @param ... Additional arguments passed to create_nodes
+#' @seealso \code{\link[DiagrammeR]{create_nodes}}
+generate_grViz <- function(obj, what = c("id", "data"), ...) {
   i <- obj$iterator()
   what <- match.arg(what, several.ok = FALSE)
-  get_id <- any('id' %in% what)
-  get_data <- any('data' %in% what)
+  get_id <- any("id" %in% what)
+  get_data <- any("data" %in% what)
 
   ids <- c()
   data <- c()
@@ -74,7 +96,7 @@ generate_grViz <- function(obj, what = c('id', 'data'), ...) {
   edges <- DiagrammeR::create_edges(
                 from = edges_from,
                 to = edges_to,
-                rel = 'related')
+                rel = "related")
 
   graph <- DiagrammeR::create_graph(
     nodes_df = nodes,
