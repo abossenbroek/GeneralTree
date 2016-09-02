@@ -20,7 +20,8 @@
 #' @param optional Ignored.
 #' @param ... Ignored.
 #' @export
-as.data.frame.GeneralTree <- function(x, row.names = NULL, optional = NULL, ...) {
+as.data.frame.GeneralTree <- function(x, row.names = NULL, optional = NULL,
+                                      ...) {
   i <- x$iterator()
 
   id <- list()
@@ -85,7 +86,7 @@ as.GeneralTree.data.frame <- function(x, ...) {
   if (any(sapply(x[c(id_colname, data_colname, parent_colname)], is.factor)))
     warning("Some columns are encoded as factors which could lead to errors.")
 
-  if (sum(is.na(x[parent_colname][,1])) != 1)
+  if (sum(is.na(x[parent_colname][, 1])) != 1)
     stop(paste0("Multiple entries with NA parent where found.",
                 "Make sure to have only one entry with parent NA."))
 
@@ -95,7 +96,7 @@ as.GeneralTree.data.frame <- function(x, ...) {
   new_tree = GeneralTree$new(root_id, root_data)
 
   # Select the remaining data that needs to be converted into the tree.
-  remaining_data = x[!is.na(x[parent_colname])[,1],]
+  remaining_data = x[!is.na(x[parent_colname])[, 1],]
 
   ids_in_tree <- NULL
 
@@ -132,10 +133,11 @@ as.GeneralTree.data.frame <- function(x, ...) {
         if (identical(intersect(idx_to_push, idx_not_found), idx_to_push))
           break
 
-        if (!(current_parent %in% remaining_data[parent_colname][,1]))
+        if (!(current_parent %in% remaining_data[parent_colname][, 1]))
           stop("Could not find parent ", current_parent)
 
-        parent_location = which(remaining_data[id_colname][,1] %in% current_parent)
+        parent_location = which(remaining_data[id_colname][, 1] %in%
+                                current_parent)
         pivot = match(parent_location, idx_to_push)
 
         tmp_idx = idx_to_push[1]

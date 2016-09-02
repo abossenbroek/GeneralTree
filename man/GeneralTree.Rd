@@ -25,11 +25,11 @@ childeren per parent.
 }
 }
 \examples{
-root <- GeneralTree$new(0, 'root')
-root$addNode(0, 1, 'child.0.1')
-root$addNode(0, 2, 'child.0.2')
-root$addNode(0, 3, 'child.0.3')
-root$addNode(3, 4, 'child.3.4')
+root <- GeneralTree$new(0, "root")
+root$addNode(0, 1, "child.0.1")
+root$addNode(0, 2, "child.0.2")
+root$addNode(0, 3, "child.0.3")
+root$addNode(3, 4, "child.3.4")
 root$search(4)
 }
 \keyword{datasets}
