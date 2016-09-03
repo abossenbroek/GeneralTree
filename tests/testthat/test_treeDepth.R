@@ -1,5 +1,11 @@
 context('Test tree_depth')
 
+test_that('tree_depth reports the correct depth for singleton tree', {
+  tree <- GeneralTree$new(0, 'parent1')
+  expect_identical(tree$tree_depth, 1)
+})
+
+
 test_that('tree_depth reports the correct depth when creating a tree', {
   tree <- GeneralTree$new(0, 'parent1')
 
@@ -72,3 +78,16 @@ test_that('treeDepth reports the correct depth when adding nodes in any order', 
 
   expect_identical(tree$tree_depth, 5)
 })
+
+test_that('treeDepth reports the correct depth asking tree depth on child node', {
+  tree <- GeneralTree$new(0, 'parent1')
+
+  tree$addNode(0, 1, 'child.1')
+  tree$addNode(0, 2, 'child.2')
+  tree$addNode(0, 3, 'child.3')
+  tree$addNode(1, 4, 'child.1.4')
+
+  expect_identical(tree$searchNode(4)$tree_depth, 3)
+})
+
+
