@@ -201,8 +201,8 @@ test_that("iteration works correctly with recycle on", {
   ids <- NULL
   for (i in 1 : 28) {
     id <- tryCatch(nextElem(itx), error = function(e) NULL)
-#    if (is.null(id))
-#        break
+    if (is.null(id))
+        break
     ids <- c(ids, id)
   }
 
