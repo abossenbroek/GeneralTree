@@ -32,7 +32,8 @@ nextElem.GeneralTreeIter <- function(obj, ...) {
         if (identical(e$message, "StopIteration")) {
           if (obj$recycle) {
             obj$state$i <- 0L
-            obj$state$resetDiscoveredOnBranch()
+            obj$state$obj$resetDiscovered()
+            obj$state$obj <- obj$state$obj$root
           }
           else {
             stop("StopIteration", call. = FALSE)
@@ -59,10 +60,11 @@ nextElem.GeneralTree <- function(obj, ...) {
 
 #' Internal function heavily inspired by iterators package.
 #' @keywords internal
+#' @importFrom R6 object_summaries
 #' @export
-iter.GeneralTree <- function(obj, by = c("data"),
-                             checkFunc = function(...) TRUE,
-                             recycle = FALSE,
+iter.GeneralTree <- function (obj, by = c("data"),
+                              checkFunc = function(...) TRUE,
+                              recycle = FALSE,
                               ...) {
   if (!(by %in% gsub("([a-zA-Z0-9]*):.*", "\\1",
                      R6:::object_summaries(obj, exclude = ".__enclos_env__"))))

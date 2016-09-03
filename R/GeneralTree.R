@@ -309,8 +309,6 @@ GeneralTree <- R6Class("GeneralTree",
        suppressWarnings({
          self$parent$setLeftChild(NULL)
        })
-     } else{
-       stop("Did not know how to remove myself")
      }
    },
    nextElem = function() {
@@ -328,7 +326,7 @@ GeneralTree <- R6Class("GeneralTree",
        candidates <- c(list(self$left_child), self$getSiblingNodes())
      }
 
-     if (is.null(next_element) && !is.null(candidates)) {
+     if (is.null(next_element) && !is.null(unlist(candidates))) {
        # Remove all NULL values.
        candidates <- Filter(Negate(is.null), candidates)
        # Remove all nodes that were already discovered.
@@ -337,8 +335,9 @@ GeneralTree <- R6Class("GeneralTree",
          next_element = not_discovered[[1]]
      }
 
-     if (is.null(next_element) && !self$is_root && self$have_parent)
+     if (is.null(next_element) && !self$is_root && self$have_parent) {
        next_element = self$parent$nextElem()
+     }
 
      if (!is.null(next_element))
         next_element$setDiscovered(TRUE)
@@ -347,8 +346,11 @@ GeneralTree <- R6Class("GeneralTree",
      if (is.null(next_element) && self$is_root)
        self$setRootDiscovered(FALSE)
 
-     if (is.null(next_element))
+
+     if (is.null(next_element)) {
+       next_element = self
        stop("StopIteration")
+     }
 
      invisible(next_element)
    },
@@ -361,15 +363,17 @@ GeneralTree <- R6Class("GeneralTree",
        return(self$root$iterator())
      }
    },
+   resetDiscovered = function() {
+     if (!self$is_root) {
+       private$.root$resetDiscoveredOnBranch()
+     } else {
+       self$resetDiscoveredOnBranch()
+     }
+   },
    resetDiscoveredOnBranch = function() {
-     self$setDiscovered(FALSE)
-
-     if (self$have_child)
-       self$left_child$resetDiscoveredOnBranch()
-
-     if (self$have_siblings)
-       for (sibling in self$siblings)
-         sibling$resetDiscoveredOnBranch()
+     reset_status = sapply(self$getChildNodes(recursive = TRUE), function(x)
+                            x$setDiscovered(FALSE))
+     invisible(reset_status)
    },
    setDiscovered = function(is_discovered) {
      private$.is_discovered = is_discovered
