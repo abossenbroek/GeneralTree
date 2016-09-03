@@ -120,3 +120,21 @@ test_that("Print tree correctly when last child has many leafs.", {
 
   expect_identical(tree$toString(), "0 : parent1 --> 1 : child.1\n            |-> 2 : child.2\n            \\-> 3 : child.3 --> 4 : child.3.4\n                            |-> 5 : child.3.5\n                            |-> 6 : child.3.6\n                            \\-> 7 : child.3.7 --> 8 : child.7.8\n                                              |-> 9 : child.7.9\n                                              \\-> 10 : child.7.10")
 })
+
+test_that("Print tree correctly without argument passed.", {
+  tree <- GeneralTree$new(0, "parent1")
+  tree$addNode(0, 1, "child.1")
+  tree$addNode(0, 2, "child.2")
+  tree$addNode(0, 3, "child.3")
+  tree$addNode(3, 4, "child.3.4")
+  tree$addNode(3, 5, "child.3.5")
+  tree$addNode(3, 6, "child.3.6")
+  tree$addNode(3, 7, "child.3.7")
+  tree$addNode(7, 8, "child.7.8")
+  tree$addNode(7, 9, "child.7.9")
+  tree$addNode(7, 10, "child.7.10")
+
+  res <- capture_output(print(tree), print = TRUE)
+
+  expect_identical(res, "0 : parent1 --> 1 : child.1\n            |-> 2 : child.2\n            \\-> 3 : child.3 --> 4 : child.3.4\n                            |-> 5 : child.3.5\n                            |-> 6 : child.3.6\n                            \\-> 7 : child.3.7 --> 8 : child.7.8\n                                              |-> 9 : child.7.9\n                                              \\-> 10 : child.7.10")
+})
