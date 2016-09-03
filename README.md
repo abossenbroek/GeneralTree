@@ -76,3 +76,5 @@ require(codetools)
 install_github('GeneralTree', username = 'abossenbroek')
 ```
 
+# License
+The GeneralTree package is licensed under the Apache V2.0 license.
