@@ -166,15 +166,9 @@ test_that("iteration works correctly with checkFunction returning FALSE", {
   require(foreach)
   itx <- iter(tree, by = "id", checkFunction = function(...) FALSE)
 
-  ids <- NULL
-  repeat {
-    id <- tryCatch(nextElem(itx), error = function(e) NULL)
-    if (is.null(id))
-        break
-    ids <- c(ids, id)
-  }
+  numbers_in_tree <- foreach(i = itx, .combine = c) %do% c(i)
 
-  expect_identical(ids, as.numeric(1 : 14))
+  expect_identical(numbers_in_tree, as.numeric(1 : 14))
 })
 
 test_that("iteration works correctly with recycle on", {
