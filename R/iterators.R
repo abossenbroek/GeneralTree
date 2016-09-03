@@ -60,16 +60,11 @@ nextElem.GeneralTree <- function(obj, ...) {
 
 #' Internal function heavily inspired by iterators package.
 #' @keywords internal
-#' @importFrom R6 object_summaries
 #' @export
 iter.GeneralTree <- function (obj, by = c("data"),
                               checkFunc = function(...) TRUE,
                               recycle = FALSE,
                               ...) {
-  if (!(by %in% gsub("([a-zA-Z0-9]*):.*", "\\1",
-                     R6:::object_summaries(obj, exclude = ".__enclos_env__"))))
-    stop("Could not find", by, "as a member of ", setdiff(class(obj), "R6"))
-
   state <- new.env()
   state$i <- 0L
   state$obj <- obj
