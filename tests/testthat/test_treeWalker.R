@@ -145,7 +145,7 @@ test_that("test that the tree_walker works when iterator is created from child n
   expect_identical(ids, as.numeric(1 : 14))
 })
 
-test_that("iteration works correctly with checkFunction returning FALSE", {
+test_that("iterations are skipped when checkFunc is set to FALSE", {
 
   tree <- GeneralTree$new(1, "parent1")
   tree$addNode(1, 2, "child.1.2")
@@ -164,11 +164,12 @@ test_that("iteration works correctly with checkFunction returning FALSE", {
 
   require(iterators)
   require(foreach)
-  itx <- iter(tree, by = "id", checkFunction = function(...) FALSE)
+  itx <- iter(tree, by = "id", checkFunc = function(i) i %% 2 == 0)
 
   numbers_in_tree <- foreach(i = itx, .combine = c) %do% c(i)
 
-  expect_identical(numbers_in_tree, as.numeric(1 : 14))
+  expect_identical(itx$length, 14)
+  expect_identical(numbers_in_tree, seq(2, 14, by = 2))
 })
 
 test_that("iteration works correctly with recycle on", {

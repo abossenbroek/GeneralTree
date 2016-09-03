@@ -311,14 +311,14 @@ GeneralTree <- R6Class("GeneralTree",
        })
      }
    },
-   nextElem = function() {
+   nextElem = function(set_discover = TRUE, include_root = TRUE) {
      next_element = NULL
      candidates = NULL
 
      if (self$is_root) {
-       if (!self$isRootDiscovered) {
+       if (!self$isRootDiscovered && include_root) {
          next_element = self
-         self$setRootDiscovered(TRUE)
+         self$setRootDiscovered(set_discover)
        } else {
          candidates <- self$getChildNodes(recursive = TRUE)
        }
@@ -340,11 +340,11 @@ GeneralTree <- R6Class("GeneralTree",
      }
 
      if (!is.null(next_element))
-        next_element$setDiscovered(TRUE)
+        next_element$setDiscovered(set_discover)
 
      # If this was the last node, reset the root discovery.
      if (is.null(next_element) && self$is_root)
-       self$setRootDiscovered(FALSE)
+       self$setRootDiscovered(set_discover)
 
 
      if (is.null(next_element)) {
@@ -368,6 +368,7 @@ GeneralTree <- R6Class("GeneralTree",
        private$.root$resetDiscoveredOnBranch()
      } else {
        self$resetDiscoveredOnBranch()
+       self$setDiscovered(FALSE)
      }
    },
    resetDiscoveredOnBranch = function() {
@@ -453,7 +454,11 @@ GeneralTree <- R6Class("GeneralTree",
   ),
   active = list(
     root = function() {
-      invisible(private$.root)
+      if (is.null(private$.root)) {
+        invisible(self)
+      } else {
+        invisible(private$.root)
+      }
     },
     left_child = function() {
       invisible(private$.left_child)
