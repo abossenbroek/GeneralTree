@@ -17,22 +17,37 @@
 #' Internal function heavily inspired by iterators package.
 #' @keywords internal
 #' @export
-nextElem.GeneralTreeIter <- function(obj, ...) {
+nextElem.GeneralTreeIter <- function (obj, ...) {
   repeat {
     tryCatch({
-      if (obj$checkFunc(getIterVal(obj, 1L))) {
-        obj$state$obj <- obj$state$obj$nextElem()
-        obj$state$i <- obj$state$i + 1L
-        return(getIterVal(obj))
-      }
-      obj$state$obj <- obj$state$obj$nextElem()
+      value <- getIterVal(obj)
       obj$state$i <- obj$state$i + 1L
+      next_element <- try(obj$state$obj$nextElem(include_root = FALSE), silent = TRUE)
+      # Verify if select the next element lead to an error.
+      if (inherits(next_element, "try-error")) {
+        # Detect whether we iterated through all the nodes.
+        if (obj$state$i > obj$length) {
+          obj$state$obj <- obj$state$obj$nextElem()
+        } else {
+          # If we still missed one, we keep the objected the same but return
+          # the value if required.
+          if (obj$checkFunc(value)) {
+            return(value)
+          }
+        }
+      } else {
+        obj$state$obj <- next_element
+        if (obj$checkFunc(value)) {
+          return(value)
+        }
+      }
     }, error = function(e) {
       if (any(nzchar(e$message))) {
         if (identical(e$message, "StopIteration")) {
           if (obj$recycle) {
             obj$state$i <- 0L
-            obj$state$resetDiscoveredOnBranch()
+            obj$state$obj$resetDiscovered()
+            obj$state$obj <- obj$state$obj$root
           }
           else {
             stop("StopIteration", call. = FALSE)
@@ -60,18 +75,14 @@ nextElem.GeneralTree <- function(obj, ...) {
 #' Internal function heavily inspired by iterators package.
 #' @keywords internal
 #' @export
-iter.GeneralTree <- function(obj, by = c("data"),
-                             checkFunc = function(...) TRUE,
-                             recycle = FALSE,
+iter.GeneralTree <- function (obj, by = c("data"),
+                              checkFunc = function(...) TRUE,
+                              recycle = FALSE,
                               ...) {
-  if (!(by %in% gsub("([a-zA-Z0-9]*):.*", "\\1",
-                     R6:::object_summaries(obj, exclude = ".__enclos_env__"))))
-    stop("Could not find", by, "as a member of ", setdiff(class(obj), "R6"))
-
   state <- new.env()
   state$i <- 0L
   state$obj <- obj
-  obj$resetDiscoveredOnBranch()
+  state$obj$resetDiscovered()
   # Add one to compensate for parent node.
   n <- length(obj$getChildNodes(recursive = TRUE)) + 1
   it <- list(state = state, by = by, length = n, checkFunc = checkFunc,
@@ -93,8 +104,12 @@ getIterVal <- function (obj, plus, ...) {
 getIterVal.GeneralTreeIter <- function (obj, plus = 0L, check = TRUE, ...) {
     i <- obj$state$i + plus
     n <- obj$length
+  
+    iter_object <- obj$state$obj
+    #iter_object <- obj$state$obj$nextElem(discover = FALSE)
+
     if (i > n)
         stop("StopIteration", call. = FALSE)
-    switch(obj$by, "data" = obj$state$obj$data, "id" = obj$state$obj$id,
-           eval(parse(file = NULL, text = paste0("obj$state$obj$", obj$by))))
+    switch(obj$by, "data" = iter_object$data, "id" = iter_object$id,
+           eval(parse(file = NULL, text = paste0("iter_object$", obj$by))))
 }

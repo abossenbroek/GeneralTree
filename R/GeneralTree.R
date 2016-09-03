@@ -309,18 +309,16 @@ GeneralTree <- R6Class("GeneralTree",
        suppressWarnings({
          self$parent$setLeftChild(NULL)
        })
-     } else{
-       stop("Did not know how to remove myself")
      }
    },
-   nextElem = function() {
+   nextElem = function(set_discover = TRUE, include_root = TRUE) {
      next_element = NULL
      candidates = NULL
 
      if (self$is_root) {
-       if (!self$isRootDiscovered) {
+       if (!self$isRootDiscovered && include_root) {
          next_element = self
-         self$setRootDiscovered(TRUE)
+         self$setRootDiscovered(set_discover)
        } else {
          candidates <- self$getChildNodes(recursive = TRUE)
        }
@@ -328,7 +326,7 @@ GeneralTree <- R6Class("GeneralTree",
        candidates <- c(list(self$left_child), self$getSiblingNodes())
      }
 
-     if (is.null(next_element) && !is.null(candidates)) {
+     if (is.null(next_element) && !is.null(unlist(candidates))) {
        # Remove all NULL values.
        candidates <- Filter(Negate(is.null), candidates)
        # Remove all nodes that were already discovered.
@@ -337,18 +335,22 @@ GeneralTree <- R6Class("GeneralTree",
          next_element = not_discovered[[1]]
      }
 
-     if (is.null(next_element) && !self$is_root && self$have_parent)
+     if (is.null(next_element) && !self$is_root && self$have_parent) {
        next_element = self$parent$nextElem()
+     }
 
      if (!is.null(next_element))
-        next_element$setDiscovered(TRUE)
+        next_element$setDiscovered(set_discover)
 
      # If this was the last node, reset the root discovery.
      if (is.null(next_element) && self$is_root)
-       self$setRootDiscovered(FALSE)
+       self$setRootDiscovered(set_discover)
 
-     if (is.null(next_element))
+
+     if (is.null(next_element)) {
+       next_element = self
        stop("StopIteration")
+     }
 
      invisible(next_element)
    },
@@ -361,15 +363,18 @@ GeneralTree <- R6Class("GeneralTree",
        return(self$root$iterator())
      }
    },
+   resetDiscovered = function() {
+     if (!self$is_root) {
+       private$.root$resetDiscoveredOnBranch()
+     } else {
+       self$resetDiscoveredOnBranch()
+       self$setDiscovered(FALSE)
+     }
+   },
    resetDiscoveredOnBranch = function() {
-     self$setDiscovered(FALSE)
-
-     if (self$have_child)
-       self$left_child$resetDiscoveredOnBranch()
-
-     if (self$have_siblings)
-       for (sibling in self$siblings)
-         sibling$resetDiscoveredOnBranch()
+     reset_status = sapply(self$getChildNodes(recursive = TRUE), function(x)
+                            x$setDiscovered(FALSE))
+     invisible(reset_status)
    },
    setDiscovered = function(is_discovered) {
      private$.is_discovered = is_discovered
@@ -449,7 +454,11 @@ GeneralTree <- R6Class("GeneralTree",
   ),
   active = list(
     root = function() {
-      invisible(private$.root)
+      if (is.null(private$.root)) {
+        invisible(self)
+      } else {
+        invisible(private$.root)
+      }
     },
     left_child = function() {
       invisible(private$.left_child)

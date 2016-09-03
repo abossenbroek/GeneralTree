@@ -47,4 +47,12 @@ test_that("search is working as expected", {
   expect_identical(tree$search(2), "child.2")
 })
 
+test_that(" is working as expected", {
+  tree <- GeneralTree$new(0, "parent1")
+
+  tree$addNode(0, 1, "child.1")
+
+  expect_identical(tree$searchNode(1)$is_last_sibling, FALSE)
+})
+
 
