@@ -52,7 +52,6 @@ test_that("add multiple childeren as part of child", {
 })
 
 test_that("add multiple childeren as part of child with char id", {
-  nodes <- list()
 
   tree <- GeneralTree$new(0, "parent1")
   tree$addNode(0, "a", "child.a")
@@ -67,7 +66,6 @@ test_that("add multiple childeren as part of child with char id", {
   tree$addNode("c", "f", "child.c.e")
 
   expect_identical(tree$searchNode("e")$data, "child.c.e")
-  expect_identical(tree$searchNode("e")$data, "child.c.e")
 })
 
 test_that("multiple childeren will yield error", {
@@ -76,4 +74,32 @@ test_that("multiple childeren will yield error", {
 
   expect_warning(tree$setLeftChild(GeneralTree$new(1, "child.0.1")))
 })
+
+test_that("child by using addChild on search result.", {
+
+  tree <- GeneralTree$new(0, "parent1")
+  tree$searchNode(0)$addChild("a", "child.a")
+  tree$searchNode(0)$addChild("b", "child.b")
+  tree$searchNode("b")$addChild("c", "child.b.c")
+  tree$searchNode("b")$addChild("d", "child.b.d")
+  tree$addNode("c", "e", "child.c.e")
+  tree$addNode("c", "f", "child.c.e")
+
+  expect_identical(tree$searchNode("e")$data, "child.c.e")
+})
+
+test_that("child by using addChild on search result.", {
+
+  tree <- GeneralTree$new(0, "parent1")
+  tree$searchNode(0)$addChild("a", "child.a")
+  tree$searchNode(0)$addChild("b", "child.b")
+  tree$searchNode("b")$addChild("c", "child.b.c")
+  tree$searchNode("b")$addChild("d", "child.b.d")
+  tree$addNode("c", "e", "child.c.e")
+  tree$addNode("c", "f", "child.c.e")
+  tree$searchNode("b")$addSibling("g", "child.g")
+
+  expect_identical(tree$searchNode("g")$parent$id, 0)
+})
+
 

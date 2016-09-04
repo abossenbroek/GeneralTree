@@ -1,0 +1,90 @@
+---
+title: "Tutorial"
+author: "Anton Bossenbroek"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This vignette gives explains some basic functionalities of the _GeneralTree_
+package.
+
+# Basic Tree Operations
+In this section we will explain how to perform basic operations on a tree.
+
+## Creating a tree
+A General Tree is a R6 object. As such it can be created with the `new` method.
+You should pass to `new` the `id` and `data` of the root node. Note that there
+is currently no requirement that the data in the tree should be the same and/or
+unique.
+
+```{r}
+# Create a root node with id = 0 and data = "root"
+require(GeneralTree)
+tree <- GeneralTree$new(id = 0, data = "root")
+```
+
+we can print the tree at any time to inspect its content,
+```{r}
+print(tree)
+```
+
+## Adding child nodes
+Once the tree is created we can add child nodes to the tree. We can either call
+`addNode` where we will have to specify the `id` of the parent node or we can
+use `search` to find the parent node and add a child directly.
+
+```{r}
+# Add a child by specifying the parent.
+tree$addNode(parent = 0, id = 1, data = "child0.1")
+print(tree)
+
+# Add a child by searching its parent.
+tree$searchNode(1)$addChild(id = 2, data = "child1.2")
+print(tree)
+```
+
+## Adding siblings
+Siblings are created automatically when you are adding a new child to a node
+that already has a child or when you explicity call `addSibling`.
+
+```{r}
+# Add a sibling by specifying the parent.
+tree$addNode(parent = 0, id = 3, data = "child0.3")
+print(tree)
+
+# Add a sibling by searching its parent.
+tree$searchNode(1)$addSibling(id = 4, data = "child0.4")
+print(tree)
+```
+
+## Searching
+There are two functions that help you retrieve data stored in the tree. Each
+method returns a different object,
+
+ * `searchNode` searches for a node.
+ * `searchData` searches for data in the tree.
+
+```{r}
+# Let us create a mixed tree.
+tree <- GeneralTree$new(0, "parent1")
+tree$addNode(0, "a", "child.a")
+tree$addNode(0, "b", "child.b")
+tree$addNode("b", "c", "child.b.c")
+tree$addNode("b", "d", "child.b.d")
+tree$addNode("c", "e", "child.c.e")
+tree$addNode("c", "f", "child.c.e")
+```
+
+Search the node with id `f`,
+```{r}
+print(tree$searchNode("f"))
+```
+
+Search the data with id `e`,
+```{r}
+tree$searchData("e")
+```

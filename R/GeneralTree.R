@@ -127,11 +127,17 @@ GeneralTree <- R6Class("GeneralTree",
    addNode = function(parent_id, id, data)
      addNode(self, private, parent_id, id, data)
    ,
-   addChild = function(node)
-     addChild(self, private, node)
+   addChild = function(id, data)
+       addChild(self, private, id, data)
    ,
-   addSibling = function(node)
-     addSibling(self, private, node)
+   addChildNode = function(node)
+     addChildNode(self, private, node)
+   ,
+   addSibling = function(id, data)
+     addSibling(self, private, id, data)
+   ,
+   addSiblingNode = function(node)
+     addSiblingNode(self, private, node)
    ,
    searchData = function(id)
      searchData(self, id)
@@ -289,13 +295,13 @@ addNode <- function (self, private, parent_id, id, data) {
 
   new_node <- GeneralTree$new(id, data)
 
-  if (self$isSingletonTree ) {
+  if (self$isSingletonTree) {
     # Add the child and set up all the references in the child correctly.
     private$.left_child = new_node
     private$.left_child$setRoot(parent_node)
     private$.left_child$setParent(parent_node)
   } else {
-    new_node = parent_node$addChild(new_node)
+    new_node = parent_node$addChildNode(new_node)
   }
 
   invisible(new_node)
@@ -303,21 +309,64 @@ addNode <- function (self, private, parent_id, id, data) {
 
 #'
 #' @keywords internal
-addChild <- function (self, private, node) {
+addChildNode <- function (self, private, node) {
   node$setParent(self)
   node$setRoot(self$root)
 
   if (self$have_child) {
-    self$left_child$addSibling(node)
+    self$left_child$addSiblingNode(node)
   } else {
     self$setLeftChild(node)
   }
   invisible(node)
 }
 
+#' Add a child at a point in the tree.
 #'
+#' @param self    The point in the tree where the child should be added.
+#' @param private The private part of the tree.
+#' @param id      The id of the node that should be added.
+#' @param data    The data of the node that should be added.
+#' @return invisible the new node that was created.
 #' @keywords internal
-addSibling <- function (self, private, node) {
+addChild <- function (self, private, id, data) {
+  new_node <- GeneralTree$new(id, data)
+
+  if (self$isSingletonTree) {
+    # Add the child and set up all the references in the child correctly.
+    private$.left_child = new_node
+    private$.left_child$setRoot(self)
+    private$.left_child$setParent(self)
+  } else {
+    new_node = self$addChildNode(new_node)
+  }
+
+  invisible(new_node)
+}
+
+#' Add a sibling to the current node.
+#'
+#' @param self    The point in the tree where the sibling should be added.
+#' @param private The private part of the tree.
+#' @param id      The id of the node that should be added.
+#' @param data    The data of the node that should be added.
+#' @return invisible the new node that was created.
+#' @keywords internal
+addSibling <- function (self, private, id, data) {
+  if (self$is_root) stop("Cannot add sibling to root")
+
+  new_node <- GeneralTree$new(id, data)
+  new_node <- self$parent$addChildNode(new_node)
+
+  invisible(new_node)
+}
+
+#' Add a node to the list of siblings of the current node.
+#'
+#' @param self    The point in the tree where the sibling should be added.
+#' @param private The private part of the tree.
+#' @keywords internal
+addSiblingNode <- function (self, private, node) {
   if (self$is_root) stop("Cannot add sibling to root")
 
   private$.siblings = c(private$.siblings, list(node))
@@ -334,7 +383,7 @@ addSibling <- function (self, private, node) {
 #' @return The data associated with an id.
 #' @export
 searchData <- function (self, id) {
-  self$searchNode(id)$data
+  return(self$searchNode(id)$data)
 }
 
 #' Search for an id in starting at a point in the tree and return the node
@@ -351,7 +400,7 @@ searchNode <- function (self, id) {
   else
     result <- self$root$searchBranch(id)
 
-  invisible(result)
+  return(result)
 }
 
 #'
