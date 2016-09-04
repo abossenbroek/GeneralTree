@@ -168,25 +168,15 @@ GeneralTree <- R6Class("GeneralTree",
    getSiblingId = function()
      getSiblingId(self)
    ,
-   getChildNodes = function(recursive = FALSE) 
+   getChildNodes = function(recursive = FALSE)
      getChildNodes(self, recursive)
    ,
-   getChildData = function(recursive = FALSE) {
-     child_data = NULL
-     if (self$have_child) {
-       child_data = lapply(self$getChildNodes(recursive), function(x) x$data)
-     }
-
-     return(child_data)
-   },
-   getChildId = function(recursive = FALSE) {
-     child_data = NULL
-     if (self$have_child) {
-       child_data = lapply(self$getChildNodes(recursive), function(x) x$id)
-     }
-
-     return(child_data)
-   },
+   getChildData = function(recursive = FALSE)
+     getChildData(self, recursive)
+   ,
+   getChildId = function(recursive = FALSE)
+     getChildId(self, recursive)
+   ,
    deleteId = function(id) {
      node = self$searchNode(id)
      node$delete()
@@ -618,4 +608,34 @@ getChildNodes <- function (self, recursive = FALSE) {
     }
   }
   return(child_nodes)
+}
+
+#' Get the data of the child nodes below the current node.
+#'
+#' @param self The node where to start.
+#' @param recursive Should the function be called on all child nodes too?
+#' @return the data associated with child nodes.
+#' @export
+getChildData <- function (self, recursive = FALSE) {
+  child_data <- NULL
+  if (self$have_child) {
+    child_data <- lapply(getChildNodes(self, recursive), function(x) x$data)
+  }
+
+  return(child_data)
+}
+
+#' Get the ids of the child nodes below the current node.
+#'
+#' @param self The node where to start.
+#' @param recursive Should the function be called on all child nodes too?
+#' @return the ids associated with child nodes.
+#' @export
+getChildId <- function (self, recursive = FALSE) {
+  child_data <- NULL
+  if (self$have_child) {
+    child_data <- lapply(getChildNodes(self, recursive), function(x) x$id)
+  }
+
+  return(child_data)
 }
