@@ -542,41 +542,41 @@ searchNode <- function (self, id) {
   invisible(result)
 }
 
-searchBranch <- function(self, id) {
-     result <- NULL
-     # Verify whether the current node matches the id.
-     if (identical(id, self$id)) {
-       result <- self
-     } else {
+searchBranch <- function (self, id) {
+  result <- NULL
+  # Verify whether the current node matches the id.
+  if (identical(id, self$id)) {
+    result <- self
+  } else {
 
-       if (self$have_private_siblings) {
-         for (s in self$siblings) {
-           result <- s$searchBranch(id)
-           if (!is.null(result)) break
-         }
-       }
+    if (self$have_private_siblings) {
+      for (s in self$siblings) {
+        result <- s$searchBranch(id)
+        if (!is.null(result)) break
+      }
+    }
 
-       if (is.null(result)) {
-         # Search the left child if it is present.
-         if (self$have_child) {
-           result <- self$left_child$searchBranch(id)
-         } else {
-           result <- NULL
-         }
-       }
-     }
+    if (is.null(result)) {
+      # Search the left child if it is present.
+      if (self$have_child) {
+        result <- self$left_child$searchBranch(id)
+      } else {
+        result <- NULL
+      }
+    }
+  }
 
-     invisible(result)
+  invisible(result)
 }
 
-getSiblingNodes <- function(self) {
-     sibling_nodes <- NULL
+getSiblingNodes <- function (self) {
+  sibling_nodes <- NULL
 
-     if (self$have_siblings) {
-       sibling_nodes <- self$parent$left_child$siblings
-       identical_to_self <- function(x) identical(x, self)
-       sibling_nodes <- Filter(Negate(identical_to_self), sibling_nodes)
-     }
+  if (self$have_siblings) {
+    sibling_nodes <- self$parent$left_child$siblings
+    identical_to_self <- function(x) identical(x, self)
+    sibling_nodes <- Filter(Negate(identical_to_self), sibling_nodes)
+  }
 
-     invisible(sibling_nodes)
-   }
+  invisible(sibling_nodes)
+}
