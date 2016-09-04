@@ -144,23 +144,21 @@ GeneralTree <- R6Class("GeneralTree",
    searchBranch = function(id)
      searchBranch(self, id)
    ,
-   setRoot = function(node) {
-     private$.root = node
-   },
-   setLeftChild = function(node) {
-     if (self$have_child) warning("Already have left child!")
-
-     private$.left_child = node
-   },
-   setData = function(data) {
-     private$.data = data
-   },
-   setParent = function(node) {
-     private$.parent = node
-   },
-   setSiblings = function(siblings) {
-     private$.siblings = siblings
-   },
+   setRoot = function(node)
+     setRoot(self, private, node)
+   ,
+   setLeftChild = function(node)
+     setLeftChild(self, private, node)
+   ,
+   setData = function(data)
+     setData(self, private, data)
+   ,
+   setParent = function(node)
+     setParent(self, private, node)
+   ,
+   setSiblings = function(siblings)
+     setSiblings(self, private, siblings)
+   ,
    getSiblingNodes = function()
      getSiblingNodes(self)
    ,
@@ -587,5 +585,28 @@ getSiblingId <- function (self) {
   }
 
   return(sibling_ids)
+}
+
+
+setRoot <- function (self, private, node) {
+  private$.root = node
+}
+
+setLeftChild <- function (self, private, node) {
+  if (self$have_child) warning("Already have left child!")
+
+  private$.left_child = node
+}
+
+setData <- function (self, private, data) {
+  private$.data = data
+}
+
+setParent <- function (self, private, node) {
+  private$.parent = node
+}
+
+setSiblings <- function (self, private, siblings) {
+  private$.siblings = siblings
 }
 
