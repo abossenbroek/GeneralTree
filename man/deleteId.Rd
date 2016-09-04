@@ -8,6 +8,8 @@ deleteId(self, id)
 }
 \arguments{
 \item{self}{The reference to the tree where the id should be searched.}
+
+\item{id}{The id that should be deleted.}
 }
 \description{
 Delete a node with a given id.

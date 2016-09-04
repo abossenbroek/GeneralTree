@@ -243,7 +243,7 @@ GeneralTree <- R6Class("GeneralTree",
       have_parent(self, private)
     ,
     data = function()
-      data(self, private)
+      dataWorker(self, private)
     ,
     is_root = function()
       is_root(self, private)
@@ -552,6 +552,7 @@ getChildId <- function (self, recursive = FALSE) {
 #' Delete a node with a given id.
 #'
 #' @param self The reference to the tree where the id should be searched.
+#' @param id The id that should be deleted.
 #' @export
 deleteId <- function (self, id) {
   node <- self$searchNode(id)
@@ -918,7 +919,7 @@ have_parent <- function (self, private) {
 #' @param private   The private members of a node.
 #' @return the data of the node.
 #' @keywords internal
-data <- function (self, private) {
+dataWorker <- function (self, private) {
   return(private$.data)
 }
 
