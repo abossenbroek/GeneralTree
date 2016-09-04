@@ -177,10 +177,9 @@ GeneralTree <- R6Class("GeneralTree",
    getChildId = function(recursive = FALSE)
      getChildId(self, recursive)
    ,
-   deleteId = function(id) {
-     node = self$searchNode(id)
-     node$delete()
-   },
+   deleteId = function(id) 
+     deleteId(self, id)
+   ,
    delete = function() {
      if (self$have_child) {
        self$left_child$delete()
@@ -638,4 +637,14 @@ getChildId <- function (self, recursive = FALSE) {
   }
 
   return(child_data)
+}
+
+#' Delete a node with a given id.
+#'
+#' @param self The reference to the tree where the id should be searched.
+#' @export
+deleteId <- function (self, id) {
+  node <- self$searchNode(id)
+  node$delete()
+  invisible(self)
 }
