@@ -44,7 +44,7 @@ test_that("search is working as expected", {
   tree$addNode(0, 2, "child.2")
   tree$addNode(0, 3, "child.3")
 
-  expect_identical(tree$search(2), "child.2")
+  expect_identical(tree$searchData(2), "child.2")
 })
 
 test_that(" is working as expected", {

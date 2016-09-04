@@ -14,7 +14,7 @@
 #' \describe{
 #'  \item{\code{addNode(parent_id, id, data)}}{Add a new node to the tree. The
 #'  new node will be a child of parent_id and have an id and data.}
-#'  \item{\code{search(id)}}{Search an node in the tree that has an id equal to
+#'  \item{\code{searchData(id)}}{Search an node in the tree that has an id equal to
 #'  \code{id}. This method returns the data associated with the node.}
 #'  \item{\code{searchNode(id)}}{Search an node in the tree that has an id
 #'  equal to \code{id}. This method returns the node.}
@@ -84,7 +84,7 @@
 #' tree$addNode(0, 2, "child.0.2")
 #' tree$addNode(0, 3, "child.0.3")
 #' tree$addNode(3, 4, "child.3.4")
-#' tree$search(4)
+#' tree$searchData(4)
 #'
 #' #
 #' # Print the tree
@@ -126,67 +126,30 @@ GeneralTree <- R6Class("GeneralTree",
 
      invisible(self)
    },
-   addNode = function(parent_id, id, data) {
-     new_node = NULL
-
-     # Find the parent node.
-     parent_node = self$searchNode(parent_id)
-
-     if (is.null(parent_node)) stop("Could not find the parent node with id ", parent_id)
-
-     new_node = GeneralTree$new(id, data)
-
-     if (self$isSingletonTree ) {
-         # Add the child and set up all the references in the child correctly.
-         private$.left_child = new_node
-         private$.left_child$setRoot(parent_node)
-         private$.left_child$setParent(parent_node)
-     } else {
-         new_node = parent_node$addChild(new_node)
-     }
-
-     invisible(new_node)
-   },
-   addChild = function(node) {
-     node$setParent(self)
-     node$setRoot(self$root)
-
-     if (self$have_child) {
-       self$left_child$addSibling(node)
-     } else {
-       self$setLeftChild(node)
-     }
-     invisible(node)
-   },
-   addSibling = function(node) {
-     if (self$is_root) stop("Cannot add sibling to root")
-
-     private$.siblings = c(private$.siblings, list(node))
-     node$setRoot(self$root)
-
-     invisible(node)
-   },
-   search = function(id) {
-     self$searchNode(id)$data
-   },
-   searchNode = function(id) {
-     # Determine whether search was called at the root node.
-     if (is.null(private$.root))
-       result = self$searchBranch(id)
-     else
-       result = private$.root$searchBranch(id)
-
-     invisible(result)
-   },
+   addNode = function(parent_id, id, data)
+     addNode(self, private, parent_id, id, data)
+   ,
+   addChild = function(node)
+     addChild(self, private, node)
+   ,
+   addSibling = function(node)
+     addSibling(self, private, node)
+   ,
+   searchData = function(id)
+     searchData(self, id)
+   ,
+   searchNode = function(id)
+     searchNode(self, id)
+   ,
    searchBranch = function(id) {
      result = NULL
      # Verify whether the current node matches the id.
-     if (identical(id, private$.id)) {
+     if (identical(id, self$id)) {
        result = self
      }
 
-     if (!is.null(private$.siblings) && is.null(result)) {
-       for (s in private$.siblings) {
+     if (self$have_private_siblings && is.null(result)) {
+       for (s in self$siblings) {
          result = s$searchBranch(id)
          if (!is.null(result)) break
        }
@@ -194,8 +157,8 @@ GeneralTree <- R6Class("GeneralTree",
 
      if (is.null(result)) {
        # Search the left child if it is present.
-       if (!is.null(private$.left_child)) {
-         result = private$.left_child$searchBranch(id)
+       if (self$have_child) {
+         result = self$left_child$searchBranch(id)
        } else {
          result = NULL
        }
@@ -535,3 +498,76 @@ GeneralTree <- R6Class("GeneralTree",
     }
   )
 )
+
+
+addNode <- function (self, private, parent_id, id, data) {
+  new_node <- NULL
+
+  # Find the parent node.
+  parent_node <- self$searchNode(parent_id)
+
+  if (is.null(parent_node)) stop("Could not find the parent node with id ", parent_id)
+
+  new_node <- GeneralTree$new(id, data)
+
+  if (self$isSingletonTree ) {
+    # Add the child and set up all the references in the child correctly.
+    private$.left_child = new_node
+    private$.left_child$setRoot(parent_node)
+    private$.left_child$setParent(parent_node)
+  } else {
+    new_node = parent_node$addChild(new_node)
+  }
+
+  invisible(new_node)
+}
+
+
+addChild <- function (self, private, node) {
+  node$setParent(self)
+  node$setRoot(self$root)
+
+  if (self$have_child) {
+    self$left_child$addSibling(node)
+  } else {
+    self$setLeftChild(node)
+  }
+  invisible(node)
+}
+
+addSibling <- function (self, private, node) {
+  if (self$is_root) stop("Cannot add sibling to root")
+
+  private$.siblings = c(private$.siblings, list(node))
+  node$setRoot(self$root)
+
+  invisible(node)
+}
+
+#' Search for an id in starting at a point in the tree and return the data
+#' matching the id.
+#'
+#' @param self the node where to start searching.
+#' @param id the id to look for.
+#' @return The data associated with an id.
+#' @export
+searchData <- function (self, id) {
+  self$searchNode(id)$data
+}
+
+#' Search for an id in starting at a point in the tree and return the node
+#' matching the id.
+#'
+#' @param self the node where to start searching.
+#' @param id the id to look for.
+#' @return The data associated with an id.
+#' @export
+searchNode <- function (self, id) {
+  # Determine whether search was called at the root node.
+  if (self$is_root)
+    result <- self$searchBranch(id)
+  else
+    result <- self$root$searchBranch(id)
+
+  invisible(result)
+}

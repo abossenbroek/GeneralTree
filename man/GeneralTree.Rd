@@ -22,7 +22,7 @@ different.
 \describe{
  \item{\code{addNode(parent_id, id, data)}}{Add a new node to the tree. The
  new node will be a child of parent_id and have an id and data.}
- \item{\code{search(id)}}{Search an node in the tree that has an id equal to
+ \item{\code{searchData(id)}}{Search an node in the tree that has an id equal to
  \code{id}. This method returns the data associated with the node.}
  \item{\code{searchNode(id)}}{Search an node in the tree that has an id
  equal to \code{id}. This method returns the node.}
@@ -96,7 +96,7 @@ tree$addNode(0, 1, "child.0.1")
 tree$addNode(0, 2, "child.0.2")
 tree$addNode(0, 3, "child.0.3")
 tree$addNode(3, 4, "child.3.4")
-tree$search(4)
+tree$searchData(4)
 
 #
 # Print the tree
