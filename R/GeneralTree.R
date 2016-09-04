@@ -186,15 +186,9 @@ GeneralTree <- R6Class("GeneralTree",
    nextElem = function(set_discover = TRUE, include_root = TRUE)
      nextElemImplementation(self, private, set_discover, include_root)
    ,
-   iterator = function() {
-     if (self$is_root) {
-       self$resetDiscoveredOnBranch()
-       self$setRootDiscovered(FALSE)
-       return(self$nextElem())
-     } else {
-       return(self$root$iterator())
-     }
-   },
+   iterator = function()
+     iteratorImpl(self, private)
+   ,
    resetDiscovered = function() {
      if (!self$is_root) {
        private$.root$resetDiscoveredOnBranch()
@@ -668,3 +662,20 @@ nextElemImplementation <- function (self, private, set_discover = TRUE,
 
   invisible(next_element)
 }
+
+#' The implementation of the GeneralTree method iterator.
+#'
+#' @param self    the GeneralTree
+#' @param private the private members of the GeneralTree.
+#' @return An iterator for the general tree.
+iteratorImpl <- function (self, private) {
+  if (self$is_root) {
+    self$resetDiscoveredOnBranch()
+    self$setRootDiscovered(FALSE)
+    return(self$nextElem())
+  } else {
+    return(self$root$iterator())
+  }
+}
+
+
