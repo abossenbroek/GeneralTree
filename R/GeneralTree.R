@@ -161,17 +161,9 @@ GeneralTree <- R6Class("GeneralTree",
    setSiblings = function(siblings) {
      private$.siblings = siblings
    },
-   getSiblingNodes = function() {
-     sibling_nodes = NULL
-
-     if (self$have_siblings) {
-       sibling_nodes = self$parent$left_child$siblings
-       identical_to_self <- function(x) identical(x, self)
-       sibling_nodes = Filter(Negate(identical_to_self), sibling_nodes)
-     }
-
-     invisible(sibling_nodes)
-   },
+   getSiblingNodes = function() 
+     getSiblingNodes(self)
+   ,
    getSiblingData = function() {
      sibling_data = NULL
      if (self$have_siblings) {
@@ -576,3 +568,15 @@ searchBranch <- function(self, id) {
 
      invisible(result)
 }
+
+getSiblingNodes <- function(self) {
+     sibling_nodes <- NULL
+
+     if (self$have_siblings) {
+       sibling_nodes <- self$parent$left_child$siblings
+       identical_to_self <- function(x) identical(x, self)
+       sibling_nodes <- Filter(Negate(identical_to_self), sibling_nodes)
+     }
+
+     invisible(sibling_nodes)
+   }
