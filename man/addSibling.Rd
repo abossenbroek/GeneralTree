@@ -4,16 +4,16 @@
 \alias{addSibling}
 \title{Add a sibling to the current node.}
 \usage{
-addSibling(self, private, data, id)
+addSibling(self, private, id, data)
 }
 \arguments{
 \item{self}{The point in the tree where the sibling should be added.}
 
 \item{private}{The private part of the tree.}
 
-\item{data}{The data of the node that should be added.}
-
 \item{id}{The id of the node that should be added.}
+
+\item{data}{The data of the node that should be added.}
 }
 \value{
 invisible the new node that was created.

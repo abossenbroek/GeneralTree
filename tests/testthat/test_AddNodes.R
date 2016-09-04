@@ -83,7 +83,7 @@ test_that("child by using addChild on search result.", {
   tree$searchNode("b")$addChild("c", "child.b.c")
   tree$searchNode("b")$addChild("d", "child.b.d")
   tree$addNode("c", "e", "child.c.e")
-  tree$addNode("c", "f", "child.c.e")
+  tree$addNode("c", "f", "child.c.f")
 
   expect_identical(tree$searchNode("e")$data, "child.c.e")
 })
