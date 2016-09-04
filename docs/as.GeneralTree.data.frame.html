@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>as.GeneralTree.data.frame. GeneralTree 0.0.0.9001</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript"
+  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="index.html">GeneralTree 0.0.0.9001</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="reference.html">Reference</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1>Convert a data frame to a GeneralTree.</h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre><span class="comment"># S3 method for data.frame</span>
+<span class="functioncall"><a href='as.GeneralTree.html'>as.GeneralTree</a></span><span class="keyword">(</span><span class="symbol">x</span><span class="keyword">,</span> <span class="symbol">...</span><span class="keyword">)</span></pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>x</dt>
+      <dd>The data frame that should be converted to a tree.</dd>
+      <dt>...</dt>
+      <dd>id      The column name of the column that holds the ids of each node.
+data    The column name of the column that holds the data of
+        each node.
+parent  The column name of the column that holds the parent
+        of each node, NA indicates a node is the root.</dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+
+      <p>Convert a data frame to a GeneralTree.</p>
+
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>  <span class="symbol">test_tree_df</span> <span class="assignement">&lt;-</span> <span class="functioncall"><a href='http://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span><span class="keyword">(</span>
+      <span class="argument">ID</span> <span class="argument">=</span> <span class="functioncall"><a href='http://www.rdocumentation.org/packages/base/topics/c'>c</a></span><span class="keyword">(</span><span class="string">"root"</span><span class="keyword">,</span> <span class="string">"child1"</span><span class="keyword">,</span> <span class="string">"child2"</span><span class="keyword">,</span> <span class="string">"child3"</span><span class="keyword">)</span><span class="keyword">,</span>
+      <span class="argument">DATA</span> <span class="argument">=</span> <span class="functioncall"><a href='http://www.rdocumentation.org/packages/base/topics/c'>c</a></span><span class="keyword">(</span><span class="string">"parent1"</span><span class="keyword">,</span> <span class="string">"data3.1"</span><span class="keyword">,</span> <span class="string">"data1.2"</span><span class="keyword">,</span> <span class="string">"data1.3"</span><span class="keyword">)</span><span class="keyword">,</span>
+     <span class="argument">PARENT</span> <span class="argument">=</span> <span class="functioncall"><a href='http://www.rdocumentation.org/packages/base/topics/c'>c</a></span><span class="keyword">(</span><span class="number">NA</span><span class="keyword">,</span> <span class="string">"child3"</span><span class="keyword">,</span> <span class="string">"root"</span><span class="keyword">,</span> <span class="string">"root"</span><span class="keyword">)</span><span class="keyword">,</span> <span class="argument">stringsAsFactors</span> <span class="argument">=</span> <span class="number">FALSE</span><span class="keyword">)</span>
+<span class="functioncall"><a href='as.GeneralTree.html'>as.GeneralTree</a></span><span class="keyword">(</span><span class="symbol">test_tree_df</span><span class="keyword">,</span> <span class="argument">id</span> <span class="argument">=</span> <span class="string">"ID"</span><span class="keyword">,</span> <span class="argument">data</span> <span class="argument">=</span> <span class="string">"DATA"</span><span class="keyword">,</span> <span class="argument">parent</span> <span class="argument">=</span> <span class="string">"PARENT"</span><span class="keyword">)</span></div>
+<div class='output'>root : parent1 --&gt; child3 : data1.3 --&gt; child1 : data3.1
+               \-&gt; child2 : data1.2</div>
+<div class='input'></div></pre>
+  </div>
+  <div class="span4 sidebar">
+    <!-- <ul>
+      <li>as.GeneralTree.data.frame</li>
+    </ul>
+    <ul>
+      
+    </ul> -->
+
+
+
+
+  </div>
+</div>
+      
+      <footer>
+      <p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="https://getbootstrap.com/2.0.4/">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

@@ -51,6 +51,7 @@ build_script:
   - travis-tool.sh install_r foreach,
   - travis-tool.sh install_r tools
   - travis-tool.sh install_r DiagrammeRsvg
+  - travis-tool.sh install_r qpdf
 
 
 test_script:
