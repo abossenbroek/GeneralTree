@@ -44,8 +44,8 @@ test_that("Cast singelton tree from data frame to tree", {
   test_tree <- data.frame(id = "root", data = "parent1", parent = NA, stringsAsFactors = FALSE)
 
 
-  expect_identical(as.GeneralTree(test_tree)$toString(what = c('id', 'data')),
-                   tree$toString(what = c('id', 'data')))
+  expect_identical(as.GeneralTree(test_tree)$toString(what = c("id", "data")),
+                   tree$toString(what = c("id", "data")))
 })
 
 test_that("Cast more complex tree from data frame to tree", {
@@ -59,8 +59,8 @@ test_that("Cast more complex tree from data frame to tree", {
     parent = c(NA, "root", "root"), stringsAsFactors = FALSE)
 
 
-  expect_identical(as.GeneralTree(test_tree)$toString(what = c('id', 'data')),
-                   tree$toString(what = c('id', 'data')))
+  expect_identical(as.GeneralTree(test_tree)$toString(what = c("id", "data")),
+                   tree$toString(what = c("id", "data")))
 })
 
 test_that("Cast more complex tree from data frame to tree", {
@@ -75,8 +75,8 @@ test_that("Cast more complex tree from data frame to tree", {
     parent = c(NA, "child3", "root", "root"), stringsAsFactors = FALSE)
 
 
-  expect_identical(as.GeneralTree(test_tree)$toString(what = c('id', 'data')),
-                   tree$toString(what = c('id', 'data')))
+  expect_identical(as.GeneralTree(test_tree)$toString(what = c("id", "data")),
+                   tree$toString(what = c("id", "data")))
 })
 
 test_that("Cast data frame with non standard column names to tree", {
@@ -92,8 +92,8 @@ test_that("Cast data frame with non standard column names to tree", {
 
   test_tree <- as.GeneralTree(test_tree_df, id = "ID", data = "DATA", parent = "PARENT")
 
-  expect_identical(test_tree$toString(what = c('id', 'data')),
-                   tree$toString(what = c('id', 'data')))
+  expect_identical(test_tree$toString(what = c("id", "data")),
+                   tree$toString(what = c("id", "data")))
 })
 
 
@@ -145,18 +145,18 @@ test_that("Test for appropriate errors and warnings", {
 })
 
 test_that("For casting parsed source to GeneralTree", {
-   p <- parse(text = "test_that('test that the tree_walker with while loop', {
+   p <- parse(text = "test_that(\"test that the tree_walker with while loop\", {
 
-             tree <- GeneralTree$new(1, 'parent1')
-             tree$addNode(1, 2, 'child.1.2')
-             tree$addNode(2, 3, 'child.2.3')
+             tree <- GeneralTree$new(1, \"parent1\")
+             tree$addNode(1, 2, \"child.1.2\")
+             tree$addNode(2, 3, \"child.2.3\")
              })
              ",
            keep.source = TRUE)
 
   result <- "0 : BaseEnvironment --> 92 :  --> 3 :  --> 1 : test_that
                               |-> 2 : (
-                              |-> 6 :  --> 4 : 'test that the tree_walker with while loop'
+                              |-> 6 :  --> 4 : \"test that the tree_walker with while loop\"
                               |-> 5 : ,
                               |-> 88 :  --> 9 : {
                               |          |-> 33 :  --> 14 :  --> 12 : tree
@@ -167,7 +167,7 @@ test_that("For casting parsed source to GeneralTree", {
                               |          |                      |-> 20 : (
                               |          |                      |-> 22 :  --> 21 : 1
                               |          |                      |-> 23 : ,
-                              |          |                      |-> 28 :  --> 26 : 'parent1'
+                              |          |                      |-> 28 :  --> 26 : \"parent1\"
                               |          |                      \\-> 27 : )
                               |          |-> 57 :  --> 40 :  --> 38 :  --> 36 : tree
                               |          |          |          |-> 37 : $
@@ -177,7 +177,7 @@ test_that("For casting parsed source to GeneralTree", {
                               |          |          |-> 44 : ,
                               |          |          |-> 48 :  --> 47 : 2
                               |          |          |-> 49 : ,
-                              |          |          |-> 54 :  --> 52 : 'child.1.2'
+                              |          |          |-> 54 :  --> 52 : \"child.1.2\"
                               |          |          \\-> 53 : )
                               |          |-> 82 :  --> 65 :  --> 63 :  --> 61 : tree
                               |          |          |          |-> 62 : $
@@ -187,7 +187,7 @@ test_that("For casting parsed source to GeneralTree", {
                               |          |          |-> 69 : ,
                               |          |          |-> 73 :  --> 72 : 3
                               |          |          |-> 74 : ,
-                              |          |          |-> 79 :  --> 77 : 'child.2.3'
+                              |          |          |-> 79 :  --> 77 : \"child.2.3\"
                               |          |          \\-> 78 : )
                               |          \\-> 86 : }
                               \\-> 89 : )"
@@ -195,11 +195,11 @@ test_that("For casting parsed source to GeneralTree", {
 })
 
 test_that("Casting parsed source to GeneralTree gives right error", {
-     p <- parse(text = "test_that('test that the tree_walker with while loop', {
+     p <- parse(text = "test_that(\"test that the tree_walker with while loop\", {
 
-             tree <- GeneralTree$new(1, 'parent1')
-             tree$addNode(1, 2, 'child.1.2')
-             tree$addNode(2, 3, 'child.2.3')
+             tree <- GeneralTree$new(1, \"parent1\")
+             tree$addNode(1, 2, \"child.1.2\")
+             tree$addNode(2, 3, \"child.2.3\")
              })
              ",
            keep.source = TRUE)

@@ -104,9 +104,8 @@ getIterVal <- function (obj, plus, ...) {
 getIterVal.GeneralTreeIter <- function (obj, plus = 0L, check = TRUE, ...) {
     i <- obj$state$i + plus
     n <- obj$length
-  
+
     iter_object <- obj$state$obj
-    #iter_object <- obj$state$obj$nextElem(discover = FALSE)
 
     if (i > n)
         stop("StopIteration", call. = FALSE)

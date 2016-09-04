@@ -72,7 +72,7 @@
 #'  \item{\code{is_root}}{Returns \code{TRUE} if the node is the
 #'    root and \code{FALSE} otherwise.}
 #'  \item{\code{parent}}{Return the parent of the node.}
-#'  \item{\code{tree_depth}}{Returns the depth of the tree.}
+#'  \item{\code{treeDepth}}{Returns the depth of the tree.}
 #'  \item{\code{branch_depth}}{Returns the depth of the branch.}
 #'  \item{\code{isSingletonTree}}{Returns \code{TRUE} if the tree contains only
 #'    a single element and \code{FALSE} otherwise.}
@@ -241,8 +241,8 @@ GeneralTree <- R6Class("GeneralTree",
     parent = function()
       parent(self, private)
     ,
-    tree_depth = function()
-      tree_depth(self, private)
+    treeDepth = function()
+      treeDepth(self, private)
     ,
     isDiscovered = function()
       isDiscovered(self, private)
@@ -641,7 +641,7 @@ resetDiscovered <- function(self, private) {
 #'
 #' @keywords internal
 resetDiscoveredOnBranch <- function(self, private) {
-  reset_status = sapply(self$getChildNodes(recursive = TRUE), function(x)
+  sapply(self$getChildNodes(recursive = TRUE), function(x)
                         x$setDiscovered(FALSE))
   invisible(self)
 }
@@ -895,9 +895,9 @@ parent <- function (self, private) {
 #' @param private   The private members of a node.
 #' @return A numeric value that indicates the number of layers in the tree.
 #' @keywords internal
-tree_depth <- function (self, private) {
+treeDepth <- function (self, private) {
   if (!self$is_root) {
-    depth = self$root$tree_depth
+    depth = self$root$treeDepth
   } else {
     depth = self$branch_depth
   }

@@ -83,7 +83,7 @@ different.
  \item{\code{is_root}}{Returns \code{TRUE} if the node is the
    root and \code{FALSE} otherwise.}
  \item{\code{parent}}{Return the parent of the node.}
- \item{\code{tree_depth}}{Returns the depth of the tree.}
+ \item{\code{treeDepth}}{Returns the depth of the tree.}
  \item{\code{branch_depth}}{Returns the depth of the branch.}
  \item{\code{isSingletonTree}}{Returns \code{TRUE} if the tree contains only
    a single element and \code{FALSE} otherwise.}
