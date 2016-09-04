@@ -1,0 +1,202 @@
+---
+title: "Tutorial"
+author: "Anton Bossenbroek"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tutorial}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r, echo = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+This vignette gives explains some basic functionalities of the _GeneralTree_
+package.
+
+# Basic Tree Operations
+In this section we will explain how to perform basic operations on a tree.
+
+## Creating a tree
+A General Tree is a R6 object. As such it can be created with the `new` method.
+You should pass to `new` the `id` and `data` of the root node. Note that there
+is currently no requirement that the data in the tree should be the same and/or
+unique.
+
+```{r}
+# Create a root node with id = 0 and data = "root"
+require(GeneralTree)
+tree <- GeneralTree$new(id = 0, data = "root")
+```
+
+we can print the tree at any time to inspect its content,
+```{r}
+print(tree)
+```
+
+## Adding child nodes
+Once the tree is created we can add child nodes to the tree. We can either call
+`addNode` where we will have to specify the `id` of the parent node or we can
+use `search` to find the parent node and add a child directly.
+
+```{r}
+# Add a child by specifying the parent.
+tree$addNode(parent = 0, id = 1, data = "child0.1")
+print(tree)
+
+# Add a child by searching its parent.
+tree$searchNode(1)$addChild(id = 2, data = "child1.2")
+print(tree)
+```
+
+## Adding siblings
+Siblings are created automatically when you are adding a new child to a node
+that already has a child or when you explicity call `addSibling`.
+
+```{r}
+# Add a sibling by specifying the parent.
+tree$addNode(parent = 0, id = 3, data = "child0.3")
+print(tree)
+
+# Add a sibling by searching its parent.
+tree$searchNode(1)$addSibling(id = 4, data = "child0.4")
+print(tree)
+```
+
+## Searching
+There are two functions that help you retrieve data stored in the tree. Each
+method returns a different object,
+
+ * `searchNode` searches for a node.
+ * `searchData` searches for data in the tree.
+
+```{r}
+# Let us create a mixed tree.
+tree <- GeneralTree$new(0, "parent1")
+tree$addNode(0, "a", "child.a")
+tree$addNode(0, "b", "child.b")
+tree$addNode("b", "c", "child.b.c")
+tree$addNode("b", "d", "child.b.d")
+tree$addNode("c", "e", "child.c.e")
+tree$addNode("c", "f", "child.c.f")
+tree$addNode("b", "g", "child.b.g")
+tree$addNode("b", "h", "child.b.h")
+tree$addNode("c", 1, "child.c.1")
+```
+
+Search the node with id `f`,
+```{r}
+print(tree$searchNode("f"))
+```
+
+Search the data with id `e`,
+```{r}
+tree$searchData("e")
+```
+
+## Plotting a tree
+If you want a graphically representation of a tree you can do so easily,
+
+```{r}
+plot(tree)
+```
+
+We can change what is plotted as well as the shapes of the diagram,
+
+```{r}
+plot(tree, what = "data", color = "coral1", shape = "oval")
+```
+
+# Advanced Topics
+
+## Casting
+In the current version you can cast a tree to a data frame and vice versa as
+well as a parsed object.
+
+### Data frame
+We can use the generic casting functions to cast to a data frame,
+
+```{r}
+as.data.frame(tree)
+```
+
+the other way around is also easy,
+
+```{r}
+# Let us define a data frame,
+test_tree_df <- data.frame(
+    ID = c("root", "child1", "child2", "child3"),
+    DATA = c("parent1", "data3.1", "data1.2", "data1.3"),
+    PARENT = c(NA, "child3", "root", "root"), stringsAsFactors = FALSE)
+test_tree_df
+```
+
+By default `as.GeneralTree` will search for columns `id`, `data` and `parent`
+where parent should have a `NA` to identify the root node. In our case we have
+different column names. This can be passed to `as.GeneralTree` as we see below,
+
+```{r}
+as.GeneralTree(test_tree_df, id = "ID", data = "DATA", parent = "PARENT")
+```
+
+### Parsed code
+To inspect how R code is parsed you can cast parsed code to a GeneralTree. Note
+GeneralTree will automatically create a dummy root to compensate for the fact
+that sometimes multiple expressions are at root,
+
+In this example all entries exist at the root,
+```{r}
+p <- parse(text = "tree <- GeneralTree$new(1, \"parent1\")
+                   tree$addNode(1, 2, \"child.1.2\")
+                   tree$addNode(2, 3, \"child.2.3\")",
+           keep.source = TRUE)
+print(as.GeneralTree(p), what = "data")
+```
+
+In this example all entries hang below `test_that`,
+```{r}
+p <- parse(text =
+           "test_that(\"test that the tree_walker with while loop\", {
+              tree <- GeneralTree$new(1, \"parent1\")
+              tree$addNode(1, 2, \"child.1.2\")
+              tree$addNode(2, 3, \"child.2.3\")
+             })",
+           keep.source = TRUE)
+print(as.GeneralTree(p), what = "data")
+```
+
+## Iterating through the tree
+There are two approaches to iterate through the tree. The first is built in
+whereas the second relies on `foreach` and `iterators` packages.
+
+### Internal
+You can iterate through the tree by first inializing an iterator and then
+calling next element on that iterator.
+
+```{r}
+# Let us inspect the tree first,
+print(tree, what = "data")
+
+i <- tree$iterator()
+while (!is.null(i)) {
+    i$setData(paste("id:", i$id, "-data", i$data))
+    i <- tryCatch(i$nextElem(), error = function(e) NULL)
+}
+
+print(tree, what = "data")
+```
+
+
+### Foreach
+With foreach you can quickly extract the id and data of the tree in a depth
+first fashion,
+
+```{r}
+require(iterators)
+require(foreach)
+itx <- iter(tree, by = "id")
+ids_in_tree <- foreach(i = itx, .combine = c) %do% c(i)
+ids_in_tree
+```
+

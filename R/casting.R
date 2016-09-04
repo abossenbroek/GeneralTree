@@ -120,8 +120,6 @@ as.GeneralTree.data.frame <- function(x, ...) {
   # Select the remaining data that needs to be converted into the tree.
   remaining_data = x[!is.na(x[parent_colname])[, 1],]
 
-  ids_in_tree <- NULL
-
   if (nrow(remaining_data) > 0) {
     idx_to_push = 1 : nrow(remaining_data)
     idx_not_found = NULL

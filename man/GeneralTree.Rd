@@ -22,7 +22,7 @@ different.
 \describe{
  \item{\code{addNode(parent_id, id, data)}}{Add a new node to the tree. The
  new node will be a child of parent_id and have an id and data.}
- \item{\code{search(id)}}{Search an node in the tree that has an id equal to
+ \item{\code{searchData(id)}}{Search an node in the tree that has an id equal to
  \code{id}. This method returns the data associated with the node.}
  \item{\code{searchNode(id)}}{Search an node in the tree that has an id
  equal to \code{id}. This method returns the node.}
@@ -52,8 +52,9 @@ different.
   be called directly.}
  \item{\code{iterator()}}{Get an iterator to iterate through the tree in a
   depth first search.}
- \item{\code{nextElem()}}{Get the next element in a depth first search.
-  Before using this function always create an iterator.}
+ \item{\code{nextElem()}}{Get the
+      next element in a depth first search.  Before using this function
+      always create an iterator.}
  \item{\code{toString(what = c("id", "data"), string_prepend = "")}}{Creates
    a string representation of the node. Note that id and data should work
    with paste to work correctly. All branches will also be returned to the
@@ -83,7 +84,7 @@ different.
  \item{\code{is_root}}{Returns \code{TRUE} if the node is the
    root and \code{FALSE} otherwise.}
  \item{\code{parent}}{Return the parent of the node.}
- \item{\code{tree_depth}}{Returns the depth of the tree.}
+ \item{\code{treeDepth}}{Returns the depth of the tree.}
  \item{\code{branch_depth}}{Returns the depth of the branch.}
  \item{\code{isSingletonTree}}{Returns \code{TRUE} if the tree contains only
    a single element and \code{FALSE} otherwise.}
@@ -96,7 +97,7 @@ tree$addNode(0, 1, "child.0.1")
 tree$addNode(0, 2, "child.0.2")
 tree$addNode(0, 3, "child.0.3")
 tree$addNode(3, 4, "child.3.4")
-tree$search(4)
+tree$searchData(4)
 
 #
 # Print the tree
