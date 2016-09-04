@@ -141,31 +141,9 @@ GeneralTree <- R6Class("GeneralTree",
    searchNode = function(id)
      searchNode(self, id)
    ,
-   searchBranch = function(id) {
-     result = NULL
-     # Verify whether the current node matches the id.
-     if (identical(id, self$id)) {
-       result = self
-     }
-
-     if (self$have_private_siblings && is.null(result)) {
-       for (s in self$siblings) {
-         result = s$searchBranch(id)
-         if (!is.null(result)) break
-       }
-     }
-
-     if (is.null(result)) {
-       # Search the left child if it is present.
-       if (self$have_child) {
-         result = self$left_child$searchBranch(id)
-       } else {
-         result = NULL
-       }
-     }
-
-     invisible(result)
-   },
+   searchBranch = function(id)
+     searchBranch(self, id)
+   ,
    setRoot = function(node) {
      private$.root = node
    },
@@ -570,4 +548,31 @@ searchNode <- function (self, id) {
     result <- self$root$searchBranch(id)
 
   invisible(result)
+}
+
+searchBranch <- function(self, id) {
+     result <- NULL
+     # Verify whether the current node matches the id.
+     if (identical(id, self$id)) {
+       result <- self
+     } else {
+
+       if (self$have_private_siblings) {
+         for (s in self$siblings) {
+           result <- s$searchBranch(id)
+           if (!is.null(result)) break
+         }
+       }
+
+       if (is.null(result)) {
+         # Search the left child if it is present.
+         if (self$have_child) {
+           result <- self$left_child$searchBranch(id)
+         } else {
+           result <- NULL
+         }
+       }
+     }
+
+     invisible(result)
 }
