@@ -204,53 +204,8 @@ GeneralTree <- R6Class("GeneralTree",
    nodeInfoToString = function(what = c("id", "data"))
      nodeInfoToString(self, what)
    ,
-   toString = function(what = c("id", "data"), string_prepend = "") {
-     what = match.arg(what, several.ok = TRUE)
-
-     initiateEmptyString = function(length = 1) {
-       paste0(rep(" ", length), collapse = "")
-     }
-
-     if (self$is_root) {
-       string = self$nodeInfoToString(what)
-       if (self$have_child) {
-         space = nchar(string)
-         child_nodes = self$getChildNodes(recursive = FALSE)
-         string_prepend = initiateEmptyString(length = space)
-         result = paste0(sapply(child_nodes, function(x) x$toString(what, string_prepend)), collapse = "\n")
-         string = paste0(string, result)
-       }
-     } else {
-       tree_sep = string_prepend
-
-       if (identical(self$parent$left_child, self)) {
-         node_sep = paste0(" --> ")
-       } else if (self$is_last_sibling) {
-         node_sep = paste0(tree_sep, " \\-> ")
-       } else {
-         node_sep = paste0(tree_sep, " |-> ")
-       }
-
-       if (self$have_child) {
-         max_space = max(sapply(self$parent$getChildNodes(), function(x)
-                                nchar(x$nodeInfoToString(what))))
-
-         branch_symbol = "|"
-         if (self$is_last_sibling || !self$have_siblings)
-           branch_symbol = " "
-
-         tree_sep = paste0(tree_sep, " ", branch_symbol, "   ", initiateEmptyString(length = max_space))
-
-         child_nodes = self$getChildNodes(recursive = FALSE)
-         result = paste0(sapply(child_nodes, function(x) x$toString(what, tree_sep)), collapse = "\n")
-         string = paste0(node_sep, self$nodeInfoToString(what), result, collapse = "\n")
-       } else {
-         string = paste0(node_sep, self$nodeInfoToString(what))
-       }
-     }
-
-     return(string)
-   }
+   toString = function(what = c("id", "data"), string_prepend = "")
+     toString(self, what, string_prepend)
   ),
   active = list(
     root = function() {
@@ -740,7 +695,7 @@ setRootDiscovered <- function(self, private, is_root_discovered) {
 #' @param what    what should be converted to a string.
 #' @return A string object that represents the node.
 #'
-#' @keywords external
+#' @keywords internal
 nodeInfoToString <- function(self, what = c("id", "data")) {
   what <- match.arg(what, several.ok = TRUE)
 
@@ -762,4 +717,62 @@ nodeInfoToString <- function(self, what = c("id", "data")) {
   node_string <- paste(node_id, node_data, sep = sep)
 
   return(node_string)
+}
+
+#' Convert a branch to a string.
+#'
+#' @param self           the GeneralTree node from where the branch should be
+#'                       converted to a string.
+#' @param what           what should be converted to a string.
+#' @param string_prepend which string should be prepended to the string.
+#' @return A string object that represents the node.
+#'
+#' @keywords internal
+
+toString <- function (self, what = c("id", "data"), string_prepend = "") {
+  what <- match.arg(what, several.ok = TRUE)
+
+  initiateEmptyString <- function(length = 1) {
+    paste0(rep(" ", length), collapse = "")
+  }
+
+  if (self$is_root) {
+    string <- self$nodeInfoToString(what)
+    if (self$have_child) {
+      space <- nchar(string)
+      child_nodes <- self$getChildNodes(recursive = FALSE)
+      string_prepend <- initiateEmptyString(length = space)
+      result <- paste0(sapply(child_nodes, function(x) x$toString(what, string_prepend)), collapse = "\n")
+      string <- paste0(string, result)
+    }
+  } else {
+    tree_sep <- string_prepend
+
+    if (identical(self$parent$left_child, self)) {
+      node_sep <- paste0(" --> ")
+    } else if (self$is_last_sibling) {
+      node_sep <- paste0(tree_sep, " \\-> ")
+    } else {
+      node_sep <- paste0(tree_sep, " |-> ")
+    }
+
+    if (self$have_child) {
+      max_space <- max(sapply(self$parent$getChildNodes(), function(x)
+                             nchar(x$nodeInfoToString(what))))
+
+      branch_symbol <- "|"
+      if (self$is_last_sibling || !self$have_siblings)
+        branch_symbol <- " "
+
+      tree_sep <- paste0(tree_sep, " ", branch_symbol, "   ", initiateEmptyString(length = max_space))
+
+      child_nodes <- self$getChildNodes(recursive = FALSE)
+      result <- paste0(sapply(child_nodes, function(x) x$toString(what, tree_sep)), collapse = "\n")
+      string <- paste0(node_sep, self$nodeInfoToString(what), result, collapse = "\n")
+    } else {
+      string <- paste0(node_sep, self$nodeInfoToString(what))
+    }
+  }
+
+  return(string)
 }

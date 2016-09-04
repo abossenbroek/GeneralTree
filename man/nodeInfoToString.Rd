@@ -17,5 +17,5 @@ A string object that represents the node.
 \description{
 Convert a node to string.
 }
-\keyword{external}
+\keyword{internal}
 
