@@ -120,12 +120,9 @@ GeneralTree <- R6Class("GeneralTree",
     .is_root_discovered = FALSE
   ),
   public = list(
-   initialize = function(id, data) {
-     private$.id = id
-     private$.data = data
-
-     invisible(self)
-   },
+   initialize = function(id, data)
+     initialize(self, private, id, data)
+   ,
    addNode = function(parent_id, id, data)
      addNode(self, private, parent_id, id, data)
    ,
@@ -208,88 +205,73 @@ GeneralTree <- R6Class("GeneralTree",
      toString(self, what, string_prepend)
   ),
   active = list(
-    root = function() {
-      if (is.null(private$.root)) {
-        invisible(self)
-      } else {
-        invisible(private$.root)
-      }
-    },
-    left_child = function() {
-      invisible(private$.left_child)
-    },
-    siblings = function() {
-      invisible(private$.siblings)
-    },
-    id = function() {
-      invisible(private$.id)
-    },
-    have_child = function() {
-      !is.null(private$.left_child)
-    },
-    have_siblings = function() {
-      if (is.null(self$parent))
-        return(FALSE)
-      else
-        self$parent$left_child$have_private_siblings
-    },
-    is_last_sibling = function() {
-      if (self$have_siblings) {
-        siblings = self$parent$left_child$getSiblingNodes()
-        return(identical(siblings[[length(siblings)]], self))
-      }
-      return(FALSE)
-    },
-    have_private_siblings = function() {
-      !is.null(private$.siblings)
-    },
-    have_parent = function() {
-      !is.null(private$.parent)
-    },
-    data = function() {
-      return(private$.data)
-    },
-    is_root = function() {
-      is.null(private$.root)
-    },
-    parent = function() {
-      return(private$.parent)
-    },
-    tree_depth = function() {
-      if (!self$is_root) {
-        depth = self$root$tree_depth
-      } else {
-        depth = self$branch_depth
-      }
-
-      return(depth)
-    },
-    isDiscovered = function() {
-      return(private$.is_discovered)
-    },
-    isRootDiscovered = function() {
-      return(private$.is_root_discovered)
-    },
-    branch_depth = function() {
-      depth = 1
-
-      if (self$have_child) {
-        depth = max(depth, self$left_child$branch_depth + 1)
-      }
-
-      if (self$have_private_siblings) {
-        depth = max(depth, sapply(self$siblings, function(x)
-                                          x$branch_depth))
-      }
-
-      return(depth)
-    },
-    isSingletonTree = function() {
-      return(is.null(private$.root) && is.null(private$.siblings) &&
-         is.null(private$.left_child))
-    }
+    root = function()
+      root(self, private)
+    ,
+    left_child = function()
+      left_child(self, private)
+    ,
+    siblings = function()
+      siblings(self, private)
+    ,
+    id = function()
+      id(self, private)
+    ,
+    have_child = function()
+      have_child(self, private)
+    ,
+    have_siblings = function() 
+      have_siblings(self, private)
+    ,
+    is_last_sibling = function() 
+      is_last_sibling(self, private)
+    ,
+    have_private_siblings = function() 
+      have_private_siblings(self, private)
+    ,
+    have_parent = function() 
+      have_parent(self, private)
+    ,
+    data = function() 
+      data(self, private)
+    ,
+    is_root = function() 
+      is_root(self, private)
+    ,
+    parent = function() 
+      parent(self, private)
+    ,
+    tree_depth = function() 
+      tree_depth(self, private)
+    ,
+    isDiscovered = function() 
+      isDiscovered(self, private)
+    ,
+    isRootDiscovered = function() 
+      isRootDiscovered(self, private)
+    ,
+    branch_depth = function() 
+      branch_depth(self, private)
+    ,
+    isSingletonTree = function() 
+      isSingletonTree(self, private)
   )
 )
+
+#' Initialize a General Tree object.
+#'
+#' @param self    the GeneralTree
+#' @param private the private members of the GeneralTree.
+#' @param id      the id of the new node.
+#' @param data    the data of the new node.
+#'
+#' @keywords internal
+initialize <- function(self, private, id, data) {
+  private$.id = id
+  private$.data = data
+
+  invisible(self)
+}
 
 #'
 #' @keywords internal
@@ -728,7 +710,6 @@ nodeInfoToString <- function(self, what = c("id", "data")) {
 #' @return A string object that represents the node.
 #'
 #' @keywords internal
-
 toString <- function (self, what = c("id", "data"), string_prepend = "") {
   what <- match.arg(what, several.ok = TRUE)
 
@@ -776,3 +757,204 @@ toString <- function (self, what = c("id", "data"), string_prepend = "") {
 
   return(string)
 }
+
+#' Return the root of the node.
+#'
+#' @param self      The node that should be inspected.
+#' @param private   The private members of a node.
+#' @return The root node.
+#' @keywords internal
+root <- function (self, private) {
+  if (is.null(private$.root)) {
+    invisible(self)
+  } else {
+    invisible(private$.root)
+  }
+}
+
+#' Return the left child of the node.
+#'
+#' @param self      The node that should be inspected.
+#' @param private   The private members of a node.
+#' @return The left child of the node or \code{NULL} otherwise.
+#' @keywords internal
+left_child <- function (self, private) {
+  invisible(private$.left_child)
+}
+
+#' Return the private siblings of the node.
+#'
+#' @param self      The node that should be inspected.
+#' @param private   The private members of a node.
+#' @return A list that contains the private siblings of the node.
+#' @keywords internal
+siblings <- function (self, private) {
+  invisible(private$.siblings)
+}
+
+#' Return the id of the current node.
+#'
+#' @param self      The node that should be inspected.
+#' @param private   The private members of a node.
+#' @return the id of the node.
+#' @keywords internal
+id <- function (self, private) {
+  return(private$.id)
+}
+
+#' Tell whether the current node has childeren.
+#'
+#' @param self      The node that should be inspected.
+#' @param private   The private members of a node.
+#' @return \code{TRUE} when the node has children.
+#' @keywords internal
+have_child <- function (self, private) {
+  !is.null(private$.left_child)
+}
+
+#' Tell whether the current node has siblings.
+#'
+#' @param self      The node that should be inspected.
+#' @param private   The private members of a node.
+#' @return \code{TRUE} when the node has siblings.
+#' @keywords internal
+have_siblings <- function (self, private) {
+  if (is.null(self$parent))
+    return(FALSE)
+  else
+    self$parent$left_child$have_private_siblings
+}
+
+#' Tell whether the current node is the last sibling.
+#'
+#' @param self      The node that should be inspected.
+#' @param private   The private members of a node.
+#' @return \code{TRUE} when the node is the last sibling.
+#' @keywords internal
+is_last_sibling <- function (self, private) {
+  if (self$have_siblings) {
+    siblings = self$parent$left_child$getSiblingNodes()
+    return(identical(siblings[[length(siblings)]], self))
+  }
+  return(FALSE)
+}
+
+#' Tell whether the current node has private siblings.
+#'
+#' @param self      The node that should be inspected.
+#' @param private   The private members of a node.
+#' @return \code{TRUE} when the node has private siblings.
+#' @keywords internal
+have_private_siblings <- function (self, private) {
+  !is.null(private$.siblings)
+}
+
+#' Returns true when the node has a parent.
+#'
+#' @param self      The node that should be inspected.
+#' @param private   The private members of a node.
+#' @return \code{TRUE} when the node has a parent.
+#' @keywords internal
+have_parent <- function (self, private) {
+  !is.null(private$.parent)
+}
+
+#' Return the data associated with a node.
+#'
+#' @param self      The node which data should be retrieved.
+#' @param private   The private members of a node.
+#' @return the data of the node.
+#' @keywords internal
+data <- function (self, private) {
+  return(private$.data)
+}
+
+#' Tell whether the passed node is the root of the tree.
+#'
+#' @param self      The node that refers to the tree.
+#' @param private   The private members of a node.
+#' @return \code{TRUE} when the node is the root of the tree.
+#' @keywords internal
+is_root <- function (self, private) {
+  is.null(private$.root)
+}
+
+#' Get the parent of a node.
+#'
+#' @param self      The node that refers to the tree.
+#' @param private   The private members of a node.
+#' @return the parent of the node.
+#' @keywords internal
+parent <- function (self, private) {
+  return(private$.parent)
+}
+
+#' Get the depth of a tree.
+#'
+#' @param self      The node that refers to the tree.
+#' @param private   The private members of a node.
+#' @return A numeric value that indicates the number of layers in the tree.
+#' @keywords internal
+tree_depth <- function (self, private) {
+  if (!self$is_root) {
+    depth = self$root$tree_depth
+  } else {
+    depth = self$branch_depth
+  }
+
+  return(depth)
+}
+
+#' Informs whether the node has the discovered bit set.
+#'
+#' @param self      The node where to start.
+#' @param private   The private members of a node.
+#' @return \code{TRUE} if the node has the discovered bit set.
+#' @keywords internal
+isDiscovered <- function (self, private) {
+  return(private$.is_discovered)
+}
+
+#' Returns whether the node has the is_root_discovered bit set.
+#'
+#' @param self      The node where to start.
+#' @param private   The private members of a node.
+#' @return \code{TRUE} if the node has the is_root_discovered bit set.
+#' @keywords internal
+isRootDiscovered <- function (self, private) {
+  return(private$.is_root_discovered)
+}
+
+#' Get the depth of a branch.
+#'
+#' @param self      The node where to start.
+#' @param private   The private members of a node.
+#' @return A numeric value that indicates the number of layers in the branch.
+#' @keywords internal
+branch_depth <- function (self, private) {
+  depth = 1
+
+  if (self$have_child) {
+    depth = max(depth, self$left_child$branch_depth + 1)
+  }
+
+  if (self$have_private_siblings) {
+    depth = max(depth, sapply(self$siblings, function(x)
+                              x$branch_depth))
+  }
+
+  return(depth)
+}
+
+#' Informs whether the tree is a singleton tree.
+#'
+#' @param self      The node where to start.
+#' @param private   The private members of a node.
+#' @return \code{TRUE} if the node contains only a single element i.e. the root
+#'  node.
+#' @keywords internal
+isSingletonTree <- function (self, private) {
+  return(is.null(private$.root) && is.null(private$.siblings) &&
+         is.null(private$.left_child))
+}
+
