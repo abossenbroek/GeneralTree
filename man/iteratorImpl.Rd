@@ -17,4 +17,5 @@ An iterator for the general tree.
 \description{
 The implementation of the GeneralTree method iterator.
 }
+\keyword{internal}
 

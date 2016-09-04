@@ -24,4 +24,5 @@ the next element in the tree that has the discover flag not set
 \description{
 The implementation of the GeneralTree method nextElem.
 }
+\keyword{internal}
 

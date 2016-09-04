@@ -362,6 +362,8 @@ GeneralTree <- R6Class("GeneralTree",
   )
 )
 
+#'
+#' @keywords internal
 addNode <- function (self, private, parent_id, id, data) {
   new_node <- NULL
 
@@ -384,7 +386,8 @@ addNode <- function (self, private, parent_id, id, data) {
   invisible(new_node)
 }
 
-
+#'
+#' @keywords internal
 addChild <- function (self, private, node) {
   node$setParent(self)
   node$setRoot(self$root)
@@ -397,6 +400,8 @@ addChild <- function (self, private, node) {
   invisible(node)
 }
 
+#'
+#' @keywords internal
 addSibling <- function (self, private, node) {
   if (self$is_root) stop("Cannot add sibling to root")
 
@@ -434,6 +439,8 @@ searchNode <- function (self, id) {
   invisible(result)
 }
 
+#'
+#' @keywords internal
 searchBranch <- function (self, id) {
   result <- NULL
   # Verify whether the current node matches the id.
@@ -461,6 +468,8 @@ searchBranch <- function (self, id) {
   invisible(result)
 }
 
+#'
+#' @keywords internal
 getSiblingNodes <- function (self) {
   sibling_nodes <- NULL
 
@@ -473,6 +482,8 @@ getSiblingNodes <- function (self) {
   invisible(sibling_nodes)
 }
 
+#'
+#' @keywords internal
 getSiblingData <- function (self) {
   sibling_data <- NULL
   if (self$have_siblings) {
@@ -482,6 +493,8 @@ getSiblingData <- function (self) {
   return(sibling_data)
 }
 
+#'
+#' @keywords internal
 getSiblingId <- function (self) {
   sibling_ids <- NULL
   if (self$have_siblings) {
@@ -492,24 +505,34 @@ getSiblingId <- function (self) {
 }
 
 
+#'
+#' @keywords internal
 setRoot <- function (self, private, node) {
   private$.root = node
 }
 
+#'
+#' @keywords internal
 setLeftChild <- function (self, private, node) {
   if (self$have_child) warning("Already have left child!")
 
   private$.left_child = node
 }
 
+#'
+#' @keywords internal
 setData <- function (self, private, data) {
   private$.data = data
 }
 
+#'
+#' @keywords internal
 setParent <- function (self, private, node) {
   private$.parent = node
 }
 
+#'
+#' @keywords internal
 setSiblings <- function (self, private, siblings) {
   private$.siblings = siblings
 }
@@ -575,6 +598,8 @@ deleteId <- function (self, id) {
 #' Delete all a node and all nodes below that node.
 #' @param self    the GeneralTree
 #' @param private the private members of the GeneralTree.
+#'
+#' @keywords internal
 delete <- function(self, private) {
   if (self$have_child) {
     self$left_child$delete()
@@ -618,6 +643,8 @@ delete <- function(self, private) {
 #' @param include_root Should the root be included in the discovery?
 #' @return the next element in the tree that has the discover flag not set
 #'         searched in a depth first search.
+#'
+#' @keywords internal
 nextElemImplementation <- function (self, private, set_discover = TRUE,
                                     include_root = TRUE) {
   next_element <- NULL
@@ -668,6 +695,8 @@ nextElemImplementation <- function (self, private, set_discover = TRUE,
 #' @param self    the GeneralTree
 #' @param private the private members of the GeneralTree.
 #' @return An iterator for the general tree.
+#'
+#' @keywords internal
 iteratorImpl <- function (self, private) {
   if (self$is_root) {
     self$resetDiscoveredOnBranch()

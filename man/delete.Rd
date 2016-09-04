@@ -14,4 +14,5 @@ delete(self, private)
 \description{
 Delete all a node and all nodes below that node.
 }
+\keyword{internal}
 
