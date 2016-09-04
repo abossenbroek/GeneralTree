@@ -189,47 +189,21 @@ GeneralTree <- R6Class("GeneralTree",
    iterator = function()
      iteratorImpl(self, private)
    ,
-   resetDiscovered = function() {
-     if (!self$is_root) {
-       private$.root$resetDiscoveredOnBranch()
-     } else {
-       self$resetDiscoveredOnBranch()
-       self$setDiscovered(FALSE)
-     }
-   },
-   resetDiscoveredOnBranch = function() {
-     reset_status = sapply(self$getChildNodes(recursive = TRUE), function(x)
-                            x$setDiscovered(FALSE))
-     invisible(reset_status)
-   },
-   setDiscovered = function(is_discovered) {
-     private$.is_discovered = is_discovered
-   },
-   setRootDiscovered = function(is_root_discovered) {
-     private$.is_root_discovered = is_root_discovered
-   },
-   nodeInfoToString = function(what = c("id", "data")) {
-     what = match.arg(what, several.ok = TRUE)
-
-     get_id = any("id" %in% what)
-     get_data = any("data" %in% what)
-
-     node_id = ""
-     if (get_id)
-       node_id = as.character(self$id)
-
-     node_data = ""
-     if (get_data)
-       node_data = as.character(self$data)
-
-     sep = ""
-     if(get_id && get_data) {
-       sep = " : "
-     }
-     node_string = paste(node_id, node_data, sep = sep)
-
-     return(node_string)
-   },
+   resetDiscovered = function()
+     resetDiscovered(self, private)
+   ,
+   resetDiscoveredOnBranch = function()
+     resetDiscoveredOnBranch(self, private)
+   ,
+   setDiscovered = function(is_discovered)
+    setDiscovered(self, private, is_discovered)
+   ,
+   setRootDiscovered = function(is_root_discovered)
+    setRootDiscovered(self, private, is_root_discovered)
+   ,
+   nodeInfoToString = function(what = c("id", "data"))
+     nodeInfoToString(self, what)
+   ,
    toString = function(what = c("id", "data"), string_prepend = "") {
      what = match.arg(what, several.ok = TRUE)
 
@@ -707,4 +681,85 @@ iteratorImpl <- function (self, private) {
   }
 }
 
+#' The implementation of the GeneralTree method iterator.
+#'
+#' @param self    the GeneralTree
+#' @param private the private members of the GeneralTree.
+#' @return An iterator for the general tree.
+#'
+#' @keywords internal
+resetDiscovered <- function(self, private) {
+  if (!self$is_root) {
+    private$.root$resetDiscoveredOnBranch()
+  } else {
+    self$resetDiscoveredOnBranch()
+    self$setDiscovered(FALSE)
+  }
+}
 
+#' Reset the discover bit of all the nodes on the branch to FALSE.
+#'
+#' @param self    the GeneralTree
+#' @param private the private members of the GeneralTree.
+#'
+#' @keywords internal
+resetDiscoveredOnBranch <- function(self, private) {
+  reset_status = sapply(self$getChildNodes(recursive = TRUE), function(x)
+                        x$setDiscovered(FALSE))
+  invisible(self)
+}
+
+#' Set the discovered bit to a certain state.
+#'
+#' @param self    the GeneralTree
+#' @param private the private members of the GeneralTree.
+#' @param is_discovered the state to which the discover bit should be set.
+#'
+#' @keywords internal
+setDiscovered <- function(self, private, is_discovered) {
+  private$.is_discovered <- is_discovered
+  invisible(self)
+}
+
+#' Set the root discovered bit to a certain state.
+#'
+#' @param self    the GeneralTree
+#' @param private the private members of the GeneralTree.
+#' @param is_root_discovered the state to which the bit should be set.
+#' @return An iterator for the general tree.
+#'
+#' @keywords internal
+setRootDiscovered <- function(self, private, is_root_discovered) {
+  private$.is_root_discovered = is_root_discovered
+  invisible(self)
+}
+
+#' Convert a node to string.
+#'
+#' @param self    the GeneralTree node that should be converted to a string.
+#' @param what    what should be converted to a string.
+#' @return A string object that represents the node.
+#'
+#' @keywords external
+nodeInfoToString <- function(self, what = c("id", "data")) {
+  what <- match.arg(what, several.ok = TRUE)
+
+  get_id <- any("id" %in% what)
+  get_data <- any("data" %in% what)
+
+  node_id <- ""
+  if (get_id)
+    node_id <- as.character(self$id)
+
+  node_data <- ""
+  if (get_data)
+    node_data <- as.character(self$data)
+
+  sep <- ""
+  if(get_id && get_data) {
+    sep <- " : "
+  }
+  node_string <- paste(node_id, node_data, sep = sep)
+
+  return(node_string)
+}
