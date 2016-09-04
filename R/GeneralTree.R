@@ -177,85 +177,15 @@ GeneralTree <- R6Class("GeneralTree",
    getChildId = function(recursive = FALSE)
      getChildId(self, recursive)
    ,
-   deleteId = function(id) 
+   deleteId = function(id)
      deleteId(self, id)
    ,
-   delete = function() {
-     if (self$have_child) {
-       self$left_child$delete()
-     }
-
-     # If we have siblings we need to make sure that only we get deleted and
-     # nothing else. In case we have siblings there are two possibilities,
-     # 1. we are the most left child, and,
-     # 2. we are not the most left child.
-     if (self$have_siblings && self$have_parent) {
-       # Handle the first case described above.
-       if (identical(self$parent$left_child$id, self$id)) {
-         # Set the left child of the parent to the first sibling.
-         suppressWarnings({
-           self$parent$setLeftChild(self$siblings[[1]])
-         })
-         remaining_siblings = self$siblings
-         # Remove the first sibling.
-         remaining_siblings[[1]] = NULL
-         # Set the remaining siblings.
-         self$parent$left_child$setSiblings(remaining_siblings)
-       } else {
-         siblings = self$parent$left_child$siblings
-         own_position = sapply(siblings, function(x) identical(x, self))
-         siblings = siblings[!own_position]
-         self$parent$left_child$setSiblings(siblings)
-       }
-     } else if (self$have_parent) {
-       suppressWarnings({
-         self$parent$setLeftChild(NULL)
-       })
-     }
-   },
-   nextElem = function(set_discover = TRUE, include_root = TRUE) {
-     next_element = NULL
-     candidates = NULL
-
-     if (self$is_root) {
-       if (!self$isRootDiscovered && include_root) {
-         next_element = self
-         self$setRootDiscovered(set_discover)
-       } else {
-         candidates <- self$getChildNodes(recursive = TRUE)
-       }
-     } else {
-       candidates <- c(list(self$left_child), self$getSiblingNodes())
-     }
-
-     if (is.null(next_element) && !is.null(unlist(candidates))) {
-       # Remove all NULL values.
-       candidates <- Filter(Negate(is.null), candidates)
-       # Remove all nodes that were already discovered.
-       not_discovered <- Filter(Negate(function(x) x$isDiscovered), candidates)
-       if (length(not_discovered) > 0)
-         next_element = not_discovered[[1]]
-     }
-
-     if (is.null(next_element) && !self$is_root && self$have_parent) {
-       next_element = self$parent$nextElem()
-     }
-
-     if (!is.null(next_element))
-        next_element$setDiscovered(set_discover)
-
-     # If this was the last node, reset the root discovery.
-     if (is.null(next_element) && self$is_root)
-       self$setRootDiscovered(set_discover)
-
-
-     if (is.null(next_element)) {
-       next_element = self
-       stop("StopIteration")
-     }
-
-     invisible(next_element)
-   },
+   delete = function()
+     delete(self, private)
+   ,
+   nextElem = function(set_discover = TRUE, include_root = TRUE)
+     nextElemImplementation(self, private, set_discover, include_root)
+   ,
    iterator = function() {
      if (self$is_root) {
        self$resetDiscoveredOnBranch()
@@ -437,7 +367,6 @@ GeneralTree <- R6Class("GeneralTree",
     }
   )
 )
-
 
 addNode <- function (self, private, parent_id, id, data) {
   new_node <- NULL
@@ -647,4 +576,95 @@ deleteId <- function (self, id) {
   node <- self$searchNode(id)
   node$delete()
   invisible(self)
+}
+
+#' Delete all a node and all nodes below that node.
+#' @param self    the GeneralTree
+#' @param private the private members of the GeneralTree.
+delete <- function(self, private) {
+  if (self$have_child) {
+    self$left_child$delete()
+  }
+
+  # If we have siblings we need to make sure that only we get deleted and
+  # nothing else. In case we have siblings there are two possibilities,
+  # 1. we are the most left child, and,
+  # 2. we are not the most left child.
+  if (self$have_siblings && self$have_parent) {
+    # Handle the first case described above.
+    if (identical(self$parent$left_child$id, self$id)) {
+      # Set the left child of the parent to the first sibling.
+      suppressWarnings({
+        self$parent$setLeftChild(self$siblings[[1]])
+      })
+      remaining_siblings <- self$siblings
+      # Remove the first sibling.
+      remaining_siblings[[1]] <- NULL
+      # Set the remaining siblings.
+      self$parent$left_child$setSiblings(remaining_siblings)
+    } else {
+      siblings <- self$parent$left_child$siblings
+      own_position <- sapply(siblings, function(x) identical(x, self))
+      siblings <- siblings[!own_position]
+      self$parent$left_child$setSiblings(siblings)
+    }
+  } else if (self$have_parent) {
+    suppressWarnings({
+      self$parent$setLeftChild(NULL)
+    })
+  }
+}
+
+#' The implementation of the GeneralTree method nextElem.
+#'
+#' @param self    the GeneralTree
+#' @param private the private members of the GeneralTree.
+#' @param set_discover Whether the discover flag should be set when seeking a
+#'                     next element.
+#' @param include_root Should the root be included in the discovery?
+#' @return the next element in the tree that has the discover flag not set
+#'         searched in a depth first search.
+nextElemImplementation <- function (self, private, set_discover = TRUE,
+                                    include_root = TRUE) {
+  next_element <- NULL
+  candidates <- NULL
+
+  if (self$is_root) {
+    if (!self$isRootDiscovered && include_root) {
+      next_element <- self
+      self$setRootDiscovered(set_discover)
+    } else {
+      candidates <- self$getChildNodes(recursive = TRUE)
+    }
+  } else {
+    candidates <- c(list(self$left_child), self$getSiblingNodes())
+  }
+
+  if (is.null(next_element) && !is.null(unlist(candidates))) {
+    # Remove all NULL values.
+    candidates <- Filter(Negate(is.null), candidates)
+    # Remove all nodes that were already discovered.
+    not_discovered <- Filter(Negate(function(x) x$isDiscovered), candidates)
+    if (length(not_discovered) > 0)
+      next_element <- not_discovered[[1]]
+  }
+
+  if (is.null(next_element) && !self$is_root && self$have_parent) {
+    next_element <- self$parent$nextElem()
+  }
+
+  if (!is.null(next_element))
+    next_element$setDiscovered(set_discover)
+
+  # If this was the last node, reset the root discovery.
+  if (is.null(next_element) && self$is_root)
+    self$setRootDiscovered(set_discover)
+
+
+  if (is.null(next_element)) {
+    next_element <- self
+    stop("StopIteration")
+  }
+
+  invisible(next_element)
 }
