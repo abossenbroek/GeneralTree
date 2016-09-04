@@ -52,8 +52,9 @@ different.
   be called directly.}
  \item{\code{iterator()}}{Get an iterator to iterate through the tree in a
   depth first search.}
- \item{\code{nextElem()}}{Get the next element in a depth first search.
-  Before using this function always create an iterator.}
+ \item{\code{nextElem()}}{Get the
+      next element in a depth first search.  Before using this function
+      always create an iterator.}
  \item{\code{toString(what = c("id", "data"), string_prepend = "")}}{Creates
    a string representation of the node. Note that id and data should work
    with paste to work correctly. All branches will also be returned to the

@@ -22,7 +22,7 @@ nextElem.GeneralTreeIter <- function (obj, ...) {
     tryCatch({
       value <- getIterVal(obj)
       obj$state$i <- obj$state$i + 1L
-      next_element <- try(obj$state$obj$nextElem(include_root = FALSE), silent = TRUE)
+      next_element <- try(obj$state$obj$nextElemWorker(include_root = FALSE), silent = TRUE)
       # Verify if select the next element lead to an error.
       if (inherits(next_element, "try-error")) {
         # Detect whether we iterated through all the nodes.
