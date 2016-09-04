@@ -168,17 +168,9 @@ GeneralTree <- R6Class("GeneralTree",
    getSiblingId = function()
      getSiblingId(self)
    ,
-   getChildNodes = function(recursive = FALSE) {
-     child_nodes = NULL
-     if (self$have_child) {
-       child_nodes = c(list(self$left_child), self$left_child$siblings)
-       if (recursive) {
-         child_nodes = c(child_nodes, sapply(child_nodes, function(x) x$getChildNodes(recursive)))
-         child_nodes = unlist(child_nodes)
-       }
-     }
-     return(child_nodes)
-   },
+   getChildNodes = function(recursive = FALSE) 
+     getChildNodes(self, recursive)
+   ,
    getChildData = function(recursive = FALSE) {
      child_data = NULL
      if (self$have_child) {
@@ -610,3 +602,20 @@ setSiblings <- function (self, private, siblings) {
   private$.siblings = siblings
 }
 
+#' Get all the child nodes below the current node.
+#'
+#' @param self The node where to start
+#' @param recursive Should the function be called on all child nodes too?
+#' @return a list of child nodes.
+#' @export
+getChildNodes <- function (self, recursive = FALSE) {
+  child_nodes <- NULL
+  if (self$have_child) {
+    child_nodes <- c(list(self$left_child), self$left_child$siblings)
+    if (recursive) {
+      child_nodes <- c(child_nodes, sapply(child_nodes, getChildNodes, recursive))
+      child_nodes <- unlist(child_nodes)
+    }
+  }
+  return(child_nodes)
+}
