@@ -220,40 +220,40 @@ GeneralTree <- R6Class("GeneralTree",
     have_child = function()
       have_child(self, private)
     ,
-    have_siblings = function() 
+    have_siblings = function()
       have_siblings(self, private)
     ,
-    is_last_sibling = function() 
+    is_last_sibling = function()
       is_last_sibling(self, private)
     ,
-    have_private_siblings = function() 
+    have_private_siblings = function()
       have_private_siblings(self, private)
     ,
-    have_parent = function() 
+    have_parent = function()
       have_parent(self, private)
     ,
-    data = function() 
+    data = function()
       data(self, private)
     ,
-    is_root = function() 
+    is_root = function()
       is_root(self, private)
     ,
-    parent = function() 
+    parent = function()
       parent(self, private)
     ,
-    tree_depth = function() 
+    tree_depth = function()
       tree_depth(self, private)
     ,
-    isDiscovered = function() 
+    isDiscovered = function()
       isDiscovered(self, private)
     ,
-    isRootDiscovered = function() 
+    isRootDiscovered = function()
       isRootDiscovered(self, private)
     ,
-    branch_depth = function() 
+    branch_depth = function()
       branch_depth(self, private)
     ,
-    isSingletonTree = function() 
+    isSingletonTree = function()
       isSingletonTree(self, private)
   )
 )
