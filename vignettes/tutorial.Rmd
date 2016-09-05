@@ -240,7 +240,8 @@ microbenchmark({
 require(foreach)
 require(iterators)
 require(doParallel)
-cl <- makeCluster(4)
+nThreads <- detectCores(logical = TRUE)
+cl <- makeCluster(nThreads)
 registerDoParallel(cl)
 microbenchmark({
   itx <- iter(tree, by = "id")
