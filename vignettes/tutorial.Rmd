@@ -240,13 +240,14 @@ microbenchmark({
 require(foreach)
 require(iterators)
 require(doParallel)
-nThreads <- detectCores(logical = TRUE)
-cl <- makeCluster(nThreads)
-registerDoParallel(cl)
-microbenchmark({
-  itx <- iter(tree, by = "id")
-  ids_in_tree <- foreach(i = itx, .combine = c) %dopar% c(i)
-})
+# Test below on  your machine.
+# nThreads <- detectCores(logical = TRUE)
+# cl <- makeCluster(nThreads)
+# registerDoParallel(cl)
+# microbenchmark({
+#   itx <- iter(tree, by = "id")
+#   ids_in_tree <- foreach(i = itx, .combine = c) %dopar% c(i)
+# })
 ```
 
 Note that currently `foreach` iteration is slower than native iteration.
