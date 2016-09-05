@@ -178,6 +178,9 @@ calling next element on that iterator.
 # Let us inspect the tree first,
 print(tree, what = "data")
 
+# Make a backup of the tree,
+old_tree <- tree
+
 i <- tree$iterator()
 while (!is.null(i)) {
     i$setData(paste("id:", i$id, "-data", i$data))
@@ -195,7 +198,7 @@ first fashion,
 ```{r}
 require(iterators)
 require(foreach)
-itx <- iter(tree, by = "id")
+itx <- iter(old_tree, by = "id")
 ids_in_tree <- foreach(i = itx, .combine = c) %do% c(i)
 ids_in_tree
 ```
