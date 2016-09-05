@@ -168,8 +168,8 @@ test_that("iterations are skipped when checkFunc is set to FALSE", {
 
   numbers_in_tree <- foreach(i = itx, .combine = c) %do% c(i)
 
-  expect_identical(itx$length, 14)
-  expect_identical(numbers_in_tree, seq(2, 14, by = 2))
+  expect_equal(itx$length, 14)
+  expect_equal(numbers_in_tree, seq(2, 14, by = 2))
 })
 
 test_that("iteration works correctly with recycle on", {

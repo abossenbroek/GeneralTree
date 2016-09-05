@@ -47,7 +47,7 @@ test_that("search is working as expected", {
   expect_identical(tree$searchData(2), "child.2")
 })
 
-test_that(" is working as expected", {
+test_that("is_last_sibling is working as expected", {
   tree <- GeneralTree$new(0, "parent1")
 
   tree$addNode(0, 1, "child.1")
@@ -55,4 +55,26 @@ test_that(" is working as expected", {
   expect_identical(tree$searchNode(1)$is_last_sibling, FALSE)
 })
 
+test_that("branchToList is working as expected", {
+  tree <- GeneralTree$new(1, "parent1")
+  tree$addNode(1, 2, "child.1.2")
+  tree$addNode(2, 3, "child.2.3")
+  tree$addNode(3, 4, "child.3.4")
+  tree$addNode(3, 5, "child.3.5")
+  tree$addNode(1, 7, "child.1.7")
+  tree$addNode(1, 8, "child.1.8")
+  tree$addNode(8, 9, "child.8.9")
+  tree$addNode(9, 10, "child.9.10")
+  tree$addNode(9, 11, "child.9.11")
+  tree$addNode(9, 12, "child.9.12")
+  tree$addNode(12, 13, "child.12.13")
+  tree$addNode(8, 14, "child.8.14")
+  tree$addNode(2, 6, "child.2.6")
 
+  res <- tree$branchToList()
+
+  expect_equal(sapply(res, function(x) x$id), 1 : 14)
+
+  res <- tree$searchNode(8)$branchToList()
+  expect_equal(sapply(res, function(x) x$id), 8 : 14)
+})
