@@ -46,8 +46,10 @@ deep_clone.GeneralTree <- function(x) {
 #' @return a clone of the tree.
 #' @usage `<-.GeneralTree`(x, value)
 #' @export
-"<-.GeneralTree" <- function(x, value)
+"<-.GeneralTree" <- function(x, value) {
     x <- deep_clone.GeneralTree(value)
+    return(x)
+}
 
 #' Deep clone a General Tree.
 #'
@@ -56,6 +58,8 @@ deep_clone.GeneralTree <- function(x) {
 #' @return a clone of the tree.
 #' @usage `=.GeneralTree`(x, value)
 #' @export
-"=.GeneralTree" <- function(x, value)
+"=.GeneralTree" <- function(x, value) {
     x <- deep_clone.GeneralTree(value)
+    return(x)
+}
 

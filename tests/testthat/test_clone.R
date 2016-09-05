@@ -66,4 +66,23 @@ test_that("Assignment operator works", {
   expect_equal(tree$searchData("b"), branch_copy_assignment$data)
 })
 
+test_that("Assignment operator works by calling as function", {
+
+  tree <- GeneralTree$new(0, "parent1")
+  tree$addNode(0, "a", "child.a")
+  tree$addNode(0, "b", "child.b")
+  tree$addNode("b", "c", "child.b.c")
+  tree$addNode("b", "d", "child.b.d")
+  tree$addNode("c", "e", "child.c.e")
+  tree$addNode("c", "f", "child.c.e")
+
+  branch_copy <- NULL
+  branch_copy <- `<-.GeneralTree`(branch_copy, tree$searchNode("b"))
+  branch_copy_assignment <- `=.GeneralTree`(branch_copy_assignment,
+                                             tree$searchNode("b"))
+
+  expect_equal(tree$searchData("b"), branch_copy$data)
+  expect_equal(tree$searchData("b"), branch_copy_assignment$data)
+})
+
 
