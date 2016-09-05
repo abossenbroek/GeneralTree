@@ -110,6 +110,7 @@
 #'
 GeneralTree <- R6Class("GeneralTree",
   lock_objects = FALSE,
+  cloneable=FALSE,
   private = list(
     .data = NULL,
     .left_child = NULL,
