@@ -18,7 +18,8 @@ Suggests: testthat,
     foreach,
     tools,
     rmarkdown,
-    microbenchmark
+    microbenchmark,
+    doParallel
 RoxygenNote: 5.0.1
 VignetteBuilder: knitr
 NeedsCompilation: no
