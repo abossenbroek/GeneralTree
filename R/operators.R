@@ -41,18 +41,21 @@ deep_clone.GeneralTree <- function(x) {
 
 #' Deep clone a General Tree.
 #'
-#' @param x     The general tree that should be deep cloned.
+#' @param x The target to where the tree should be copied.
+#' @param value The general tree that should be cloned into.
 #' @return a clone of the tree.
+#' @usage `<-.GeneralTree`(x, value)
 #' @export
-"<-.GeneralTree" <- function(x)
-    deep_clone.GeneralTree(x)
+"<-.GeneralTree" <- function(x, value)
+    x <- deep_clone.GeneralTree(value)
 
 #' Deep clone a General Tree.
 #'
-#' @param x     The general tree that should be deep cloned.
+#' @param x The target to where the tree should be copied.
+#' @param value The general tree that should be cloned into.
 #' @return a clone of the tree.
+#' @usage `=.GeneralTree`(x, value)
 #' @export
-"=.GeneralTree" <- function(x)
-    deep_clone.GeneralTree(x)
-
+"=.GeneralTree" <- function(x, value)
+    x <- deep_clone.GeneralTree(value)
 
