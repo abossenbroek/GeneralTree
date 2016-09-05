@@ -4,10 +4,12 @@
 \alias{=.GeneralTree}
 \title{Deep clone a General Tree.}
 \usage{
-"=.GeneralTree"(x)
+`=.GeneralTree`(x, value)
 }
 \arguments{
-\item{x}{The general tree that should be deep cloned.}
+\item{x}{The target to where the tree should be copied.}
+
+\item{value}{The general tree that should be cloned into.}
 }
 \value{
 a clone of the tree.
