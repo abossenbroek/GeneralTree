@@ -17,7 +17,9 @@ Suggests: testthat,
     iterators,
     foreach,
     tools,
-    rmarkdown
+    rmarkdown,
+    microbenchmark,
+    doParallel
 RoxygenNote: 5.0.1
 VignetteBuilder: knitr
 NeedsCompilation: no

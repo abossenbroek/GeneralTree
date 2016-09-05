@@ -178,6 +178,9 @@ calling next element on that iterator.
 # Let us inspect the tree first,
 print(tree, what = "data")
 
+# Make a backup of the tree,
+old_tree <- tree
+
 i <- tree$iterator()
 while (!is.null(i)) {
     i$setData(paste("id:", i$id, "-data", i$data))
@@ -195,8 +198,54 @@ first fashion,
 ```{r}
 require(iterators)
 require(foreach)
-itx <- iter(tree, by = "id")
+itx <- iter(old_tree, by = "id")
 ids_in_tree <- foreach(i = itx, .combine = c) %do% c(i)
 ids_in_tree
 ```
 
+The main benefit of using `iter` is that you can iterate through the tree in
+parllel. If you only need to perform operations on the `id` or `data` of a node
+we highly recommend to use the latter method to traverse the tree. See the
+following benchmark,
+
+```{r}
+p <- parse(text = "
+            tree <- GeneralTree$new(1, \"parent1\")
+            tree$addNode(1, 2, \"child.1.2\")
+            tree$addNode(2, 3, \"child.2.3\")
+            tree$addNode(3, 4, \"child.3.4\")
+            tree$addNode(3, 5, \"child.3.5\")
+            tree$addNode(1, 7, \"child.1.7\")
+            tree$addNode(1, 8, \"child.1.8\")
+            tree$addNode(8, 9, \"child.8.9\")
+            tree$addNode(9, 10, \"child.9.10\")
+            tree$addNode(9, 11, \"child.9.11\")
+            tree$addNode(9, 12, \"child.9.12\")
+            tree$addNode(12, 13, \"child.12.13\")
+            tree$addNode(8, 14, \"child.8.14\")
+            tree$addNode(2, 6, \"child.2.6\")", keep.source = TRUE)
+tree <- as.GeneralTree(p)
+
+require(microbenchmark)
+
+microbenchmark({
+  i <- tree$iterator()
+  ids_in_tree <- c()
+  while (!is.null(i)) {
+    ids_in_tree <- c(ids_in_tree, i$id)
+    i <- tryCatch(i$nextElem(), error = function(e) NULL)
+  }
+})
+
+require(foreach)
+require(iterators)
+require(doParallel)
+cl <- makeCluster(4)
+registerDoParallel(cl)
+microbenchmark({
+  itx <- iter(tree, by = "id")
+  ids_in_tree <- foreach(i = itx, .combine = c) %dopar% c(i)
+})
+```
+
+Note that currently `foreach` iteration is slower than native iteration.

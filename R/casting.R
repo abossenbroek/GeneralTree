@@ -192,25 +192,29 @@ as.GeneralTree.data.frame <- function(x, ...) {
 #' @export
 as.GeneralTree.expression <- function(x, ...) {
 
-  parsed_data = utils::getParseData(x)
+  parsed_data <- utils::getParseData(x)
+
+  if (is.null(parsed_data))
+    stop("Could not find parsed data, make sure to set keep.source = TRUE in",
+         " your call to parse.")
 
   dots <- list(...)
 
-  what = "text"
+  what <- "text"
   if ("what" %in% names(dots)) {
     if (all(dots$what == "token")) {
-      what = "token"
+      what <- "token"
     } else if (all(dots$what == "text")) {
-      what = "text"
+      what <- "text"
     } else if (all(dots$what %in% c("text", "token"))) {
       parsed_data$DATA <- paste(parsed_data$token, parsed_data$text, sep = ": ")
-      what = "DATA"
+      what <- "DATA"
     } else {
       stop("Do not know how to process ", dots$what)
     }
   }
 
-  tree = GeneralTree$new(0L, "BaseEnvironment")
+  tree <- GeneralTree$new(0L, "BaseEnvironment")
 
   return(GeneralTree::as.GeneralTree(parsed_data, data = what,
                                      parent_node = tree))
