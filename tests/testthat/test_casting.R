@@ -213,3 +213,18 @@ test_that("Casting parsed source to GeneralTree gives right error", {
                "SYMBOL_FUNCTION_CALL: test_that")
   expect_error(as.GeneralTree(p, what = "some"))
 })
+
+test_that("Test for appropriate errors when tyring to cast parsed data", {
+   p <- parse(text = "test_that(\"test that the tree_walker with while loop\", {
+
+             tree <- GeneralTree$new(1, \"parent1\")
+             tree$addNode(1, 2, \"child.1.2\")
+             tree$addNode(2, 3, \"child.2.3\")
+             })
+             ",
+           keep.source = FALSE)
+
+
+  expect_error(as.GeneralTree(p))
+})
+

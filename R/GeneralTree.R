@@ -110,7 +110,7 @@
 #'
 GeneralTree <- R6Class("GeneralTree",
   lock_objects = FALSE,
-  cloneable=FALSE,
+  cloneable = FALSE,
   private = list(
     .data = NULL,
     .left_child = NULL,
@@ -181,6 +181,9 @@ GeneralTree <- R6Class("GeneralTree",
    ,
    getChildId = function(recursive = FALSE)
      getChildId(self, recursive)
+   ,
+   branchToList = function()
+     branchToList(self)
    ,
    deleteId = function(id)
      deleteId(self, id)
@@ -518,6 +521,22 @@ getChildNodes <- function (self, recursive = FALSE) {
     }
   }
   return(child_nodes)
+}
+
+#' Convert a branch to a list.
+#'
+#' @param self The branch where to start
+#' @return list that contains all the nodes in the branch.
+#' @keywords internal
+branchToList <- function (self) {
+  child_nodes <- NULL
+  if (self$have_child) {
+    child_nodes <- c(list(self$left_child$branchToList()),
+                     sapply(self$left_child$siblings, branchToList))
+
+    child_nodes <- unlist(child_nodes)
+  }
+  return(c(self, child_nodes))
 }
 
 #' Get the data of the child nodes below the current node.

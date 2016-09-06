@@ -51,7 +51,9 @@ build_script:
   - travis-tool.sh install_r foreach,
   - travis-tool.sh install_r tools
   - travis-tool.sh install_r DiagrammeRsvg
-
+  - travis-tool.sh install_r microbenchmark
+  - travis-tool.sh install_r rmarkdown
+  - travis-tool.sh install_r doParallel
 
 test_script:
   - travis-tool.sh run_tests

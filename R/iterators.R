@@ -20,34 +20,17 @@
 nextElem.GeneralTreeIter <- function (obj, ...) {
   repeat {
     tryCatch({
-      value <- getIterVal(obj)
+      value <- getIterVal.GeneralTreeIter(obj, 1L)
       obj$state$i <- obj$state$i + 1L
-      next_element <- try(obj$state$obj$nextElemWorker(include_root = FALSE), silent = TRUE)
-      # Verify if select the next element lead to an error.
-      if (inherits(next_element, "try-error")) {
-        # Detect whether we iterated through all the nodes.
-        if (obj$state$i > obj$length) {
-          obj$state$obj <- obj$state$obj$nextElem()
-        } else {
-          # If we still missed one, we keep the objected the same but return
-          # the value if required.
-          if (obj$checkFunc(value)) {
-            return(value)
-          }
-        }
-      } else {
-        obj$state$obj <- next_element
-        if (obj$checkFunc(value)) {
+
+      if (obj$checkFunc(value)) {
           return(value)
-        }
       }
     }, error = function(e) {
       if (any(nzchar(e$message))) {
         if (identical(e$message, "StopIteration")) {
           if (obj$recycle) {
             obj$state$i <- 0L
-            obj$state$obj$resetDiscovered()
-            obj$state$obj <- obj$state$obj$root
           }
           else {
             stop("StopIteration", call. = FALSE)
@@ -81,10 +64,13 @@ iter.GeneralTree <- function (obj, by = c("data"),
                               ...) {
   state <- new.env()
   state$i <- 0L
-  state$obj <- obj
-  state$obj$resetDiscovered()
-  # Add one to compensate for parent node.
-  n <- length(obj$getChildNodes(recursive = TRUE)) + 1
+  nodes <- obj$branchToList()
+
+  state$obj <- lapply(nodes, function(x) {
+    switch(by, data = x$data, id = x$id,
+           eval(parse(file = NULL, text = paste0("x$", by))))
+                              })
+  n <- length(state$obj)
   it <- list(state = state, by = by, length = n, checkFunc = checkFunc,
              recycle = recycle)
   class(it) <- c("GeneralTreeIter", "iter")
@@ -109,6 +95,6 @@ getIterVal.GeneralTreeIter <- function (obj, plus = 0L, check = TRUE, ...) {
 
     if (i > n)
         stop("StopIteration", call. = FALSE)
-    switch(obj$by, "data" = iter_object$data, "id" = iter_object$id,
-           eval(parse(file = NULL, text = paste0("iter_object$", obj$by))))
+
+    return(obj$state$obj[[i]])
 }
