@@ -6,7 +6,7 @@
 | Codecov        |[![Coverage Status](https://img.shields.io/codecov/c/github/abossenbroek/GeneralTree/master.svg)](https://codecov.io/github/abossenbroek/GeneralTree?branch=master) | [![Coverage Status](https://img.shields.io/codecov/c/github/abossenbroek/GeneralTree/develop.svg)](https://codecov.io/github/abossenbroek/GeneralTree?branch=develop) |
 | Coveralls     |[![Coverage Status](https://coveralls.io/repos/github/abossenbroek/GeneralTree/badge.svg?branch=master)](https://coveralls.io/github/abossenbroek/GeneralTree?branch=master) | [![Coverage Status](https://coveralls.io/repos/github/abossenbroek/GeneralTree/badge.svg?branch=develop)](https://coveralls.io/github/abossenbroek/GeneralTree?branch=develop) |
 
-'Apache License'    'http://img.shields.io/badge/license-APACHE2-blue.svg' 'https://www.apache.org/licenses/LICENSE-2.0.html'
+[!['Apache License'] ('http://img.shields.io/badge/license-APACHE2-blue.svg')] ['https://www.apache.org/licenses/LICENSE-2.0.html']
 
 # GeneralTree
 This R package allows you to create trees with an arbitrary number of child
