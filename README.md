@@ -6,7 +6,7 @@
 | Codecov        |[![Coverage Status](https://img.shields.io/codecov/c/github/abossenbroek/GeneralTree/master.svg)](https://codecov.io/github/abossenbroek/GeneralTree?branch=master) | [![Coverage Status](https://img.shields.io/codecov/c/github/abossenbroek/GeneralTree/develop.svg)](https://codecov.io/github/abossenbroek/GeneralTree?branch=develop) |
 | Coveralls     |[![Coverage Status](https://coveralls.io/repos/github/abossenbroek/GeneralTree/badge.svg?branch=master)](https://coveralls.io/github/abossenbroek/GeneralTree?branch=master) | [![Coverage Status](https://coveralls.io/repos/github/abossenbroek/GeneralTree/badge.svg?branch=develop)](https://coveralls.io/github/abossenbroek/GeneralTree?branch=develop) |
 
-[![Apache License](http://img.shields.io/badge/license-APACHE2-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+![License](http://img.shields.io/:license-gpl2-blue.svg?style=flat-square)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/GeneralTree)](https://cran.r-project.org/package=GeneralTree)
 
 # GeneralTree
@@ -79,7 +79,7 @@ install_github('GeneralTree', username = 'abossenbroek')
 ```
 
 # License
-The GeneralTree package is licensed under the Apache V2.0 license.
+The GeneralTree package is licensed under the GPL V2.0 license.
 
 # Code of conduct
 Please note that this project is released with a [Contributor Code of
