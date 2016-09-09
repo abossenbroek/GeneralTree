@@ -55,6 +55,7 @@ build_script:
   - travis-tool.sh install_r rmarkdown
   - travis-tool.sh install_r doParallel
   - travis-tool.sh install_r Rcpp
+  - travis-tool.sh install_r pryr
 
 test_script:
   - travis-tool.sh run_tests

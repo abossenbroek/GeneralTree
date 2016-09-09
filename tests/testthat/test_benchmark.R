@@ -12,8 +12,13 @@ test_that("Correct tests are run", {
   res <- benchmarkGeneralTree(times = 1, fraction_to_search = .1,
                               number_of_splits = 2)
 
-  expect_equal(colnames(res), c("mean", "median"))
-  expect_equal(rownames(res), c("2-create", "2-search", "2-native-iter",
-                                "2-foreach-iter", "2-casting-df",
-                                "2-casting-gt-df"))
+  expect_equal(colnames(res$computing_speed),
+               c("mean", "median"))
+  expect_equal(rownames(res$computing_speed),
+               c("2-create", "2-search", "2-native-iter",
+                 "2-foreach-iter", "2-casting-df",
+                 "2-casting-gt-df"))
+
+  expect_equal(rownames(res$memory_footprint),
+               c("2-tree-size"))
 })
