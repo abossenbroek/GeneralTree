@@ -11,23 +11,27 @@ typedef uid_SEXP_bimap::value_type uid_SEXP_pair;
 typedef std::pair<int, int> uid_uid_pair;
 typedef std::map<int, int> uid_to_uid_map;
 
+typedef std::map<int, std::vector<int> > uid_to_uids_map;
+
 
 class GeneralTreeInternals {
 public:
-    uint uid_counter;
-    uid_SEXP_bimap uid_to_id;
-    uid_SEXP_bimap uid_to_data;
-    uid_to_uid_map uid_to_child;
-    uid_to_uid_map uid_to_parent;
-    std::map <int, std::vector<int> > uid_to_siblings;
+  uint uid_counter;
+  uid_SEXP_bimap uid_to_id;
+  uid_SEXP_bimap uid_to_data;
+  uid_to_uid_map uid_to_child;
+  uid_to_uid_map uid_to_parent;
+  uid_to_uids_map uid_to_siblings;
 
-    GeneralTreeInternals(SEXP root_id, SEXP root_data);
+  GeneralTreeInternals(SEXP root_id, SEXP root_data);
 
-    void add_node(SEXP parent, SEXP child, SEXP data);
+  void add_node(SEXP parent, SEXP child, SEXP data);
 
-    int find_uid_given_id(SEXP id);
-    int find_uid_given_data(SEXP data);
-    int find_child_given_uid(int uid);
+  int find_uid_given_id(SEXP id);
+  int find_uid_given_data(SEXP data);
+  int find_child_given_uid(int uid);
+  bool has_child(int uid);
+  bool has_siblings(int uid);
 };
 
 
@@ -121,10 +125,12 @@ GeneralTreeInternals::add_node(SEXP parent_id, SEXP child_id, SEXP data)
   this->uid_to_id.insert(uid_SEXP_pair(this->uid_counter, child_id));
   this->uid_to_data.insert(uid_SEXP_pair(this->uid_counter, data));
   this->uid_to_parent.insert(uid_uid_pair(this->uid_counter, parent_uid));
-
-  // Verify whether childeren or siblings of the parent already exist.
-
   this->uid_counter++;
+
+  // Check whether the parent has a child.
+  if (this->has_child(parent_uid)) {
+  }
+
 
 
 }
@@ -169,4 +175,18 @@ GeneralTreeInternals::find_child_given_uid(int uid)
   return child_iter->second;
 }
 
+bool
+GeneralTreeInternals::has_child(int uid) {
+  uid_to_uid_map::iterator child_iter =
+    this->uid_to_parent.find(uid);
 
+  return child_iter != this->uid_to_parent.end();
+}
+
+bool
+GeneralTreeInternals::has_siblings(int uid) {
+  uid_to_uids_map::iterator sib_iter =
+    this->uid_to_siblings.find(uid);
+
+  return sib_iter != this->uid_to_siblings.end();
+}
