@@ -51,7 +51,7 @@ benchmarkGeneralTree <- function (depth = 4,
     stop("times should be strict positive")
 
   # Verify whether microbenchmark is installed.
-  if (!("microbenchmark" %in% installed.packages()[, "Package"]))
+  if (!("microbenchmark" %in% utils::installed.packages()[, "Package"]))
     stop("Could not perform benchmark without the microbenchmark package.")
 
   create_tree <- function(number_of_childeren = 2) {
@@ -98,19 +98,18 @@ benchmarkGeneralTree <- function (depth = 4,
       return(NULL)
   }
 
-  if (all(c("foreach", "iterator") %in% installed.packages()[, "Package"])) {
+  if (all(c("foreach", "iterators") %in% utils::installed.packages()[, "Package"])) {
+    require(foreach)
       foreach_iterate <- function(tree) {
-          itx <- iterator::iter(tree, by = "id")
-          ids_in_tree <- foreach::foreach(i = itx, .combine = c) %do% c(i)
+          itx <- iterators::iter(tree, by = "id")
+          ids_in_tree <- foreach(i = itx, .combine = c) %do% c(i)
       }
   }
 
-
   raw_results <- list()
 
-  set.seed(10)
-
   for (splits in number_of_splits) {
+    set.seed(10)
     # Create a perfect binary tree.
     create_res <- list(summary(microbenchmark::microbenchmark({
       create_tree(number_of_childeren = splits)

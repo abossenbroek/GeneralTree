@@ -5,9 +5,24 @@
 \title{Benchmark function that measures the speed of the tree implementation.}
 \usage{
 benchmarkGeneralTree(depth = 4, number_of_splits = c(2, 4, 16),
-  times = 100L)
+  fraction_to_search = 0.5, times = 100L)
+}
+\arguments{
+\item{depth}{the depth of the test trees.}
+
+\item{number_of_splits}{the number of splits that should be benchmarked.
+This can either be a single number or vector.}
+
+\item{fraction_to_search}{the fraction ids in the tree that should be
+searched.}
+
+\item{times}{The number of times a benchmark should be run.}
+}
+\value{
+a data frame with the mean and median of each test.
 }
 \description{
-Benchmark function that measures the speed of the tree implementation.
+The current implementation tests tree creation, search and iteration and
+returns the results in a data frame.
 }
 
