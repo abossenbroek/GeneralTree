@@ -2,25 +2,42 @@
 #include <Rcpp.h>
 #include <boost/bimap.hpp>
 
-typedef boost::bimap<int, SEXP> tree_mapping;
-typedef tree_mapping::value_type tree_map;
+#include <map>
+#include <utility>
+
+typedef boost::bimap<int, SEXP> uid_SEXP_bimap;
+typedef uid_SEXP_bimap::value_type uid_SEXP_pair;
+
+typedef std::pair<int, int> uid_uid_pair;
+typedef std::map<int, int> uid_to_uid_map;
 
 
-typedef struct _GeneralTree {
-    tree_mapping uid_to_id;
-    tree_mapping uid_to_data;
-    std::map <int, int> uid_to_child;
-    std::map <int, int> uid_to_parent;
+class GeneralTreeInternals {
+public:
+    uint uid_counter;
+    uid_SEXP_bimap uid_to_id;
+    uid_SEXP_bimap uid_to_data;
+    uid_to_uid_map uid_to_child;
+    uid_to_uid_map uid_to_parent;
     std::map <int, std::vector<int> > uid_to_siblings;
-} GeneralTree;
+
+    GeneralTreeInternals(SEXP root_id, SEXP root_data);
+
+    void add_node(SEXP parent, SEXP child, SEXP data);
+
+    int find_uid_given_id(SEXP id);
+    int find_uid_given_data(SEXP data);
+    int find_child_given_uid(int uid);
+};
+
 
 namespace Rcpp {
   /* Convert a bimap tree mapping to a R structure. */
-  template <> SEXP wrap(const tree_mapping& mapping) {
+  template <> SEXP wrap(const uid_SEXP_bimap& mapping) {
     std::vector<int> left_vector;
     std::vector<SEXP> right_vector;
 
-    for (tree_mapping::left_const_iterator id_iter = mapping.left.begin(),
+    for (uid_SEXP_bimap::left_const_iterator id_iter = mapping.left.begin(),
          iend = mapping.left.end();
          id_iter != iend; ++id_iter) {
       left_vector.push_back(id_iter->first);
@@ -31,26 +48,36 @@ namespace Rcpp {
   }
 
   /* Convert a R structure to a bimap tree mapping. */
-  template <> tree_mapping as(SEXP t_m_exp) {
+  template <> uid_SEXP_bimap as(SEXP t_m_exp) {
     List t_m = as<List>(t_m_exp);
     std::vector<int> left_vector = t_m["left"];
     std::vector<SEXP> right_vector = t_m["right"];
     std::vector<int>::iterator lit;
     std::vector<SEXP>::iterator rit;
 
-    tree_mapping result;
+    uid_SEXP_bimap result;
 
     for (lit = left_vector.begin(),
          rit = right_vector.begin();
          lit != left_vector.end();
          ++lit, ++rit) {
-      result.insert(tree_map(*lit, *rit));
+      result.insert(uid_SEXP_pair(*lit, *rit));
     }
 
     return(result);
   }
 
+  template <> SEXP wrap(const GeneralTreeInternals& gti) {
+    List lst = List::create();
+    lst["uid_counter"] = wrap(gti.uid_counter);
+    lst["uid_to_id"] = wrap(gti.uid_to_id);
+    lst["uid_to_data"] = wrap(gti.uid_to_data);
+    lst["uid_to_child"] = wrap(gti.uid_to_child);
+    lst["uid_to_parent"] = wrap(gti.uid_to_parent);
+    lst["uid_to_siblings"] = wrap(gti.uid_to_siblings);
 
+    return lst;
+  }
 
 }
 
@@ -63,34 +90,83 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 void
-add_child(List tree_data, SEXP parent_id, SEXP id, SEXP data)
+add_child(List gti, SEXP parent_id, SEXP id, SEXP data)
 {
-  /*
-  std::map <int, SEXP> map_id = tree_data[0];
-  std::map <int, SEXP> map_data = tree_data[1];
-  std::map <int, int> map_left_child = tree_data[2];
-  std::map <int, IntegerVector> map_sib = tree_data[3];
-  int unique_id = tree_data[4];
-*/
-  //TODO: detect whether the node already exists. Only required if specified.
-
 }
 
 // [[Rcpp::export]]
-  List
+List
 initialize_tree(SEXP id, SEXP data)
 {
-  tree_mapping uid_to_id;
-  std::map <int, SEXP> map_data;
-  std::map <int, int> map_left_child;
-  std::map <int, IntegerVector> map_sib;
-  int unique_id = 0;
-  unique_id++;
+  GeneralTreeInternals gti(id, data);
 
-  uid_to_id.insert(tree_map(unique_id, id));
-  //map_data.insert(std::pair<int, SEXP> (unique_id, data));
+  return wrap(gti);
+}
 
-  return List::create(uid_to_id, map_data, map_left_child, map_sib, unique_id) ;
+GeneralTreeInternals::GeneralTreeInternals(SEXP root_id, SEXP root_data)
+{
+  this->uid_counter = 0;
+
+  this->uid_to_id.insert(uid_SEXP_pair(this->uid_counter, root_id));
+  this->uid_to_data.insert(uid_SEXP_pair(this->uid_counter, root_data));
+
+  this->uid_counter++;
+}
+
+void
+GeneralTreeInternals::add_node(SEXP parent_id, SEXP child_id, SEXP data)
+{
+  // Resolve the uid
+  int parent_uid = this->find_uid_given_id(parent_id);
+  this->uid_to_id.insert(uid_SEXP_pair(this->uid_counter, child_id));
+  this->uid_to_data.insert(uid_SEXP_pair(this->uid_counter, data));
+  this->uid_to_parent.insert(uid_uid_pair(this->uid_counter, parent_uid));
+
+  // Verify whether childeren or siblings of the parent already exist.
+
+  this->uid_counter++;
+
+
+}
+
+
+int
+GeneralTreeInternals::find_uid_given_id(SEXP id)
+{
+  uid_SEXP_bimap::right_const_iterator id_iter =
+    this->uid_to_id.right.find(id);
+
+  if (id_iter == this->uid_to_id.right.end()) {
+    throw std::invalid_argument("Could not find id in tree.");
+  }
+
+  return id_iter->second;
+}
+
+int
+GeneralTreeInternals::find_uid_given_data(SEXP data)
+{
+  uid_SEXP_bimap::right_const_iterator data_iter =
+    this->uid_to_data.right.find(data);
+
+  if (data_iter == this->uid_to_id.right.end()) {
+    throw std::invalid_argument("Could not find data in tree.");
+  }
+
+  return data_iter->second;
+}
+
+int
+GeneralTreeInternals::find_child_given_uid(int uid)
+{
+  uid_to_uid_map::iterator child_iter =
+    this->uid_to_parent.find(uid);
+
+  if (child_iter == this->uid_to_parent.end()) {
+    throw std::invalid_argument("Could not find child in tree.");
+  }
+
+  return child_iter->second;
 }
 
 
