@@ -2,14 +2,23 @@
 #include <Rcpp.h>
 #include <boost/bimap.hpp>
 
-typedef boost::bimap<int, int> tree_mapping;
+typedef boost::bimap<int, SEXP> tree_mapping;
 typedef tree_mapping::value_type tree_map;
 
-namespace Rcpp {
-  template <> SEXP wrap( const tree_mapping& mapping) {
 
+typedef struct _GeneralTree {
+    tree_mapping uid_to_id;
+    tree_mapping uid_to_data;
+    std::map <int, int> uid_to_child;
+    std::map <int, int> uid_to_parent;
+    std::map <int, std::vector<int> > uid_to_siblings;
+} GeneralTree;
+
+namespace Rcpp {
+  /* Convert a bimap tree mapping to a R structure. */
+  template <> SEXP wrap(const tree_mapping& mapping) {
     std::vector<int> left_vector;
-    std::vector<int> right_vector;
+    std::vector<SEXP> right_vector;
 
     for (tree_mapping::left_const_iterator id_iter = mapping.left.begin(),
          iend = mapping.left.end();
@@ -20,6 +29,29 @@ namespace Rcpp {
 
     return List::create(Named("left") = wrap(left_vector), Named("right") = wrap(right_vector));
   }
+
+  /* Convert a R structure to a bimap tree mapping. */
+  template <> tree_mapping as(SEXP t_m_exp) {
+    List t_m = as<List>(t_m_exp);
+    std::vector<int> left_vector = t_m["left"];
+    std::vector<SEXP> right_vector = t_m["right"];
+    std::vector<int>::iterator lit;
+    std::vector<SEXP>::iterator rit;
+
+    tree_mapping result;
+
+    for (lit = left_vector.begin(),
+         rit = right_vector.begin();
+         lit != left_vector.end();
+         ++lit, ++rit) {
+      result.insert(tree_map(*lit, *rit));
+    }
+
+    return(result);
+  }
+
+
+
 }
 
 
@@ -46,7 +78,7 @@ add_child(List tree_data, SEXP parent_id, SEXP id, SEXP data)
 
 // [[Rcpp::export]]
   List
-initialize_tree(int id, SEXP data)
+initialize_tree(SEXP id, SEXP data)
 {
   tree_mapping uid_to_id;
   std::map <int, SEXP> map_data;
