@@ -16,18 +16,43 @@
 
 #' Benchmark function that measures the speed of the tree implementation.
 #'
+#' The current implementation tests tree creation, search and iteration and
+#' returns the results in a data frame.
+#'
+#' @param depth the depth of the test trees.
+#' @param number_of_splits the number of splits that should be benchmarked.
+#'                         This can either be a single number or vector.
+#' @param fraction_to_search the fraction ids in the tree that should be
+#'                           searched.
+#' @param times           The number of times a benchmark should be run.
+#' @return a data frame with the mean and median of each test.
 #' @export
 benchmarkGeneralTree <- function (depth = 4,
                                   number_of_splits = c(2, 4, 16),
                                   fraction_to_search = 0.5,
                                   times = 100L) {
-# nocov start
 
+  if (!is.numeric(depth))
+    stop("depth should be numeric")
+  else if (depth < 1)
+    stop("depth should be larger than 1")
+
+  if (!all(is.numeric(number_of_splits)))
+    stop("number_of_splits should be numeric or a vector of numerics")
+
+  if (!is.numeric(fraction_to_search))
+    stop("fraction_to_search should be numeric")
+  else if (fraction_to_search < 0.01 || fraction_to_search > 1)
+    stop("fraction_to_search should be within the 0.01 and 1 range")
+
+  if (!is.numeric(times))
+    stop("times should be numeric")
+  else if (times < 1)
+    stop("times should be strict positive")
 
   # Verify whether microbenchmark is installed.
   if (!("microbenchmark" %in% installed.packages()[, "Package"]))
     stop("Could not perform benchmark without the microbenchmark package.")
-
 
   create_tree <- function(number_of_childeren = 2) {
     idx <- 0
@@ -52,8 +77,10 @@ benchmarkGeneralTree <- function (depth = 4,
 
   search_tree <- function(tree) {
     all_ids <- sapply(tree$branchToList(), function(x) x$id)
-    ids_to_search <- sample(all_ids[1 : ceiling(length(all_ids) *
-                                                fraction_to_search)])
+    ids_to_search <- all_ids[1 : ceiling(length(all_ids) *
+                                                fraction_to_search)]
+    if (length(ids_to_search) > 2)
+        ids_to_search <- sample(ids_to_search)
     for (i in ids_to_search)
       tree$searchData(i)
   }
@@ -65,6 +92,17 @@ benchmarkGeneralTree <- function (depth = 4,
       ids_in_tree <- c(ids_in_tree, i$id)
       i <- tryCatch(i$nextElem(), error = function(e) NULL)
     }
+  }
+
+  foreach_iterate <- function(tree) {
+      return(NULL)
+  }
+
+  if (all(c("foreach", "iterator") %in% installed.packages()[, "Package"])) {
+      foreach_iterate <- function(tree) {
+          itx <- iterator::iter(tree, by = "id")
+          ids_in_tree <- foreach::foreach(i = itx, .combine = c) %do% c(i)
+      }
   }
 
 
@@ -91,8 +129,26 @@ benchmarkGeneralTree <- function (depth = 4,
     }), times = times))
     names(native_iter_res) <-  paste0(splits, "-native-iter")
 
+    foreach_iter_res <- list(summary(microbenchmark::microbenchmark({
+      foreach_iterate(tree)
+    }), times = times))
+    names(foreach_iter_res) <-  paste0(splits, "-foreach-iter")
 
-    raw_results <- c(raw_results, create_res, search_res, native_iter_res)
+    casting_df_res <- list(summary(microbenchmark::microbenchmark({
+      as.data.frame(tree)
+    }), times = times))
+    names(casting_df_res) <-  paste0(splits, "-casting-df")
+
+    tree_in_df <- as.data.frame(tree)
+    casting_gt_df_res <- list(summary(microbenchmark::microbenchmark({
+      as.GeneralTree(tree_in_df)
+    }), times = times))
+    names(casting_gt_df_res) <-  paste0(splits, "-casting-gt-df")
+
+    raw_results <- c(raw_results, create_res, search_res, native_iter_res,
+                     foreach_iter_res, casting_df_res, casting_gt_df_res)
+
+    rm(list = "tree")
   }
 
   result <- data.frame(row.names = names(raw_results),
@@ -101,5 +157,4 @@ benchmarkGeneralTree <- function (depth = 4,
 
 
   return (result)
-# nocov end
 }
