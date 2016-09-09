@@ -104,7 +104,7 @@ benchmarkGeneralTree <- function (depth = 4,
     require(foreach)
       foreach_iterate <- function(tree) {
           itx <- iterators::iter(tree, by = "id")
-          ids_in_tree <- foreach(i = itx, .combine = c) %do% c(i)
+          foreach(i = itx, .combine = c) %do% c(i)
       }
   }
 
@@ -150,7 +150,6 @@ benchmarkGeneralTree <- function (depth = 4,
     raw_results <- c(raw_results, create_res, search_res, native_iter_res,
                      foreach_iter_res, casting_df_res, casting_gt_df_res)
 
-    
     if (test_pryr) {
         raw_mem_result <- pryr::object_size(tree)
         names(raw_mem_result) <- paste0(splits, "-tree-size")
@@ -172,5 +171,5 @@ benchmarkGeneralTree <- function (depth = 4,
       mem_results <- NULL
   }
 
-  return (result)
+  return (list(computing_speed = result, memory_footprint = mem_results))
 }
