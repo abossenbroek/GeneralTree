@@ -54,6 +54,7 @@ build_script:
   - travis-tool.sh install_r microbenchmark
   - travis-tool.sh install_r rmarkdown
   - travis-tool.sh install_r doParallel
+  - travis-tool.sh install_r Rcpp
 
 test_script:
   - travis-tool.sh run_tests
