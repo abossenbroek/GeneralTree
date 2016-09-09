@@ -7,6 +7,7 @@
 | Coveralls     |[![Coverage Status](https://coveralls.io/repos/github/abossenbroek/GeneralTree/badge.svg?branch=master)](https://coveralls.io/github/abossenbroek/GeneralTree?branch=master) | [![Coverage Status](https://coveralls.io/repos/github/abossenbroek/GeneralTree/badge.svg?branch=develop)](https://coveralls.io/github/abossenbroek/GeneralTree?branch=develop) |
 
 [![Apache License](http://img.shields.io/badge/license-APACHE2-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/GeneralTree)](https://cran.r-project.org/package=GeneralTree)
 
 # GeneralTree
 This R package allows you to create trees with an arbitrary number of child
@@ -79,3 +80,8 @@ install_github('GeneralTree', username = 'abossenbroek')
 
 # License
 The GeneralTree package is licensed under the Apache V2.0 license.
+
+# Code of conduct
+Please note that this project is released with a [Contributor Code of
+Conduct](CONDUCT.md). By participating in this project you agree to abide by
+its terms.
