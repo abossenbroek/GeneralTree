@@ -3,7 +3,7 @@ Type: Package
 Title: General Tree Data Structure
 Version: 0.0.1
 Authors@R: person("Anton", "Bossenbroek", email = "anton.bossenbroek@me.com", role = c("aut", "cre"))
-Description: A general tree data structure implementation in R
+Description: A general tree data structure implementation in R.
 Depends: R (>= 3.2.4),
     R6 (>= 2.1.2),
     utils (>= 2.3.0)
