@@ -54,6 +54,8 @@ benchmarkGeneralTree <- function (depth = 4,
   if (!("microbenchmark" %in% utils::installed.packages()[, "Package"]))
     stop("Could not perform benchmark without the microbenchmark package.")
 
+  test_pryr <- ("pryr" %in% utils::installed.packages()[, "Package"])
+
   create_tree <- function(number_of_childeren = 2) {
     idx <- 0
     tree <- GeneralTree$new(id = idx, data = idx)
@@ -107,6 +109,7 @@ benchmarkGeneralTree <- function (depth = 4,
   }
 
   raw_results <- list()
+  mem_results <- list()
 
   for (splits in number_of_splits) {
     set.seed(10)
@@ -147,6 +150,14 @@ benchmarkGeneralTree <- function (depth = 4,
     raw_results <- c(raw_results, create_res, search_res, native_iter_res,
                      foreach_iter_res, casting_df_res, casting_gt_df_res)
 
+    
+    if (test_pryr) {
+        raw_mem_result <- pryr::object_size(tree)
+        names(raw_mem_result) <- paste0(splits, "-tree-size")
+
+        mem_results <- c(mem_results, raw_mem_result)
+    }
+
     rm(list = "tree")
   }
 
@@ -154,6 +165,12 @@ benchmarkGeneralTree <- function (depth = 4,
                         mean = sapply(raw_results, function(x) x$mean),
                         median = sapply(raw_results, function(x) x$median))
 
+  if (length(mem_results) > 0) {
+      mem_results <- data.frame(row.names = names(mem_results),
+                                size = unlist(mem_results))
+  } else {
+      mem_results <- NULL
+  }
 
   return (result)
 }

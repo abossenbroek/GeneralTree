@@ -19,7 +19,8 @@ Suggests: testthat,
     tools,
     rmarkdown,
     microbenchmark,
-    doParallel
+    doParallel,
+    pryr
 RoxygenNote: 5.0.1
 VignetteBuilder: knitr
 NeedsCompilation: no
