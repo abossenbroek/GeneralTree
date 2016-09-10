@@ -61,6 +61,31 @@ GeneralTreeInternal::GeneralTreeInternal()
 {
 }
 
+SEXP
+GeneralTreeInternal::get_value(SEXP key)
+{
+  if (!is_id_in_tree(key))
+    throw std::invalid_argument("get_value: Could not find id in tree.");
+
+  int uid = find_uid(key);
+  uid_to_SEXP_map::iterator value = uid_to_data.find(uid);
+
+  if (value == uid_to_data.end())
+    throw std::runtime_error("get_value: key was found in child but uid not"
+        " in data. Possible inconsistency");
+
+  return value->second;
+}
+
+bool
+GeneralTreeInternal::is_id_in_tree(SEXP id)
+{
+  uid_id_bimap::right_const_iterator id_iter =
+    this->uid_to_id.right.find(as<string>(id));
+
+  return id_iter != this->uid_to_id.right.end();
+}
+
 void
 GeneralTreeInternal::add_node(SEXP parent_id, SEXP child_id, SEXP data)
 {

@@ -40,3 +40,17 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// add_node
+SEXP add_node(SEXP gti_sexp, SEXP parent_id, SEXP id, SEXP data);
+RcppExport SEXP GeneralTree_add_node(SEXP gti_sexpSEXP, SEXP parent_idSEXP, SEXP idSEXP, SEXP dataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type parent_id(parent_idSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type id(idSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    __result = Rcpp::wrap(add_node(gti_sexp, parent_id, id, data));
+    return __result;
+END_RCPP
+}

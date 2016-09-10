@@ -18,13 +18,16 @@
 
 using namespace Rcpp;
 
-typedef boost::bimap<int, boost::bimaps::multiset_of<SEXP> > uid_SEXP_bimap;
 typedef boost::bimap<int, boost::bimaps::multiset_of<std::string> > uid_id_bimap;
-typedef uid_SEXP_bimap::value_type uid_SEXP_pair;
 typedef uid_id_bimap::value_type uid_id_pair;
 
 typedef std::pair<int, int> uid_uid_pair;
 typedef std::map<int, int> uid_to_uid_map;
+
+typedef std::pair<int, SEXP> uid_SEXP_pair;
+typedef std::map<int, SEXP> uid_to_SEXP_map;
+
+
 
 typedef std::vector<int> uids_list;
 
@@ -37,7 +40,7 @@ class GeneralTreeInternal {
 public:
   uint uid_counter;
   uid_id_bimap uid_to_id;
-  uid_SEXP_bimap uid_to_data;
+  uid_to_SEXP_map uid_to_data;
   uid_to_uid_map uid_to_child;
   uid_to_uid_map uid_to_parent;
   uid_to_uids_map uid_to_siblings;
@@ -55,6 +58,8 @@ public:
   void set_parent(int parent_uid, int child_uid);
   int get_parent(int child_uid);
   bool has_parent(int child_uid);
+  SEXP get_value(SEXP key);
+  bool is_id_in_tree(SEXP id);
 
   bool cmp(const GeneralTreeInternal& gti);
 };
