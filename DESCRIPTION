@@ -25,5 +25,5 @@ Suggests: testthat,
 RoxygenNote: 5.0.1
 VignetteBuilder: knitr
 NeedsCompilation: no
-LinkingTo: Rcpp, BH
+LinkingTo: Rcpp, BH, testthat
 Imports: Rcpp, BH
