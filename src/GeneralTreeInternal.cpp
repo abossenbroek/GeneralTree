@@ -38,6 +38,16 @@ cmp(SEXP gti_lhs, SEXP gti_rhs)
   return lhs->cmp(*(GeneralTreeInternal*)rhs);
 }
 
+// [[Rcpp::export]]
+SEXP
+add_node(SEXP gti_sexp, SEXP parent_id, SEXP id, SEXP data)
+{
+  gti_xptr gti(gti_sexp);
+  gti->add_node(parent_id, id, data);
+
+  return gti;
+}
+
 GeneralTreeInternal::GeneralTreeInternal(SEXP root_id, SEXP root_data)
 {
   this->uid_counter = 0;

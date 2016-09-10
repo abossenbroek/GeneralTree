@@ -13,3 +13,7 @@ cmp <- function(gti_lhs, gti_rhs) {
     .Call('GeneralTree_cmp', PACKAGE = 'GeneralTree', gti_lhs, gti_rhs)
 }
 
+add_node <- function(gti_sexp, parent_id, id, data) {
+    .Call('GeneralTree_add_node', PACKAGE = 'GeneralTree', gti_sexp, parent_id, id, data)
+}
+
