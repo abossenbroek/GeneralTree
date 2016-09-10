@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with GeneralTree.  If not, see <http://www.gnu.org/licenses/>.
 #
+
 #' A tree that can have multiple childeren per parent.
 #'
 #' This class allows to create a tree with multiple childs per node. The data

@@ -5,17 +5,18 @@
 
 using namespace Rcpp;
 
-// add_child
-void add_child(List gti, SEXP parent_id, SEXP id, SEXP data);
-RcppExport SEXP GeneralTree_add_child(SEXP gtiSEXP, SEXP parent_idSEXP, SEXP idSEXP, SEXP dataSEXP) {
+// add_node
+List add_node(List gti_param, SEXP parent_id, SEXP id, SEXP data);
+RcppExport SEXP GeneralTree_add_node(SEXP gti_paramSEXP, SEXP parent_idSEXP, SEXP idSEXP, SEXP dataSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< List >::type gti(gtiSEXP);
+    Rcpp::traits::input_parameter< List >::type gti_param(gti_paramSEXP);
     Rcpp::traits::input_parameter< SEXP >::type parent_id(parent_idSEXP);
     Rcpp::traits::input_parameter< SEXP >::type id(idSEXP);
     Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
-    add_child(gti, parent_id, id, data);
-    return R_NilValue;
+    __result = Rcpp::wrap(add_node(gti_param, parent_id, id, data));
+    return __result;
 END_RCPP
 }
 // initialize_tree
