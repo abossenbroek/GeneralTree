@@ -72,4 +72,22 @@ context("GeneralTreeInternal C++ works") {
     expect_true(gti.has_siblings(child_uid));
   }
 
+  test_that("correct exceptions") {
+    String child_id_string = "child";
+    String sibling_id_string = "sibling";
+    String root_id_string = "root";
+    SEXP root_id = wrap(root_id_string);
+    SEXP child_id = wrap(child_id_string);
+    SEXP sibling_id = wrap(sibling_id_string);
+    // Create a gti.
+    GeneralTreeInternal gti(root_id, root_id);
+    // Add child node.
+    gti.add_node(root_id, child_id, child_id);
+
+    expect_error(gti.find_uid_given_id(sibling_id));
+    expect_error(gti.find_child_given_uid(gti.uid_counter));
+    expect_error(gti.get_parent(gti.uid_counter));
+  }
+
+
 }
