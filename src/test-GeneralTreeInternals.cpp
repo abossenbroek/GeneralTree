@@ -133,6 +133,49 @@ context("GeneralTreeInternal can add siblings") {
     expect_true(gti.get_parent(sibling2_uid) == root_uid);
   }
 
+  test_that("we can add several siblings to the child under the root") {
+    String child_id_string = "child";
+    String child2_id_string = "child2";
+    String child3_id_string = "child3";
+    String root_id_string = "root";
+    String sibling_id_string = "sibling";
+    String sibling2_id_string = "sibling2";
+    String sibling3_id_string = "sibling3";
+    SEXP root_id = wrap(root_id_string);
+    SEXP child_id = wrap(child_id_string);
+    SEXP child2_id = wrap(child2_id_string);
+    SEXP child3_id = wrap(child3_id_string);
+    SEXP sibling_id = wrap(sibling_id_string);
+    SEXP sibling2_id = wrap(sibling2_id_string);
+    SEXP sibling3_id = wrap(sibling3_id_string);
+    // Create a gti.
+    GeneralTreeInternal gti(root_id, root_id);
+    // Add child node.
+    gti.add_node(root_id, child_id, child_id);
+    // Add fist sibling.
+    gti.add_node(root_id, sibling_id, sibling_id);
+    // Add child to first sibling.
+    gti.add_node(sibling_id, child2_id, child2_id);
+    // Add sibling to the last child.
+    gti.add_node(sibling_id, sibling2_id, sibling2_id);
+    // Add child to last sibling.
+    gti.add_node(sibling2_id, child3_id, child3_id);
+    gti.add_node(sibling2_id, sibling3_id, sibling3_id);
+
+    int root_uid = gti.find_uid_given_id(root_id);
+    int child_uid = gti.find_uid_given_id(child_id);
+    int child2_uid = gti.find_uid_given_id(child2_id);
+    int child3_uid = gti.find_uid_given_id(child3_id);
+    int sibling_uid = gti.find_uid_given_id(sibling_id);
+    int sibling2_uid = gti.find_uid_given_id(sibling2_id);
+    int sibling3_uid = gti.find_uid_given_id(sibling3_id);
+
+    // Verify whether all the getters return the proper result of the tree.
+    expect_true(gti.get_parent(child_uid) == root_uid);
+    expect_true(gti.get_parent(child3_uid) == sibling2_uid);
+    expect_true(gti.get_parent(sibling2_uid) == sibling_uid);
+    expect_true(gti.get_parent(sibling3_uid) == sibling2_uid);
+  }
 }
 
 context("GeneralTreeInternal correct exceptions are returned") {
