@@ -9,6 +9,8 @@
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
 
+#include <boost/shared_ptr.hpp>
+
 #include <map>
 #include <string>
 #include <utility>
@@ -60,6 +62,8 @@ public:
   bool has_parent(uid child_uid);
   SEXP get_value(SEXP key);
   bool is_id_in_tree(SEXP id);
+  boost::shared_ptr<uids_vector> get_childeren(uid parent_uid);
+  boost::shared_ptr<uids_vector> get_siblings(uid node_uid);
 
   bool cmp(const GeneralTreeInternal& gti);
 };

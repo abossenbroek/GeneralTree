@@ -1,7 +1,9 @@
 // [[Rcpp::depends(BH)]]
 #include <Rcpp.h>
 
-#include "string"
+#include <boost/shared_ptr.hpp>
+
+#include <string>
 
 #include "GeneralTreeInternal.h"
 
@@ -190,6 +192,10 @@ GeneralTreeInternal::has_siblings(uid node_uid) {
 void
 GeneralTreeInternal::add_sibling(uid origin_uid, uid sibling_uid)
 {
+  if (origin_uid == sibling_uid)
+    throw std::invalid_argument("Do not know how to add a sibling to the"
+        " same origin.");
+
   uid_to_uids_map::iterator origin_iter =
     this->uid_to_siblings.find(origin_uid);
 
@@ -249,4 +255,60 @@ GeneralTreeInternal::cmp(const GeneralTreeInternal& gti)
 
   // TODO: finish comparison implementation.
   return status;
+}
+
+
+boost::shared_ptr<uids_vector>
+GeneralTreeInternal::get_childeren(uid parent_uid)
+{
+  boost::shared_ptr<uids_vector> result(new uids_vector());
+
+  // Return empty list if this node does not have any childeren.
+  if (!has_child(parent_uid))
+    return result;
+
+  uid child_uid = find_child(parent_uid);
+  // Create a list with child and possible siblings.
+  result->push_back(child_uid);
+
+  // Add the siblings to the list if the node has any siblings.
+  if (has_siblings(child_uid)) {
+    boost::shared_ptr<uids_vector> sibling_uids = get_siblings(child_uid);
+    result->insert(result->end(), sibling_uids->begin(), sibling_uids->end());
+  }
+
+  return result;
+}
+
+boost::shared_ptr<uids_vector>
+GeneralTreeInternal::get_siblings(uid node_uid)
+{
+  boost::shared_ptr<uids_vector> result(new uids_vector());
+
+  if (!has_siblings(node_uid))
+    return result;
+
+  // Find the left most child of the parent of the node.
+  uid lchild_uid = find_child(get_parent(node_uid));
+
+  uid_to_uids_map::iterator uid_it = uid_to_siblings.find(lchild_uid);
+
+  // This should probably never happen but we want to make sure.
+  if (uid_it == uid_to_siblings.end())
+    throw std::runtime_error("get_siblings: uid was found as having siblings"
+        " but no data was found. Possible inconsistency.");
+
+  // Make sure that the result contains all the nodes under the parent.
+  result->push_back(lchild_uid);
+  result->insert(result->end(), uid_it->second.begin(), uid_it->second.end());
+
+  // Remove the node with which this function was called from the vector.
+  int node_position = 0;
+  for (int i = 0; i < result->size(); ++i) {
+    if (result->at(i) == node_uid)
+      node_position = i;
+  }
+  result->erase(result->begin() + node_position);
+
+  return result;
 }
