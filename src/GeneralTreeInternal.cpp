@@ -116,7 +116,7 @@ GeneralTreeInternal::add_node(SEXP parent_id, SEXP child_id, SEXP data)
   // Check whether the parent has a child.
   if (this->has_child(parent_uid)) {
     // Find the left child of this parent.
-    uid left_child = this->find_child(parent_uid);
+    uid left_child = this->get_lchild(parent_uid);
     // Add the new node to the existing child.
     this->add_sibling(left_child, this->uid_counter);
   } else {
@@ -144,7 +144,7 @@ GeneralTreeInternal::find_uid(SEXP id)
 }
 
 uid
-GeneralTreeInternal::find_child(uid parent_uid)
+GeneralTreeInternal::get_lchild(uid parent_uid)
 {
   uid_to_uid_map::iterator child_iter =
     this->uid_to_child.find(parent_uid);
@@ -179,7 +179,7 @@ GeneralTreeInternal::has_siblings(uid node_uid) {
 
   if (has_parent(node_uid)) {
     uid parent_uid = get_parent(node_uid);
-    uid child = find_child(parent_uid);
+    uid child = get_lchild(parent_uid);
 
     // If the child has a different uid than the one we got passed we can safely
     // conclude that this node has a sibling.
@@ -267,7 +267,7 @@ GeneralTreeInternal::get_childeren(uid parent_uid)
   if (!has_child(parent_uid))
     return result;
 
-  uid child_uid = find_child(parent_uid);
+  uid child_uid = get_lchild(parent_uid);
   // Create a list with child and possible siblings.
   result->push_back(child_uid);
 
@@ -289,7 +289,7 @@ GeneralTreeInternal::get_siblings(uid node_uid)
     return result;
 
   // Find the left most child of the parent of the node.
-  uid lchild_uid = find_child(get_parent(node_uid));
+  uid lchild_uid = get_lchild(get_parent(node_uid));
 
   uid_to_uids_map::iterator uid_it = uid_to_siblings.find(lchild_uid);
 

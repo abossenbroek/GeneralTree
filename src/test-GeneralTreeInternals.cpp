@@ -290,7 +290,7 @@ context("GeneralTreeInternal correct exceptions are returned") {
     gti.add_node(root_id, child_id, child_id);
 
     expect_error(gti.find_uid(sibling_id));
-    expect_error(gti.find_child(gti.uid_counter));
+    expect_error(gti.get_lchild(gti.uid_counter));
     expect_error(gti.get_parent(gti.uid_counter));
   }
 }
