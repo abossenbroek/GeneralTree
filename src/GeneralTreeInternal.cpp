@@ -5,6 +5,7 @@
 
 #include "GeneralTreeInternal.h"
 
+
 using namespace Rcpp;
 using namespace std;
 
@@ -46,7 +47,6 @@ GeneralTreeInternal::GeneralTreeInternal(SEXP root_id, SEXP root_data)
   this->uid_counter++;
 }
 
-// nocov start
 GeneralTreeInternal::GeneralTreeInternal()
 {
 }
@@ -101,9 +101,9 @@ int
 GeneralTreeInternal::find_child_given_uid(int uid)
 {
   uid_to_uid_map::iterator child_iter =
-    this->uid_to_parent.find(uid);
+    this->uid_to_child.find(uid);
 
-  if (child_iter == this->uid_to_parent.end()) {
+  if (child_iter == this->uid_to_child.end()) {
     throw std::invalid_argument("Could not find child in tree.");
   }
 
@@ -112,12 +112,22 @@ GeneralTreeInternal::find_child_given_uid(int uid)
 
 bool
 GeneralTreeInternal::has_child(int uid) {
+
+  Rcerr << "has_child: has_child(" << uid << ")" << std::endl;
+  Rcerr << "has_child: current content of uid_to_child" << std::endl;
+  for (int i = 0; i < uid_to_child.size(); ++i)
+    Rcerr << "has_child: [" << i << "]: " << uid_to_child[i] << std::endl;
+
   uid_to_uid_map::iterator child_iter =
     this->uid_to_child.find(uid);
+
+  Rcerr << "has_child: result " << (child_iter != this->uid_to_child.end()) << std::endl;
 
   return child_iter != this->uid_to_child.end();
 }
 
+//TODO: improve this function to ensure that if the node passed is a sibling it
+//can will return true.
 bool
 GeneralTreeInternal::has_siblings(int uid) {
   uid_to_uids_map::iterator sib_iter =
@@ -170,7 +180,6 @@ GeneralTreeInternal::get_parent(int child_uid)
 
   return par_iter->second;
 }
-// nocov end
 
 bool
 GeneralTreeInternal::cmp(const GeneralTreeInternal& gti)
