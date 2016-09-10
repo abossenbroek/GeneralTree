@@ -130,10 +130,26 @@ GeneralTreeInternal::has_child(int uid) {
 //can will return true.
 bool
 GeneralTreeInternal::has_siblings(int uid) {
+
+  // First try to find whether this node is present in uid_to_siblings.
   uid_to_uids_map::iterator sib_iter =
     this->uid_to_siblings.find(uid);
 
-  return sib_iter != this->uid_to_siblings.end();
+  if (sib_iter != this->uid_to_siblings.end()) {
+    return true;
+  }
+
+
+  if (has_parent(uid)) {
+    int parent_uid = get_parent(uid);
+    int child = find_child_given_uid(parent_uid);
+
+    // If the child has a different uid than the one we got passed we can safely
+    // conclude that this node has a sibling.
+    return child != uid;
+  }
+
+  return false;
 }
 
 void
@@ -151,7 +167,6 @@ GeneralTreeInternal::add_sibling(int origin_uid, int sibling_uid)
   int origin_parent_id = this->get_parent(origin_uid);
   this->set_parent(origin_parent_id, sibling_uid);
 }
-
 
 void
 GeneralTreeInternal::set_parent(int parent_uid, int child_uid)
@@ -181,6 +196,14 @@ GeneralTreeInternal::get_parent(int child_uid)
   return par_iter->second;
 }
 
+bool
+GeneralTreeInternal::has_parent(int child_uid)
+{
+  uid_to_uid_map::iterator par_iter =
+    this->uid_to_parent.find(child_uid);
+
+  return par_iter != this->uid_to_parent.end();
+}
 bool
 GeneralTreeInternal::cmp(const GeneralTreeInternal& gti)
 {

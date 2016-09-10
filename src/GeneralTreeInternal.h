@@ -54,6 +54,7 @@ public:
   void add_sibling(int origin_uid, int sibling_uid);
   void set_parent(int parent_uid, int child_uid);
   int get_parent(int child_uid);
+  bool has_parent(int child_uid);
 
   bool cmp(const GeneralTreeInternal& gti);
 };
