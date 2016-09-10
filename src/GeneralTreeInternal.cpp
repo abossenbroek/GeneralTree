@@ -9,31 +9,30 @@
 #include <utility>
 #include <string>
 
-#include "general_tree.h"
+#include "GeneralTreeInternal.h"
 
 using namespace Rcpp;
 
-// nocov start
 // [[Rcpp::export]]
-List
-add_node(List gti_param, SEXP parent_id, SEXP id, SEXP data)
-{
-  GeneralTreeInternals gti = as<GeneralTreeInternals>(gti_param);
-  gti.add_node(parent_id, id, data);
-
-  return wrap(gti);
-}
-
-// [[Rcpp::export]]
-List
+SEXP
 initialize_tree(SEXP id, SEXP data)
 {
-  GeneralTreeInternals gti(id, data);
+  GeneralTreeInternal* gti = new GeneralTreeInternal(id, data);
+  gti_xptr p(gti, true);
 
-  return wrap(gti);
+  return p;
 }
 
-GeneralTreeInternals::GeneralTreeInternals(SEXP root_id, SEXP root_data)
+// [[Rcpp::export]]
+SEXP
+dummy_pass(SEXP gti)
+{
+  gti_xptr p(gti);
+
+  return p;
+}
+
+GeneralTreeInternal::GeneralTreeInternal(SEXP root_id, SEXP root_data)
 {
   this->uid_counter = 0;
 
@@ -43,12 +42,12 @@ GeneralTreeInternals::GeneralTreeInternals(SEXP root_id, SEXP root_data)
   this->uid_counter++;
 }
 
-GeneralTreeInternals::GeneralTreeInternals()
+GeneralTreeInternal::GeneralTreeInternal()
 {
 }
 
 void
-GeneralTreeInternals::add_node(SEXP parent_id, SEXP child_id, SEXP data)
+GeneralTreeInternal::add_node(SEXP parent_id, SEXP child_id, SEXP data)
 {
   // Resolve the uid
   int parent_uid = 0;
@@ -81,7 +80,7 @@ GeneralTreeInternals::add_node(SEXP parent_id, SEXP child_id, SEXP data)
 }
 
 int
-GeneralTreeInternals::find_uid_given_id(SEXP id)
+GeneralTreeInternal::find_uid_given_id(SEXP id)
 {
   uid_id_bimap::right_const_iterator id_iter =
     this->uid_to_id.right.find(as<std::string>(id));
@@ -94,7 +93,7 @@ GeneralTreeInternals::find_uid_given_id(SEXP id)
 }
 
 int
-GeneralTreeInternals::find_child_given_uid(int uid)
+GeneralTreeInternal::find_child_given_uid(int uid)
 {
   uid_to_uid_map::iterator child_iter =
     this->uid_to_parent.find(uid);
@@ -107,7 +106,7 @@ GeneralTreeInternals::find_child_given_uid(int uid)
 }
 
 bool
-GeneralTreeInternals::has_child(int uid) {
+GeneralTreeInternal::has_child(int uid) {
   uid_to_uid_map::iterator child_iter =
     this->uid_to_child.find(uid);
 
@@ -115,7 +114,7 @@ GeneralTreeInternals::has_child(int uid) {
 }
 
 bool
-GeneralTreeInternals::has_siblings(int uid) {
+GeneralTreeInternal::has_siblings(int uid) {
   uid_to_uids_map::iterator sib_iter =
     this->uid_to_siblings.find(uid);
 
@@ -123,7 +122,7 @@ GeneralTreeInternals::has_siblings(int uid) {
 }
 
 void
-GeneralTreeInternals::add_sibling(int origin_uid, int sibling_uid)
+GeneralTreeInternal::add_sibling(int origin_uid, int sibling_uid)
 {
   uid_to_uids_map::iterator origin_iter =
     this->uid_to_siblings.find(origin_uid);
@@ -140,7 +139,7 @@ GeneralTreeInternals::add_sibling(int origin_uid, int sibling_uid)
 
 
 void
-GeneralTreeInternals::set_parent(int parent_uid, int child_uid)
+GeneralTreeInternal::set_parent(int parent_uid, int child_uid)
 {
   uid_to_uid_map::iterator par_iter =
     this->uid_to_parent.find(child_uid);
@@ -154,7 +153,7 @@ GeneralTreeInternals::set_parent(int parent_uid, int child_uid)
 }
 
 int
-GeneralTreeInternals::get_parent(int child_uid)
+GeneralTreeInternal::get_parent(int child_uid)
 {
   uid_to_uid_map::iterator par_iter =
     this->uid_to_parent.find(child_uid);
