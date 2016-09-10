@@ -47,9 +47,9 @@ public:
 
   void add_node(SEXP parent, SEXP child, SEXP data);
 
-  int find_uid_given_id(SEXP id);
-  int find_child_given_uid(int uid);
-  bool has_child(int uid);
+  int find_uid(SEXP id);
+  int find_child(int parent_uid);
+  bool has_child(int parent_uid);
   bool has_siblings(int uid);
   void add_sibling(int origin_uid, int sibling_uid);
   void set_parent(int parent_uid, int child_uid);

@@ -57,7 +57,7 @@ GeneralTreeInternal::add_node(SEXP parent_id, SEXP child_id, SEXP data)
   // Resolve the uid
   int parent_uid = 0;
   try {
-    parent_uid = this->find_uid_given_id(parent_id);
+    parent_uid = this->find_uid(parent_id);
   } catch (std::exception &ex) {
     forward_exception_to_r(ex);
   } catch (...) {
@@ -70,7 +70,7 @@ GeneralTreeInternal::add_node(SEXP parent_id, SEXP child_id, SEXP data)
   // Check whether the parent has a child.
   if (this->has_child(parent_uid)) {
     // Find the left child of this parent.
-    int left_child = this->find_child_given_uid(parent_uid);
+    int left_child = this->find_child(parent_uid);
     // Add the new node to the existing child.
     this->add_sibling(left_child, this->uid_counter);
   } else {
@@ -85,7 +85,7 @@ GeneralTreeInternal::add_node(SEXP parent_id, SEXP child_id, SEXP data)
 }
 
 int
-GeneralTreeInternal::find_uid_given_id(SEXP id)
+GeneralTreeInternal::find_uid(SEXP id)
 {
   uid_id_bimap::right_const_iterator id_iter =
     this->uid_to_id.right.find(as<string>(id));
@@ -98,10 +98,10 @@ GeneralTreeInternal::find_uid_given_id(SEXP id)
 }
 
 int
-GeneralTreeInternal::find_child_given_uid(int uid)
+GeneralTreeInternal::find_child(int parent_uid)
 {
   uid_to_uid_map::iterator child_iter =
-    this->uid_to_child.find(uid);
+    this->uid_to_child.find(parent_uid);
 
   if (child_iter == this->uid_to_child.end()) {
     throw std::invalid_argument("Could not find child in tree.");
@@ -111,23 +111,14 @@ GeneralTreeInternal::find_child_given_uid(int uid)
 }
 
 bool
-GeneralTreeInternal::has_child(int uid) {
-
-  Rcerr << "has_child: has_child(" << uid << ")" << std::endl;
-  Rcerr << "has_child: current content of uid_to_child" << std::endl;
-  for (int i = 0; i < uid_to_child.size(); ++i)
-    Rcerr << "has_child: [" << i << "]: " << uid_to_child[i] << std::endl;
+GeneralTreeInternal::has_child(int parent_uid) {
 
   uid_to_uid_map::iterator child_iter =
-    this->uid_to_child.find(uid);
-
-  Rcerr << "has_child: result " << (child_iter != this->uid_to_child.end()) << std::endl;
+    this->uid_to_child.find(parent_uid);
 
   return child_iter != this->uid_to_child.end();
 }
 
-//TODO: improve this function to ensure that if the node passed is a sibling it
-//can will return true.
 bool
 GeneralTreeInternal::has_siblings(int uid) {
 
@@ -142,7 +133,7 @@ GeneralTreeInternal::has_siblings(int uid) {
 
   if (has_parent(uid)) {
     int parent_uid = get_parent(uid);
-    int child = find_child_given_uid(parent_uid);
+    int child = find_child(parent_uid);
 
     // If the child has a different uid than the one we got passed we can safely
     // conclude that this node has a sibling.
@@ -204,6 +195,7 @@ GeneralTreeInternal::has_parent(int child_uid)
 
   return par_iter != this->uid_to_parent.end();
 }
+
 bool
 GeneralTreeInternal::cmp(const GeneralTreeInternal& gti)
 {
