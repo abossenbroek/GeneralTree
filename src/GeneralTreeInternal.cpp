@@ -76,8 +76,8 @@ GeneralTreeInternal::get_value(SEXP key)
   if (!is_id_in_tree(key))
     throw std::invalid_argument("get_value: Could not find id in tree.");
 
-  int uid = find_uid(key);
-  uid_to_SEXP_map::iterator value = uid_to_data.find(uid);
+  uid found_uid = find_uid(key);
+  uid_to_SEXP_map::iterator value = uid_to_data.find(found_uid);
 
   if (value == uid_to_data.end())
     throw std::runtime_error("get_value: key was found in child but uid not"
@@ -99,7 +99,7 @@ void
 GeneralTreeInternal::add_node(SEXP parent_id, SEXP child_id, SEXP data)
 {
   // Resolve the uid
-  int parent_uid = 0;
+  uid parent_uid = 0;
   try {
     parent_uid = this->find_uid(parent_id);
   } catch (std::exception &ex) {
@@ -114,7 +114,7 @@ GeneralTreeInternal::add_node(SEXP parent_id, SEXP child_id, SEXP data)
   // Check whether the parent has a child.
   if (this->has_child(parent_uid)) {
     // Find the left child of this parent.
-    int left_child = this->find_child(parent_uid);
+    uid left_child = this->find_child(parent_uid);
     // Add the new node to the existing child.
     this->add_sibling(left_child, this->uid_counter);
   } else {
@@ -128,7 +128,7 @@ GeneralTreeInternal::add_node(SEXP parent_id, SEXP child_id, SEXP data)
   this->uid_counter++;
 }
 
-int
+uid
 GeneralTreeInternal::find_uid(SEXP id)
 {
   uid_id_bimap::right_const_iterator id_iter =
@@ -141,8 +141,8 @@ GeneralTreeInternal::find_uid(SEXP id)
   return id_iter->second;
 }
 
-int
-GeneralTreeInternal::find_child(int parent_uid)
+uid
+GeneralTreeInternal::find_child(uid parent_uid)
 {
   uid_to_uid_map::iterator child_iter =
     this->uid_to_child.find(parent_uid);
@@ -155,7 +155,7 @@ GeneralTreeInternal::find_child(int parent_uid)
 }
 
 bool
-GeneralTreeInternal::has_child(int parent_uid) {
+GeneralTreeInternal::has_child(uid parent_uid) {
 
   uid_to_uid_map::iterator child_iter =
     this->uid_to_child.find(parent_uid);
@@ -164,47 +164,47 @@ GeneralTreeInternal::has_child(int parent_uid) {
 }
 
 bool
-GeneralTreeInternal::has_siblings(int uid) {
+GeneralTreeInternal::has_siblings(uid node_uid) {
 
   // First try to find whether this node is present in uid_to_siblings.
   uid_to_uids_map::iterator sib_iter =
-    this->uid_to_siblings.find(uid);
+    this->uid_to_siblings.find(node_uid);
 
   if (sib_iter != this->uid_to_siblings.end()) {
     return true;
   }
 
 
-  if (has_parent(uid)) {
-    int parent_uid = get_parent(uid);
-    int child = find_child(parent_uid);
+  if (has_parent(node_uid)) {
+    uid parent_uid = get_parent(node_uid);
+    uid child = find_child(parent_uid);
 
     // If the child has a different uid than the one we got passed we can safely
     // conclude that this node has a sibling.
-    return child != uid;
+    return child != node_uid;
   }
 
   return false;
 }
 
 void
-GeneralTreeInternal::add_sibling(int origin_uid, int sibling_uid)
+GeneralTreeInternal::add_sibling(uid origin_uid, uid sibling_uid)
 {
   uid_to_uids_map::iterator origin_iter =
     this->uid_to_siblings.find(origin_uid);
 
   if (origin_iter == this->uid_to_siblings.end()) {
     origin_iter = (this->uid_to_siblings.insert(uid_uids_pair(origin_uid,
-          std::vector<int>()))).first;
+          uids_vector()))).first;
   }
 
   origin_iter->second.push_back(sibling_uid);
-  int origin_parent_id = this->get_parent(origin_uid);
+  uid origin_parent_id = this->get_parent(origin_uid);
   this->set_parent(origin_parent_id, sibling_uid);
 }
 
 void
-GeneralTreeInternal::set_parent(int parent_uid, int child_uid)
+GeneralTreeInternal::set_parent(uid parent_uid, uid child_uid)
 {
   uid_to_uid_map::iterator par_iter =
     this->uid_to_parent.find(child_uid);
@@ -217,8 +217,8 @@ GeneralTreeInternal::set_parent(int parent_uid, int child_uid)
   }
 }
 
-int
-GeneralTreeInternal::get_parent(int child_uid)
+uid
+GeneralTreeInternal::get_parent(uid child_uid)
 {
   uid_to_uid_map::iterator par_iter =
     this->uid_to_parent.find(child_uid);
@@ -232,7 +232,7 @@ GeneralTreeInternal::get_parent(int child_uid)
 }
 
 bool
-GeneralTreeInternal::has_parent(int child_uid)
+GeneralTreeInternal::has_parent(uid child_uid)
 {
   uid_to_uid_map::iterator par_iter =
     this->uid_to_parent.find(child_uid);
