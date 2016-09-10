@@ -13,3 +13,7 @@ cmp <- function(gti_lhs, gti_rhs) {
     .Call('GeneralTree_cmp', PACKAGE = 'GeneralTree', gti_lhs, gti_rhs)
 }
 
+test <- function() {
+    .Call('GeneralTree_test', PACKAGE = 'GeneralTree')
+}
+

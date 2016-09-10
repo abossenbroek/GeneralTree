@@ -6,6 +6,14 @@
 #include <map>
 #include <vector>
 
+#include <boost/bimap.hpp>
+#include <boost/bimap/multiset_of.hpp>
+
+#include <map>
+#include <string>
+#include <utility>
+
+
 // nocov start
 
 using namespace Rcpp;

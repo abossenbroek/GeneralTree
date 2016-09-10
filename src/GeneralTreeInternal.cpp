@@ -1,17 +1,12 @@
 // [[Rcpp::depends(BH)]]
 #include <Rcpp.h>
-#include <boost/bimap.hpp>
-#include <boost/bimap/multiset_of.hpp>
 
-#include <boost/any.hpp>
-
-#include <map>
-#include <utility>
-#include <string>
+#include "string"
 
 #include "GeneralTreeInternal.h"
 
 using namespace Rcpp;
+using namespace std;
 
 // [[Rcpp::export]]
 SEXP
@@ -42,16 +37,22 @@ cmp(SEXP gti_lhs, SEXP gti_rhs)
   return lhs->cmp(*(GeneralTreeInternal*)rhs);
 }
 
+// [[Rcpp::export]]
+LogicalVector
+test() {
+  return true;
+}
+
 GeneralTreeInternal::GeneralTreeInternal(SEXP root_id, SEXP root_data)
 {
   this->uid_counter = 0;
-
-  this->uid_to_id.insert(uid_id_pair(this->uid_counter, as<std::string>(root_id)));
+  this->uid_to_id.insert(uid_id_pair(this->uid_counter, as<string>(root_id)));
   this->uid_to_data.insert(uid_SEXP_pair(this->uid_counter, root_data));
 
   this->uid_counter++;
 }
 
+// nocov start
 GeneralTreeInternal::GeneralTreeInternal()
 {
 }
@@ -68,7 +69,7 @@ GeneralTreeInternal::add_node(SEXP parent_id, SEXP child_id, SEXP data)
   } catch (...) {
     ::Rf_error("c++ exception (unknown reason)");
   }
-  this->uid_to_id.insert(uid_id_pair(this->uid_counter, as<std::string>(child_id)));
+  this->uid_to_id.insert(uid_id_pair(this->uid_counter, as<string>(child_id)));
   this->uid_to_data.insert(uid_SEXP_pair(this->uid_counter, data));
   this->uid_to_parent.insert(uid_uid_pair(this->uid_counter, parent_uid));
 
@@ -93,7 +94,7 @@ int
 GeneralTreeInternal::find_uid_given_id(SEXP id)
 {
   uid_id_bimap::right_const_iterator id_iter =
-    this->uid_to_id.right.find(as<std::string>(id));
+    this->uid_to_id.right.find(as<string>(id));
 
   if (id_iter == this->uid_to_id.right.end()) {
     throw std::invalid_argument("Could not find id in tree.");
@@ -175,11 +176,15 @@ GeneralTreeInternal::get_parent(int child_uid)
 
   return par_iter->second;
 }
+// nocov end
 
 bool
 GeneralTreeInternal::cmp(const GeneralTreeInternal& gti)
 {
+  bool status = true;
+
+  status = status && (this->uid_counter == gti.uid_counter);
+
   // TODO: finish comparison implementation.
-  return this->uid_counter == gti.uid_counter;
+  return status;
 }
-// nocov end
