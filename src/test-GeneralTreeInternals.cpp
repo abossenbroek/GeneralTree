@@ -77,7 +77,7 @@ context("GeneralTreeInternal can add childeren directly under each other") {
 
 
 context("GeneralTreeInternal can add siblings") {
-  test_that("we can add a sibling to the child uner the root") {
+  test_that("we can add a sibling to the child under the root") {
     String child_id_string = "child";
     String sibling_id_string = "sibling";
     String root_id_string = "root";
@@ -100,6 +100,39 @@ context("GeneralTreeInternal can add siblings") {
     expect_true(gti.has_child(root_uid));
     expect_true(gti.get_parent(sibling_uid) == root_uid);
   }
+
+  test_that("we can add several siblings to the child under the root") {
+    String child_id_string = "child";
+    String root_id_string = "root";
+    String sibling_id_string = "sibling";
+    String sibling2_id_string = "sibling2";
+    SEXP root_id = wrap(root_id_string);
+    SEXP child_id = wrap(child_id_string);
+    SEXP sibling_id = wrap(sibling_id_string);
+    SEXP sibling2_id = wrap(sibling2_id_string);
+    // Create a gti.
+    GeneralTreeInternal gti(root_id, root_id);
+    // Add child node.
+    gti.add_node(root_id, child_id, child_id);
+    gti.add_node(root_id, sibling_id, sibling_id);
+    gti.add_node(root_id, sibling2_id, sibling2_id);
+
+    int root_uid = gti.find_uid_given_id(root_id);
+    int child_uid = gti.find_uid_given_id(child_id);
+    int sibling_uid = gti.find_uid_given_id(sibling_id);
+    int sibling2_uid = gti.find_uid_given_id(sibling2_id);
+
+    // Verify whether all the getters return the proper result of the tree.
+    expect_true(gti.has_siblings(child_uid));
+    expect_true(gti.has_siblings(sibling_uid));
+    expect_true(gti.has_siblings(sibling2_uid));
+    expect_false(gti.has_child(child_uid));
+    expect_false(gti.has_child(sibling_uid));
+    expect_false(gti.has_child(sibling2_uid));
+    expect_true(gti.has_child(root_uid));
+    expect_true(gti.get_parent(sibling2_uid) == root_uid);
+  }
+
 }
 
 context("GeneralTreeInternal correct exceptions are returned") {
