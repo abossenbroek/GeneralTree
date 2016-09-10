@@ -48,6 +48,15 @@ add_node(SEXP gti_sexp, SEXP parent_id, SEXP id, SEXP data)
   return gti;
 }
 
+// [[Rcpp::export]]
+SEXP
+get_value(SEXP gti_sexp, SEXP key)
+{
+  gti_xptr gti(gti_sexp);
+
+  return gti->get_value(key);
+}
+
 GeneralTreeInternal::GeneralTreeInternal(SEXP root_id, SEXP root_data)
 {
   this->uid_counter = 0;

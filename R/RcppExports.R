@@ -17,3 +17,7 @@ add_node <- function(gti_sexp, parent_id, id, data) {
     .Call('GeneralTree_add_node', PACKAGE = 'GeneralTree', gti_sexp, parent_id, id, data)
 }
 
+get_value <- function(gti_sexp, key) {
+    .Call('GeneralTree_get_value', PACKAGE = 'GeneralTree', gti_sexp, key)
+}
+

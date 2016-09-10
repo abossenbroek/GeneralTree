@@ -54,3 +54,15 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// get_value
+SEXP get_value(SEXP gti_sexp, SEXP key);
+RcppExport SEXP GeneralTree_get_value(SEXP gti_sexpSEXP, SEXP keySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type key(keySEXP);
+    __result = Rcpp::wrap(get_value(gti_sexp, key));
+    return __result;
+END_RCPP
+}
