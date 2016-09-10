@@ -37,12 +37,6 @@ cmp(SEXP gti_lhs, SEXP gti_rhs)
   return lhs->cmp(*(GeneralTreeInternal*)rhs);
 }
 
-// [[Rcpp::export]]
-LogicalVector
-test() {
-  return true;
-}
-
 GeneralTreeInternal::GeneralTreeInternal(SEXP root_id, SEXP root_data)
 {
   this->uid_counter = 0;

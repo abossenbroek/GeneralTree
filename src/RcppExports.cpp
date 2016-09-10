@@ -40,13 +40,3 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// test
-LogicalVector test();
-RcppExport SEXP GeneralTree_test() {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    __result = Rcpp::wrap(test());
-    return __result;
-END_RCPP
-}
