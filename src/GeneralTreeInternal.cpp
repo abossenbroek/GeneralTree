@@ -25,11 +25,21 @@ initialize_tree(SEXP id, SEXP data)
 
 // [[Rcpp::export]]
 SEXP
-dummy_pass(SEXP gti)
+pass_gti_xptr(SEXP gti)
 {
   gti_xptr p(gti);
 
   return p;
+}
+
+// [[Rcpp::export]]
+LogicalVector
+cmp(SEXP gti_lhs, SEXP gti_rhs)
+{
+  gti_xptr lhs(gti_lhs);
+  gti_xptr rhs(gti_rhs);
+
+  return lhs->cmp(*(GeneralTreeInternal*)rhs);
 }
 
 GeneralTreeInternal::GeneralTreeInternal(SEXP root_id, SEXP root_data)
@@ -166,5 +176,10 @@ GeneralTreeInternal::get_parent(int child_uid)
   return par_iter->second;
 }
 
-
+bool
+GeneralTreeInternal::cmp(const GeneralTreeInternal& gti)
+{
+  // TODO: finish comparison implementation.
+  return this->uid_counter == gti.uid_counter;
+}
 // nocov end

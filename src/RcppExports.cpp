@@ -5,22 +5,8 @@
 
 using namespace Rcpp;
 
-// add_node
-List add_node(List gti_param, SEXP parent_id, SEXP id, SEXP data);
-RcppExport SEXP GeneralTree_add_node(SEXP gti_paramSEXP, SEXP parent_idSEXP, SEXP idSEXP, SEXP dataSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< List >::type gti_param(gti_paramSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type parent_id(parent_idSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type id(idSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
-    __result = Rcpp::wrap(add_node(gti_param, parent_id, id, data));
-    return __result;
-END_RCPP
-}
 // initialize_tree
-List initialize_tree(SEXP id, SEXP data);
+SEXP initialize_tree(SEXP id, SEXP data);
 RcppExport SEXP GeneralTree_initialize_tree(SEXP idSEXP, SEXP dataSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
@@ -28,6 +14,29 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type id(idSEXP);
     Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
     __result = Rcpp::wrap(initialize_tree(id, data));
+    return __result;
+END_RCPP
+}
+// pass_gti_xptr
+SEXP pass_gti_xptr(SEXP gti);
+RcppExport SEXP GeneralTree_pass_gti_xptr(SEXP gtiSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti(gtiSEXP);
+    __result = Rcpp::wrap(pass_gti_xptr(gti));
+    return __result;
+END_RCPP
+}
+// cmp
+LogicalVector cmp(SEXP gti_lhs, SEXP gti_rhs);
+RcppExport SEXP GeneralTree_cmp(SEXP gti_lhsSEXP, SEXP gti_rhsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_lhs(gti_lhsSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type gti_rhs(gti_rhsSEXP);
+    __result = Rcpp::wrap(cmp(gti_lhs, gti_rhs));
     return __result;
 END_RCPP
 }

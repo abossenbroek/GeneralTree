@@ -23,6 +23,8 @@ typedef std::vector<int> uids_list;
 typedef std::map<int, uids_list> uid_to_uids_map;
 typedef std::pair<int, std::vector<int> > uid_uids_pair;
 
+class GeneralTreeInternal;
+
 class GeneralTreeInternal {
 public:
   uint uid_counter;
@@ -44,6 +46,8 @@ public:
   void add_sibling(int origin_uid, int sibling_uid);
   void set_parent(int parent_uid, int child_uid);
   int get_parent(int child_uid);
+
+  bool cmp(const GeneralTreeInternal& gti);
 };
 
 namespace Rcpp {
