@@ -255,15 +255,9 @@ context("GeneralTreeInternal get_childeren_uid and get_siblings_uid work") {
     int sibling_uid = gti.find_uid(sibling_id);
     int sibling2_uid = gti.find_uid(sibling2_id);
     int sibling3_uid = gti.find_uid(sibling3_id);
-    uids_vector first_level;
-    first_level.push_back(child_uid);
-    first_level.push_back(sibling_uid);
-
-    uids_vector siblings_of_child;
-    siblings_of_child.push_back(sibling_uid);
-
-    uids_vector siblings_of_sibling;
-    siblings_of_sibling.push_back(child_uid);
+    uids_vector first_level = {child_uid, sibling_uid};
+    uids_vector siblings_of_child = {sibling_uid};
+    uids_vector siblings_of_sibling = {child_uid};
 
 
     // Verify whether all the getters return the proper result of the tree.
@@ -311,15 +305,9 @@ context("GeneralTreeInternal get_childeren_uid and get_siblings_uid work") {
     int sibling_uid = gti.find_uid(sibling_id);
     int sibling2_uid = gti.find_uid(sibling2_id);
     int sibling3_uid = gti.find_uid(sibling3_id);
-    std::vector<tree_key> first_level;
-    first_level.push_back(child_id_string);
-    first_level.push_back(sibling_id_string);
-
-    std::vector<tree_key> siblings_of_child;
-    siblings_of_child.push_back(sibling_id_string);
-
-    std::vector<tree_key> siblings_of_sibling;
-    siblings_of_sibling.push_back(child_id_string);
+    std::vector<tree_key> first_level = {child_id_string, sibling_id_string};
+    std::vector<tree_key> siblings_of_child = {sibling_id_string};
+    std::vector<tree_key> siblings_of_sibling = {child_id_string};
 
 
     // Verify whether all the getters return the proper result of the tree.
@@ -331,7 +319,6 @@ context("GeneralTreeInternal get_childeren_uid and get_siblings_uid work") {
     expect_true((*gti.get_siblings_keys(sibling_uid)) == siblings_of_sibling);
   }
 
-  //TODO: finish correcting tests.
   test_that("we get the right keys") {
     String child_id_string = "child";
     String child2_id_string = "child2";
@@ -368,16 +355,9 @@ context("GeneralTreeInternal get_childeren_uid and get_siblings_uid work") {
     int sibling_uid = gti.find_uid(sibling_id);
     int sibling2_uid = gti.find_uid(sibling2_id);
     int sibling3_uid = gti.find_uid(sibling3_id);
-    std::vector<SEXP> first_level;
-    first_level.push_back(child_id);
-    first_level.push_back(sibling_id);
-
-    std::vector<SEXP> siblings_of_child;
-    siblings_of_child.push_back(sibling_id);
-
-    std::vector<SEXP> siblings_of_sibling;
-    siblings_of_sibling.push_back(child_id);
-
+    std::vector<SEXP> first_level = {child_id, sibling_id};
+    std::vector<SEXP> siblings_of_child = {sibling_id};
+    std::vector<SEXP> siblings_of_sibling = {child_id};
 
     // Verify whether all the getters return the proper result of the tree.
     expect_true(gti.get_siblings_values(root_uid)->size() == 0);
