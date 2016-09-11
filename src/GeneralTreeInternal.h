@@ -1,3 +1,4 @@
+// [[Rcpp::plugins(cpp11)]]
 #ifndef _GENERALTREEINTERNALS_H_
 #define _GENERALTREEINTERNALS_H_
 

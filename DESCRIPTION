@@ -27,3 +27,4 @@ VignetteBuilder: knitr
 NeedsCompilation: no
 LinkingTo: Rcpp, BH, testthat
 Imports: Rcpp, BH
+SystemRequirements: C++11

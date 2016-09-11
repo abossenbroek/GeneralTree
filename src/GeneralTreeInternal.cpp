@@ -1,4 +1,5 @@
 // [[Rcpp::depends(BH)]]
+// [[Rcpp::plugins(cpp11)]]
 #include <Rcpp.h>
 
 #include <boost/shared_ptr.hpp>
@@ -7,57 +8,8 @@
 
 #include "GeneralTreeInternal.h"
 
-
 using namespace Rcpp;
 using namespace std;
-
-// [[Rcpp::export]]
-SEXP
-initialize_tree(SEXP id, SEXP data)
-{
-  GeneralTreeInternal* gti = new GeneralTreeInternal(id, data);
-  gti_xptr p(gti, true);
-
-  return p;
-}
-
-// [[Rcpp::export]]
-SEXP
-pass_gti_xptr(SEXP gti)
-{
-  gti_xptr p(gti);
-
-  return p;
-}
-
-// [[Rcpp::export]]
-LogicalVector
-cmp(SEXP gti_lhs, SEXP gti_rhs)
-{
-  gti_xptr lhs(gti_lhs);
-  gti_xptr rhs(gti_rhs);
-
-  return lhs->cmp(*(GeneralTreeInternal*)rhs);
-}
-
-// [[Rcpp::export]]
-SEXP
-add_node(SEXP gti_sexp, SEXP parent_id, SEXP id, SEXP data)
-{
-  gti_xptr gti(gti_sexp);
-  gti->add_node(parent_id, id, data);
-
-  return gti;
-}
-
-// [[Rcpp::export]]
-SEXP
-get_value(SEXP gti_sexp, SEXP key)
-{
-  gti_xptr gti(gti_sexp);
-
-  return gti->get_value(key);
-}
 
 GeneralTreeInternal::GeneralTreeInternal(SEXP root_id, SEXP root_data)
 {
@@ -313,10 +265,10 @@ GeneralTreeInternal::get_siblings_uid(uid node_uid)
   return result;
 }
 
-boost::shared_ptr<std::vector<std::string> >
+boost::shared_ptr<std::vector<tree_key> >
 GeneralTreeInternal::get_childeren_keys(uid parent_uid)
 {
-  boost::shared_ptr<std::vector<std::string> > result(new std::vector<std::string>);
+  boost::shared_ptr<std::vector<tree_key> > result(new std::vector<tree_key>);
 
   if (!has_child(parent_uid))
     return result;
@@ -329,10 +281,10 @@ GeneralTreeInternal::get_childeren_keys(uid parent_uid)
   return result;
 }
 
-boost::shared_ptr<std::vector<std::string> >
+boost::shared_ptr<std::vector<tree_key> >
 GeneralTreeInternal::get_siblings_keys(uid node_uid)
 {
-  boost::shared_ptr<std::vector<std::string> > result(new std::vector<std::string>);
+  boost::shared_ptr<std::vector<tree_key> > result(new std::vector<tree_key>);
 
   if (!has_siblings(node_uid))
     return result;
@@ -345,7 +297,7 @@ GeneralTreeInternal::get_siblings_keys(uid node_uid)
   return result;
 }
 
-string
+tree_key
 GeneralTreeInternal::find_key(uid node_uid)
 {
   uid_id_bimap::left_const_iterator id_iter =
@@ -359,12 +311,12 @@ GeneralTreeInternal::find_key(uid node_uid)
 }
 
 SEXP
-GeneralTreeInternal::find_value(uid node_uid)
+GeneralTreeInternal::get_value(uid node_uid)
 {
   uid_to_SEXP_map::iterator value = uid_to_data.find(node_uid);
 
   if (value == uid_to_data.end())
-    throw std::runtime_error("find_value: key was found in child but uid not"
+    throw std::runtime_error("get_value: key was found in child but uid not"
         " in data. Possible inconsistency");
 
   return value->second;
@@ -383,7 +335,7 @@ GeneralTreeInternal::get_childeren_values(uid parent_uid)
   boost::shared_ptr<uids_vector> childeren = get_childeren_uid(parent_uid);
 
   for (int i = 0; i < childeren->size(); ++i)
-    result->push_back(find_value(childeren->at(i)));
+    result->push_back(get_value(childeren->at(i)));
 
   return result;
 }
@@ -399,7 +351,7 @@ GeneralTreeInternal::get_siblings_values(uid node_uid)
   boost::shared_ptr<uids_vector> siblings = get_siblings_uid(node_uid);
 
   for (int i = 0; i < siblings->size(); ++i)
-    result->push_back(find_value(siblings->at(i)));
+    result->push_back(get_value(siblings->at(i)));
 
   return result;
 }
