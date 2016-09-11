@@ -4567,8 +4567,10 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: getting path to test for testthat Catch headers" >&5
 $as_echo "$as_me: getting path to test for testthat Catch headers" >&6;}
 TESTTHAT_INCLUDE_DIR=`"${R_BIN}" --vanilla --slave -q -e "suppressWarnings(try(cat(tools::file_path_as_absolute(base::system.file(package='testthat','include','testthat',mustWork=FALSE))),silent=TRUE))"`
+BOOST_INCLUDE_DIR=`"${R_BIN}" --vanilla --slave -q -e "suppressWarnings(try(cat(tools::file_path_as_absolute(base::system.file(package='BH','include',mustWork=FALSE))),silent=TRUE))"`
+
 # maybe a better way, but I need to have the testthat package include dir in the pre-processor include directories:
-CPPFLAGS="$CPPFLAGS -I$TESTTHAT_INCLUDE_DIR"
+CPPFLAGS="$CPPFLAGS -I$TESTTHAT_INCLUDE_DIR -I$BOOST_INCLUDE_DIR"
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4723,6 +4725,18 @@ else
   { $as_echo "$as_me:${as_lineno-$LINENO}: testthat headers for Catch tests not found" >&5
 $as_echo "$as_me: testthat headers for Catch tests not found" >&6;}
 fi
+
+
+ac_fn_cxx_check_header_mongrel "$LINENO" "boost/bimap.hpp" "ac_cv_header_boost_bimap_hpp" "$ac_includes_default"
+if test "x$ac_cv_header_boost_bimap_hpp" = xyes; then :
+
+$as_echo "#define HAVE_BOOST_BIMAP_HPP 1" >>confdefs.h
+
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: boost bimap headers not found" >&5
+$as_echo "$as_me: boost bimap headers not found" >&6;}
+fi
+
 
 
 ac_ext=cpp
