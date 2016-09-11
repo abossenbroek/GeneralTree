@@ -8,14 +8,16 @@
 #include <string>
 
 #include "GeneralTreeInternal.h"
+#include "key_visitor.h"
 
 using namespace Rcpp;
 using namespace std;
 
 GeneralTreeInternal::GeneralTreeInternal(SEXP root_id, SEXP root_data)
 {
-  this->uid_counter = 0;
-  this->uid_to_id.insert(uid_id_pair(this->uid_counter, as<string>(root_id)));
+  uid_counter = 0;
+  shared_ptr<tree_key> root_key = add_mapping(uid_counter, root_id, type_mapping);
+  this->uid_to_id.insert(uid_id_pair(this->uid_counter, *root_key));
   this->uid_to_data.insert(uid_SEXP_pair(this->uid_counter, root_data));
 
   this->uid_counter++;
@@ -279,7 +281,6 @@ GeneralTreeInternal::get_childeren_keys(uid parent_uid)
 
   transform(childeren->begin(), childeren->end(), back_inserter(*result),
       [this](uid& x){ return find_key(x); } );
-
 
   return result;
 }

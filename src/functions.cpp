@@ -6,6 +6,7 @@
 #include <string>
 
 
+#include "tree_types.h"
 #include "GeneralTreeInternal.h"
 
 using namespace Rcpp;

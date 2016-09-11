@@ -8,6 +8,7 @@
 #include <map>
 #include <vector>
 
+#include <boost/variant.hpp>
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
 
@@ -18,35 +19,21 @@
 #include <utility>
 #include <memory>
 
+#include "tree_types.h"
+#include "key_visitor.h"
 
 // nocov start
 
 using namespace Rcpp;
 
-typedef std::string tree_key;
-
-typedef boost::bimap<int, boost::bimaps::multiset_of<tree_key> > uid_id_bimap;
-typedef uid_id_bimap::value_type uid_id_pair;
-
-typedef std::pair<int, int> uid_uid_pair;
-typedef std::map<int, int> uid_to_uid_map;
-
-typedef std::pair<int, SEXP> uid_SEXP_pair;
-typedef std::map<int, SEXP> uid_to_SEXP_map;
-
-typedef int uid;
-
-typedef std::vector<uid> uids_vector;
-
-typedef std::map<int, uids_vector> uid_to_uids_map;
-typedef std::pair<int, std::vector<int> > uid_uids_pair;
-
-
 class GeneralTreeInternal;
 
 class GeneralTreeInternal {
+private:
+  uid_to_SEXP_map type_mapping;
+
 public:
-  unsigned int uid_counter;
+  uid uid_counter;
   uid_id_bimap uid_to_id;
   uid_to_SEXP_map uid_to_data;
   uid_to_uid_map uid_to_child;
