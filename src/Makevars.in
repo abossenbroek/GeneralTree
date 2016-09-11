@@ -1,0 +1,4 @@
+# update Makevars.win when Makevars.in changes
+#PKG_CXXFLAGS = -I.  @CXX11_FLAG@ @BOOST_CPPFLAGS@
+PKG_CXXFLAGS = -I.  @CXX11_FLAG@
+PKG_LIBS =  @LIBS@

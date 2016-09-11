@@ -50,7 +50,7 @@ AC_PROG_CXX
 AC_TYPE_SIZE_T
 AC_C_INLINE
 
-BOOST_REQUIRE([1.60.0])
+#BOOST_REQUIRE([1.60.0])
 
 # this only works in C++, since it is a C++ system header...
 AC_LANG_PUSH([C++])
