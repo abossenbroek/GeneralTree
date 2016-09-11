@@ -46,7 +46,7 @@ class GeneralTreeInternal;
 
 class GeneralTreeInternal {
 public:
-  uint uid_counter;
+  unsigned int uid_counter;
   uid_id_bimap uid_to_id;
   uid_to_SEXP_map uid_to_data;
   uid_to_uid_map uid_to_child;
