@@ -357,3 +357,51 @@ GeneralTreeInternal::find_key(uid node_uid)
 
   return id_iter->second;
 }
+
+SEXP
+GeneralTreeInternal::find_value(uid node_uid)
+{
+  uid_to_SEXP_map::iterator value = uid_to_data.find(node_uid);
+
+  if (value == uid_to_data.end())
+    throw std::runtime_error("find_value: key was found in child but uid not"
+        " in data. Possible inconsistency");
+
+  return value->second;
+}
+
+
+
+boost::shared_ptr<std::vector<SEXP> >
+GeneralTreeInternal::get_childeren_values(uid parent_uid)
+{
+  boost::shared_ptr<std::vector<SEXP> > result(new std::vector<SEXP>);
+
+  if (!has_child(parent_uid))
+    return result;
+
+  boost::shared_ptr<uids_vector> childeren = get_childeren_uid(parent_uid);
+
+  for (int i = 0; i < childeren->size(); ++i)
+    result->push_back(find_value(childeren->at(i)));
+
+  return result;
+}
+
+boost::shared_ptr<std::vector<SEXP> >
+GeneralTreeInternal::get_siblings_values(uid node_uid)
+{
+  boost::shared_ptr<std::vector<SEXP> > result(new std::vector<SEXP>);
+
+  if (!has_siblings(node_uid))
+    return result;
+
+  boost::shared_ptr<uids_vector> siblings = get_siblings_uid(node_uid);
+
+  for (int i = 0; i < siblings->size(); ++i)
+    result->push_back(find_value(siblings->at(i)));
+
+  return result;
+}
+
+

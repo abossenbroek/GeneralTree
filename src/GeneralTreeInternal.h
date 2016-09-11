@@ -68,6 +68,10 @@ public:
   boost::shared_ptr<std::vector<std::string> > get_childeren_keys(uid
       parent_uid);
   boost::shared_ptr<std::vector<std::string> > get_siblings_keys(uid node_uid);
+  boost::shared_ptr<std::vector<SEXP> > get_childeren_values(uid
+      parent_uid);
+  boost::shared_ptr<std::vector<SEXP> > get_siblings_values(uid node_uid);
+  SEXP find_value(uid node_uid);
 
 
   bool cmp(const GeneralTreeInternal& gti);
