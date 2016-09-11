@@ -1,3 +1,4 @@
+// [[Rcpp::depends(BH)]]
 // [[Rcpp::plugins(cpp11)]]
 #ifndef _GENERALTREEINTERNALS_H_
 #define _GENERALTREEINTERNALS_H_
@@ -15,13 +16,16 @@
 #include <map>
 #include <string>
 #include <utility>
+#include <memory>
 
 
 // nocov start
 
 using namespace Rcpp;
 
-typedef boost::bimap<int, boost::bimaps::multiset_of<std::string> > uid_id_bimap;
+typedef std::string tree_key;
+
+typedef boost::bimap<int, boost::bimaps::multiset_of<tree_key> > uid_id_bimap;
 typedef uid_id_bimap::value_type uid_id_pair;
 
 typedef std::pair<int, int> uid_uid_pair;
@@ -36,6 +40,7 @@ typedef std::vector<uid> uids_vector;
 
 typedef std::map<int, uids_vector> uid_to_uids_map;
 typedef std::pair<int, std::vector<int> > uid_uids_pair;
+
 
 class GeneralTreeInternal;
 
@@ -54,7 +59,7 @@ public:
   void add_node(SEXP parent, SEXP child, SEXP data);
 
   int find_uid(SEXP id);
-  std::string find_key(uid node_uid);
+  tree_key find_key(uid node_uid);
   uid get_lchild(uid parent_uid);
   bool has_child(uid parent_uid);
   bool has_siblings(uid node_uid);
@@ -63,17 +68,16 @@ public:
   uid get_parent(uid child_uid);
   bool has_parent(uid child_uid);
   SEXP get_value(SEXP key);
+  SEXP get_value(uid node_uid);
   bool is_id_in_tree(SEXP id);
-  boost::shared_ptr<uids_vector> get_childeren_uid(uid parent_uid);
-  boost::shared_ptr<uids_vector> get_siblings_uid(uid node_uid);
-  boost::shared_ptr<std::vector<std::string> > get_childeren_keys(uid
+  std::shared_ptr<uids_vector> get_childeren_uid(uid parent_uid);
+  std::shared_ptr<uids_vector> get_siblings_uid(uid node_uid);
+  std::shared_ptr<std::vector<tree_key> > get_childeren_keys(uid
       parent_uid);
-  boost::shared_ptr<std::vector<std::string> > get_siblings_keys(uid node_uid);
-  boost::shared_ptr<std::vector<SEXP> > get_childeren_values(uid
+  std::shared_ptr<std::vector<tree_key> > get_siblings_keys(uid node_uid);
+  std::shared_ptr<std::vector<SEXP> > get_childeren_values(uid
       parent_uid);
-  boost::shared_ptr<std::vector<SEXP> > get_siblings_values(uid node_uid);
-  SEXP find_value(uid node_uid);
-
+  std::shared_ptr<std::vector<SEXP> > get_siblings_values(uid node_uid);
 
   bool cmp(const GeneralTreeInternal& gti);
 };
@@ -117,7 +121,7 @@ namespace Rcpp {
 //  /* Convert a bimap tree mapping to a R structure. */
 //  template <> SEXP wrap(const uid_id_bimap& mapping) {
 //    std::vector<int> left_vector;
-//    std::vector<std::string> right_vector;
+//    std::vector<tree_key> right_vector;
 //
 //    for (uid_id_bimap::left_const_iterator id_iter = mapping.left.begin(),
 //         iend = mapping.left.end();
@@ -133,9 +137,9 @@ namespace Rcpp {
 //  template <> uid_id_bimap as(SEXP t_m_exp) {
 //    List t_m = as<List>(t_m_exp);
 //    std::vector<int> left_vector = t_m["left"];
-//    std::vector<std::string> right_vector = t_m["right"];
+//    std::vector<tree_key> right_vector = t_m["right"];
 //    std::vector<int>::iterator lit;
-//    std::vector<std::string>::iterator rit;
+//    std::vector<tree_key>::iterator rit;
 //
 //    uid_id_bimap result;
 //

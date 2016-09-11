@@ -2,7 +2,8 @@
 // [[Rcpp::plugins(cpp11)]]
 #include <Rcpp.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+#include <algorithm>
 
 #include <string>
 
@@ -210,10 +211,10 @@ GeneralTreeInternal::cmp(const GeneralTreeInternal& gti)
 }
 
 
-boost::shared_ptr<uids_vector>
+shared_ptr<uids_vector>
 GeneralTreeInternal::get_childeren_uid(uid parent_uid)
 {
-  boost::shared_ptr<uids_vector> result(new uids_vector());
+  shared_ptr<uids_vector> result(new uids_vector());
 
   // Return empty list if this node does not have any childeren.
   if (!has_child(parent_uid))
@@ -225,17 +226,17 @@ GeneralTreeInternal::get_childeren_uid(uid parent_uid)
 
   // Add the siblings to the list if the node has any siblings.
   if (has_siblings(child_uid)) {
-    boost::shared_ptr<uids_vector> sibling_uids = get_siblings_uid(child_uid);
+    shared_ptr<uids_vector> sibling_uids = get_siblings_uid(child_uid);
     result->insert(result->end(), sibling_uids->begin(), sibling_uids->end());
   }
 
   return result;
 }
 
-boost::shared_ptr<uids_vector>
+shared_ptr<uids_vector>
 GeneralTreeInternal::get_siblings_uid(uid node_uid)
 {
-  boost::shared_ptr<uids_vector> result(new uids_vector());
+  shared_ptr<uids_vector> result(new uids_vector());
 
   if (!has_siblings(node_uid))
     return result;
@@ -265,34 +266,37 @@ GeneralTreeInternal::get_siblings_uid(uid node_uid)
   return result;
 }
 
-boost::shared_ptr<std::vector<tree_key> >
+shared_ptr<std::vector<tree_key> >
 GeneralTreeInternal::get_childeren_keys(uid parent_uid)
 {
-  boost::shared_ptr<std::vector<tree_key> > result(new std::vector<tree_key>);
+  shared_ptr<std::vector<tree_key> > result(new std::vector<tree_key>);
 
   if (!has_child(parent_uid))
     return result;
 
-  boost::shared_ptr<uids_vector> childeren = get_childeren_uid(parent_uid);
+  shared_ptr<uids_vector> childeren = get_childeren_uid(parent_uid);
+  result->reserve(childeren->size());
 
-  for (int i = 0; i < childeren->size(); ++i)
-    result->push_back(find_key(childeren->at(i)));
+  transform(childeren->begin(), childeren->end(), back_inserter(*result),
+      [this](uid& x){ return find_key(x); } );
+
 
   return result;
 }
 
-boost::shared_ptr<std::vector<tree_key> >
+shared_ptr<std::vector<tree_key> >
 GeneralTreeInternal::get_siblings_keys(uid node_uid)
 {
-  boost::shared_ptr<std::vector<tree_key> > result(new std::vector<tree_key>);
+  shared_ptr<std::vector<tree_key> > result(new std::vector<tree_key>);
 
   if (!has_siblings(node_uid))
     return result;
 
-  boost::shared_ptr<uids_vector> siblings = get_siblings_uid(node_uid);
+  shared_ptr<uids_vector> siblings = get_siblings_uid(node_uid);
+  result->reserve(siblings->size());
 
-  for (int i = 0; i < siblings->size(); ++i)
-    result->push_back(find_key(siblings->at(i)));
+  transform(siblings->begin(), siblings->end(), back_inserter(*result),
+      [this](uid& x){ return find_key(x); } );
 
   return result;
 }
@@ -305,7 +309,6 @@ GeneralTreeInternal::find_key(uid node_uid)
 
   if (id_iter == uid_to_id.left.end())
     throw std::invalid_argument("find_key: Could not find node_uid in tree.");
-
 
   return id_iter->second;
 }
@@ -324,34 +327,36 @@ GeneralTreeInternal::get_value(uid node_uid)
 
 
 
-boost::shared_ptr<std::vector<SEXP> >
+shared_ptr<std::vector<SEXP> >
 GeneralTreeInternal::get_childeren_values(uid parent_uid)
 {
-  boost::shared_ptr<std::vector<SEXP> > result(new std::vector<SEXP>);
+  shared_ptr<std::vector<SEXP> > result(new std::vector<SEXP>);
 
   if (!has_child(parent_uid))
     return result;
 
-  boost::shared_ptr<uids_vector> childeren = get_childeren_uid(parent_uid);
+  shared_ptr<uids_vector> childeren = get_childeren_uid(parent_uid);
+  result->reserve(childeren->size());
 
-  for (int i = 0; i < childeren->size(); ++i)
-    result->push_back(get_value(childeren->at(i)));
+  transform(childeren->begin(), childeren->end(), back_inserter(*result),
+      [this](uid& x){ return get_value(x); } );
 
   return result;
 }
 
-boost::shared_ptr<std::vector<SEXP> >
+shared_ptr<std::vector<SEXP> >
 GeneralTreeInternal::get_siblings_values(uid node_uid)
 {
-  boost::shared_ptr<std::vector<SEXP> > result(new std::vector<SEXP>);
+  shared_ptr<std::vector<SEXP> > result(new std::vector<SEXP>);
 
   if (!has_siblings(node_uid))
     return result;
 
-  boost::shared_ptr<uids_vector> siblings = get_siblings_uid(node_uid);
+  shared_ptr<uids_vector> siblings = get_siblings_uid(node_uid);
+  result->reserve(siblings->size());
 
-  for (int i = 0; i < siblings->size(); ++i)
-    result->push_back(get_value(siblings->at(i)));
+  transform(siblings->begin(), siblings->end(), back_inserter(*result),
+      [this](uid& x){ return get_value(x); } );
 
   return result;
 }

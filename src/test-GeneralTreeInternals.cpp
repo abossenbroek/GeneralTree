@@ -311,14 +311,14 @@ context("GeneralTreeInternal get_childeren_uid and get_siblings_uid work") {
     int sibling_uid = gti.find_uid(sibling_id);
     int sibling2_uid = gti.find_uid(sibling2_id);
     int sibling3_uid = gti.find_uid(sibling3_id);
-    std::vector<std::string> first_level;
+    std::vector<tree_key> first_level;
     first_level.push_back(child_id_string);
     first_level.push_back(sibling_id_string);
 
-    std::vector<std::string> siblings_of_child;
+    std::vector<tree_key> siblings_of_child;
     siblings_of_child.push_back(sibling_id_string);
 
-    std::vector<std::string> siblings_of_sibling;
+    std::vector<tree_key> siblings_of_sibling;
     siblings_of_sibling.push_back(child_id_string);
 
 
