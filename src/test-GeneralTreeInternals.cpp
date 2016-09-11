@@ -1,4 +1,6 @@
 // [[Rcpp::plugins(cpp11)]]
+#ifdef HAVE_TESTTHAT_H
+
 #include <testthat.h>
 #include <Rcpp.h>
 
@@ -389,3 +391,5 @@ context("GeneralTreeInternal correct exceptions are returned") {
     expect_error(gti.get_parent(gti.uid_counter));
   }
 }
+
+#endif //HAVE_TESTTHAT_H
