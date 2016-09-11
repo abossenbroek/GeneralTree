@@ -257,7 +257,7 @@ GeneralTreeInternal::get_siblings_uid(uid node_uid)
 
   // Remove the node with which this function was called from the vector.
   int node_position = 0;
-  for (int i = 0; i < result->size(); ++i) {
+  for (unsigned int i = 0; i < result->size(); ++i) {
     if (result->at(i) == node_uid)
       node_position = i;
   }
