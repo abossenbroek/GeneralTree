@@ -259,7 +259,7 @@ GeneralTreeInternal::cmp(const GeneralTreeInternal& gti)
 
 
 boost::shared_ptr<uids_vector>
-GeneralTreeInternal::get_childeren(uid parent_uid)
+GeneralTreeInternal::get_childeren_uid(uid parent_uid)
 {
   boost::shared_ptr<uids_vector> result(new uids_vector());
 
@@ -273,7 +273,7 @@ GeneralTreeInternal::get_childeren(uid parent_uid)
 
   // Add the siblings to the list if the node has any siblings.
   if (has_siblings(child_uid)) {
-    boost::shared_ptr<uids_vector> sibling_uids = get_siblings(child_uid);
+    boost::shared_ptr<uids_vector> sibling_uids = get_siblings_uid(child_uid);
     result->insert(result->end(), sibling_uids->begin(), sibling_uids->end());
   }
 
@@ -281,7 +281,7 @@ GeneralTreeInternal::get_childeren(uid parent_uid)
 }
 
 boost::shared_ptr<uids_vector>
-GeneralTreeInternal::get_siblings(uid node_uid)
+GeneralTreeInternal::get_siblings_uid(uid node_uid)
 {
   boost::shared_ptr<uids_vector> result(new uids_vector());
 
@@ -295,7 +295,7 @@ GeneralTreeInternal::get_siblings(uid node_uid)
 
   // This should probably never happen but we want to make sure.
   if (uid_it == uid_to_siblings.end())
-    throw std::runtime_error("get_siblings: uid was found as having siblings"
+    throw std::runtime_error("get_siblings_uid: uid was found as having siblings"
         " but no data was found. Possible inconsistency.");
 
   // Make sure that the result contains all the nodes under the parent.
@@ -311,4 +311,49 @@ GeneralTreeInternal::get_siblings(uid node_uid)
   result->erase(result->begin() + node_position);
 
   return result;
+}
+
+boost::shared_ptr<std::vector<std::string> >
+GeneralTreeInternal::get_childeren_keys(uid parent_uid)
+{
+  boost::shared_ptr<std::vector<std::string> > result(new std::vector<std::string>);
+
+  if (!has_child(parent_uid))
+    return result;
+
+  boost::shared_ptr<uids_vector> childeren = get_childeren_uid(parent_uid);
+
+  for (int i = 0; i < childeren->size(); ++i)
+    result->push_back(find_key(childeren->at(i)));
+
+  return result;
+}
+
+boost::shared_ptr<std::vector<std::string> >
+GeneralTreeInternal::get_siblings_keys(uid node_uid)
+{
+  boost::shared_ptr<std::vector<std::string> > result(new std::vector<std::string>);
+
+  if (!has_siblings(node_uid))
+    return result;
+
+  boost::shared_ptr<uids_vector> siblings = get_siblings_uid(node_uid);
+
+  for (int i = 0; i < siblings->size(); ++i)
+    result->push_back(find_key(siblings->at(i)));
+
+  return result;
+}
+
+string
+GeneralTreeInternal::find_key(uid node_uid)
+{
+  uid_id_bimap::left_const_iterator id_iter =
+    this->uid_to_id.left.find(node_uid);
+
+  if (id_iter == uid_to_id.left.end())
+    throw std::invalid_argument("find_key: Could not find node_uid in tree.");
+
+
+  return id_iter->second;
 }

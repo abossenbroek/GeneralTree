@@ -53,6 +53,7 @@ public:
   void add_node(SEXP parent, SEXP child, SEXP data);
 
   int find_uid(SEXP id);
+  std::string find_key(uid node_uid);
   uid get_lchild(uid parent_uid);
   bool has_child(uid parent_uid);
   bool has_siblings(uid node_uid);
@@ -62,8 +63,12 @@ public:
   bool has_parent(uid child_uid);
   SEXP get_value(SEXP key);
   bool is_id_in_tree(SEXP id);
-  boost::shared_ptr<uids_vector> get_childeren(uid parent_uid);
-  boost::shared_ptr<uids_vector> get_siblings(uid node_uid);
+  boost::shared_ptr<uids_vector> get_childeren_uid(uid parent_uid);
+  boost::shared_ptr<uids_vector> get_siblings_uid(uid node_uid);
+  boost::shared_ptr<std::vector<std::string> > get_childeren_keys(uid
+      parent_uid);
+  boost::shared_ptr<std::vector<std::string> > get_siblings_keys(uid node_uid);
+
 
   bool cmp(const GeneralTreeInternal& gti);
 };
