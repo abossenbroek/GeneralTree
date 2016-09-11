@@ -16,7 +16,7 @@ using namespace std;
 GeneralTreeInternal::GeneralTreeInternal(SEXP root_id, SEXP root_data)
 {
   uid_counter = 0;
-  shared_ptr<tree_key> root_key = add_mapping(uid_counter, root_id, type_mapping);
+  shared_ptr<tree_key> root_key = add_mapping(uid_counter, root_id);
   this->uid_to_id.insert(uid_id_pair(this->uid_counter, *root_key));
   this->uid_to_data.insert(uid_SEXP_pair(this->uid_counter, root_data));
 
@@ -46,8 +46,10 @@ GeneralTreeInternal::get_value(SEXP key)
 bool
 GeneralTreeInternal::is_id_in_tree(SEXP id)
 {
+  shared_ptr<tree_key> search_key = tree_key_cast_SEXP(id);
+
   uid_id_bimap::right_const_iterator id_iter =
-    this->uid_to_id.right.find(as<string>(id));
+    this->uid_to_id.right.find(*search_key);
 
   return id_iter != this->uid_to_id.right.end();
 }
@@ -64,7 +66,9 @@ GeneralTreeInternal::add_node(SEXP parent_id, SEXP child_id, SEXP data)
   } catch (...) {
     ::Rf_error("c++ exception (unknown reason)");
   }
-  this->uid_to_id.insert(uid_id_pair(this->uid_counter, as<string>(child_id)));
+  shared_ptr<tree_key> child_key = add_mapping(uid_counter, child_id);
+
+  this->uid_to_id.insert(uid_id_pair(this->uid_counter, *child_key));
   this->uid_to_data.insert(uid_SEXP_pair(this->uid_counter, data));
   this->uid_to_parent.insert(uid_uid_pair(this->uid_counter, parent_uid));
 
@@ -88,8 +92,10 @@ GeneralTreeInternal::add_node(SEXP parent_id, SEXP child_id, SEXP data)
 uid
 GeneralTreeInternal::find_uid(SEXP id)
 {
+  shared_ptr<tree_key> search_key = tree_key_cast_SEXP(id);
+
   uid_id_bimap::right_const_iterator id_iter =
-    this->uid_to_id.right.find(as<string>(id));
+    this->uid_to_id.right.find(*search_key);
 
   if (id_iter == this->uid_to_id.right.end()) {
     throw std::invalid_argument("Could not find id in tree.");

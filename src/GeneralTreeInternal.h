@@ -29,9 +29,6 @@ using namespace Rcpp;
 class GeneralTreeInternal;
 
 class GeneralTreeInternal {
-private:
-  uid_to_SEXP_map type_mapping;
-
 public:
   uid uid_counter;
   uid_id_bimap uid_to_id;

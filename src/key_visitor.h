@@ -18,10 +18,7 @@ using namespace Rcpp;
  * The purpose of this function is that at a later stage we can call the
  * right visitor on our variant to return the intended type from the tree.
  */
-static std::shared_ptr<tree_key> add_mapping(uid& key, SEXP& value,
-    uid_to_SEXP_map& type_mapping) {
-  type_mapping.insert(uid_SEXP_pair(key, value));
-
+static std::shared_ptr<tree_key> add_mapping(uid& key, SEXP& value) {
   switch (TYPEOF(value)) {
     case REALSXP: {
         std::shared_ptr<tree_key> result(new tree_key(as<NumericVector>(value)[0]));
@@ -47,14 +44,31 @@ static std::shared_ptr<tree_key> add_mapping(uid& key, SEXP& value,
   return nullptr;
 }
 
-/*
- * Delete a mapping from the table.
- */
-static void delete_mapping(uid& key, uid_to_SEXP_map& type_mapping) {
-  uid_to_SEXP_map::iterator uid_it = type_mapping.find(key);
+static std::shared_ptr<tree_key> tree_key_cast_SEXP(SEXP& key)
+{
+  switch (TYPEOF(key)) {
+    case REALSXP: {
+        std::shared_ptr<tree_key> result(new tree_key(as<NumericVector>(key)[0]));
+        return result;
+    }
 
-  if (uid_it != type_mapping.end())
-    type_mapping.erase(uid_it);
+    case INTSXP: {
+       std::shared_ptr<tree_key> result(new tree_key(as<IntegerVector>(key)[0]));
+       return result;
+    }
+
+    case STRSXP: {
+       std::shared_ptr<tree_key> result(new tree_key(as<String>(key)));
+       return result;
+    }
+
+    default: {
+      stop("add_mapping: incompatible SEXP encoutered. Currently only int,"
+          " numeric and string are supported.");
+    }
+  }
+
+  return nullptr;
 }
 
 class key_visitor

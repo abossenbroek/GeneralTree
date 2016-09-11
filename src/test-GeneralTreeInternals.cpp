@@ -19,6 +19,8 @@ context("GeneralTreeInternal can be created") {
   }
 }
 
+
+
 context("GeneralTreeInternal can add childeren directly under each other") {
   test_that("we can add a child to the tree directly under the root") {
     String child_id_string = "child";
@@ -76,8 +78,8 @@ context("GeneralTreeInternal can add childeren directly under each other") {
     expect_false(gti.has_siblings(child2_uid));
     expect_true(gti.get_parent(child2_uid) == child_uid);
     expect_true(gti.get_parent(gti.get_parent(child2_uid)) == root_uid);
-  }}
-
+  }
+}
 
 context("GeneralTreeInternal can add siblings") {
   test_that("we can add a sibling to the child under the root") {
@@ -179,9 +181,8 @@ context("GeneralTreeInternal can add siblings") {
     expect_true(gti.get_parent(sibling2_uid) == sibling_uid);
     expect_true(gti.get_parent(sibling3_uid) == sibling2_uid);
   }
-
-
 }
+
 
 
 context("GeneralTreeInternal returns correct values") {
@@ -371,7 +372,128 @@ context("GeneralTreeInternal get_childeren_uid and get_siblings_uid work") {
   }
 }
 
+context("GeneralTreeInternal support various key types") {
+  test_that("root node can be initiated with integer") {
+    int root_id_string = 0;
+    SEXP root_id = wrap(root_id_string);
+    // Create a gti
+    GeneralTreeInternal gti(root_id, root_id);
+    // Retrieve the unique id.
+    int root_uid = gti.find_uid(root_id);
+    // Verify whether it is the correct uid.
+    expect_true(root_uid == (gti.uid_counter - 1));
+  }
 
+  test_that("root node can be initiated with float") {
+    double root_id_string = 0.0;
+    SEXP root_id = wrap(root_id_string);
+    // Create a gti
+    GeneralTreeInternal gti(root_id, root_id);
+    // Retrieve the unique id.
+    int root_uid = gti.find_uid(root_id);
+    // Verify whether it is the correct uid.
+    expect_true(root_uid == (gti.uid_counter - 1));
+  }
+
+  test_that("we get the right keys using integer") {
+    int child_id_int = 0;
+    int child2_id_int = 1;
+    int child3_id_int = 2;
+    int root_id_int = 3;
+    int sibling_id_int = 4;
+    int sibling2_id_int = 5;
+    int sibling3_id_int = 6;
+    SEXP root_id = wrap(root_id_int);
+    SEXP child_id = wrap(child_id_int);
+    SEXP child2_id = wrap(child2_id_int);
+    SEXP child3_id = wrap(child3_id_int);
+    SEXP sibling_id = wrap(sibling_id_int);
+    SEXP sibling2_id = wrap(sibling2_id_int);
+    SEXP sibling3_id = wrap(sibling3_id_int);
+    // Create a gti.
+    GeneralTreeInternal gti(root_id, root_id);
+    // Add child node.
+    gti.add_node(root_id, child_id, child_id);
+    // Add fist sibling.
+    gti.add_node(root_id, sibling_id, sibling_id);
+    // Add child to first sibling.
+    gti.add_node(sibling_id, child2_id, child2_id);
+    // Add sibling to the last child.
+    gti.add_node(sibling_id, sibling2_id, sibling2_id);
+    // Add child to last sibling.
+    gti.add_node(sibling2_id, child3_id, child3_id);
+    gti.add_node(sibling2_id, sibling3_id, sibling3_id);
+
+    int root_uid = gti.find_uid(root_id);
+    int child_uid = gti.find_uid(child_id);
+    int child2_uid = gti.find_uid(child2_id);
+    int child3_uid = gti.find_uid(child3_id);
+    int sibling_uid = gti.find_uid(sibling_id);
+    int sibling2_uid = gti.find_uid(sibling2_id);
+    int sibling3_uid = gti.find_uid(sibling3_id);
+    uids_vector first_level = {child_id_int, sibling_id_int};
+    uids_vector siblings_of_child = {sibling_id_int};
+    uids_vector siblings_of_sibling = {child_id_int};
+
+
+    // Verify whether all the getters return the proper result of the tree.
+    expect_true(gti.get_siblings_uid(root_uid)->size() == 0);
+    expect_true(gti.get_siblings_uid(child_uid)->size() ==
+        gti.get_siblings_uid(sibling_uid)->size());
+    expect_true((*gti.get_childeren_keys(root_uid)) == first_level);
+    expect_true((*gti.get_siblings_keys(child_uid)) == siblings_of_child);
+    expect_true((*gti.get_siblings_keys(sibling_uid)) == siblings_of_sibling);
+  }
+
+  test_that("we get the right keys using double") {
+    double child_id_double = 0.0;
+    double child2_id_double = 0.1;
+    double child3_id_double = 0.2;
+    double root_id_double = 0.3;
+    double sibling_id_double = 0.4;
+    double sibling2_id_double = 0.5;
+    double sibling3_id_double = 0.6;
+    SEXP root_id = wrap(root_id_double);
+    SEXP child_id = wrap(child_id_double);
+    SEXP child2_id = wrap(child2_id_double);
+    SEXP child3_id = wrap(child3_id_double);
+    SEXP sibling_id = wrap(sibling_id_double);
+    SEXP sibling2_id = wrap(sibling2_id_double);
+    SEXP sibling3_id = wrap(sibling3_id_double);
+    // Create a gti.
+    GeneralTreeInternal gti(root_id, root_id);
+    // Add child node.
+    gti.add_node(root_id, child_id, child_id);
+    // Add fist sibling.
+    gti.add_node(root_id, sibling_id, sibling_id);
+    // Add child to first sibling.
+    gti.add_node(sibling_id, child2_id, child2_id);
+    // Add sibling to the last child.
+    gti.add_node(sibling_id, sibling2_id, sibling2_id);
+    // Add child to last sibling.
+    gti.add_node(sibling2_id, child3_id, child3_id);
+    gti.add_node(sibling2_id, sibling3_id, sibling3_id);
+
+    int root_uid = gti.find_uid(root_id);
+    int child_uid = gti.find_uid(child_id);
+    int child2_uid = gti.find_uid(child2_id);
+    int child3_uid = gti.find_uid(child3_id);
+    int sibling_uid = gti.find_uid(sibling_id);
+    int sibling2_uid = gti.find_uid(sibling2_id);
+    int sibling3_uid = gti.find_uid(sibling3_id);
+    uids_vector first_level = {child_id_double, sibling_id_double};
+    uids_vector siblings_of_child = {sibling_id_double};
+    uids_vector siblings_of_sibling = {child_id_double};
+
+    // Verify whether all the getters return the proper result of the tree.
+    expect_true(gti.get_siblings_uid(root_uid)->size() == 0);
+    expect_true(gti.get_siblings_uid(child_uid)->size() ==
+        gti.get_siblings_uid(sibling_uid)->size());
+    expect_true((*gti.get_childeren_keys(root_uid)) == first_level);
+    expect_true((*gti.get_siblings_keys(child_uid)) == siblings_of_child);
+    expect_true((*gti.get_siblings_keys(sibling_uid)) == siblings_of_sibling);
+  }
+}
 
 context("GeneralTreeInternal correct exceptions are returned") {
   test_that("correct exceptions") {
