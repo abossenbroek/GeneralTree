@@ -1,15 +1,19 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+sudo: required
+
 before_install:
   - tlmgr install index
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
 
-install:
-  - sudo apt-get install -qq g++-4.9
+    #install:
+  #  - sudo apt-get install -qq g++-4.9
 
 addons:
-  apt: 
+  apt:
     packages:
       - libxml2-dev
+      - g++-4.9
 #      libv8-3.14-dev
 language: r
 r:
