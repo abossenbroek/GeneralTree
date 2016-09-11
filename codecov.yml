@@ -16,3 +16,10 @@ coverage:
 comment:
   layout: "header, diff"
   behavior: default  # update if exists else create new
+
+coverage:
+  notify:
+    gitter:
+      default:
+        url: "https://webhooks.gitter.im/e/d30a16d1ede5c5bf507d"
+        threshold: 1%
