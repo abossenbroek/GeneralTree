@@ -7,7 +7,6 @@ cache: packages
 # this was causing hunspell installation to fail
 before_install:
   - if [[ "$TRAVIS_R_VERSION_STRING" = 'devel' ]]; then mkdir ~/.R && echo 'CXX1X=g++ -std=c++0x -g -O2 -fPIC' > ~/.R/Makevars; fi
-  - sudo apt-get -qq update
   - tlmgr install index
 
 # The git config settings are not setup on travis by default
