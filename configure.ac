@@ -81,7 +81,7 @@ AC_LANG_PUSH([C++])
 AC_CHECK_HEADER(testthat.h, [AC_DEFINE(HAVE_TESTTHAT_H, 1, [define as 1 if testthat catch available])],
   [AC_MSG_NOTICE([testthat headers for Catch tests not found])])
 AC_CHECK_HEADER(boost/bimap.hpp, [AC_DEFINE(HAVE_BOOST_BIMAP_HPP, 1, [define as 1 if boost bimap available])],
-  [AC_MSG_NOTICE([boost bimap headers not found])])
+  [AC_MSG_ERROR([boost bimap headers not found])])
 
 AC_LANG_POP([C++])
 # end testthat test
