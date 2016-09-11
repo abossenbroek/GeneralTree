@@ -6,8 +6,7 @@
 | Codecov        |[![Coverage Status](https://img.shields.io/codecov/c/github/abossenbroek/GeneralTree/master.svg)](https://codecov.io/github/abossenbroek/GeneralTree?branch=master) | [![Coverage Status](https://img.shields.io/codecov/c/github/abossenbroek/GeneralTree/develop.svg)](https://codecov.io/github/abossenbroek/GeneralTree?branch=develop) |
 | Coveralls     |[![Coverage Status](https://coveralls.io/repos/github/abossenbroek/GeneralTree/badge.svg?branch=master)](https://coveralls.io/github/abossenbroek/GeneralTree?branch=master) | [![Coverage Status](https://coveralls.io/repos/github/abossenbroek/GeneralTree/badge.svg?branch=develop)](https://coveralls.io/github/abossenbroek/GeneralTree?branch=develop) |
 
-![License](http://img.shields.io/:license-gpl2-blue.svg?style=flat-square)](http://www.gnu.org/licenses/gpl-2.0.html)
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/GeneralTree)](https://cran.r-project.org/package=GeneralTree)
+[![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html) [![CRAN](http://www.r-pkg.org/badges/version/GeneralTree)](http://cran.r-project.org/package=GeneralTree)[![Downloads](http://cranlogs.r-pkg.org/badges/GeneralTree?color=brightgreen)](http://www.r-pkg.org/pkg/GeneralTree)
 
 # GeneralTree
 This R package allows you to create trees with an arbitrary number of child
