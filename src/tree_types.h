@@ -29,8 +29,7 @@ typedef std::vector<uid> uids_vector;
 typedef std::map<int, uids_vector> uid_to_uids_map;
 typedef std::pair<int, std::vector<int> > uid_uids_pair;
 
-
-
-
+typedef std::shared_ptr<std::vector<SEXP> > shared_ptr_SEXP_vec;
+typedef std::shared_ptr<std::vector<tree_key> > shared_ptr_key_vec;
 
 #endif // _TREE_TYPES_H

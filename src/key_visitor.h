@@ -3,13 +3,36 @@
 #ifndef _KEY_VISITOR_H_
 #define _KEY_VISITOR_H_
 
+#include <algorithm>
+
 #include <boost/variant.hpp>
 
 #include <Rcpp.h>
 
 using namespace Rcpp;
 
+#include "tree_types.h"
 #include "GeneralTreeInternal.h"
+
+class key_visitor
+  : public boost::static_visitor<SEXP>
+{
+public:
+  SEXP operator()(int& i) const
+  {
+    return wrap(i);
+  }
+
+  SEXP operator()(std::string& s) const
+  {
+    return wrap(s);
+  }
+
+  SEXP operator()(double& d) const
+  {
+    return wrap(d);
+  }
+};
 
 
 /*
@@ -18,7 +41,8 @@ using namespace Rcpp;
  * The purpose of this function is that at a later stage we can call the
  * right visitor on our variant to return the intended type from the tree.
  */
-static std::shared_ptr<tree_key> add_mapping(uid& key, SEXP& value) {
+static std::shared_ptr<tree_key>
+add_mapping(uid& key, SEXP& value) {
   switch (TYPEOF(value)) {
     case REALSXP: {
         std::shared_ptr<tree_key> result(new tree_key(as<NumericVector>(value)[0]));
@@ -36,6 +60,7 @@ static std::shared_ptr<tree_key> add_mapping(uid& key, SEXP& value) {
     }
 
     default: {
+      // Rcerr << "found value: " << TYPEOF(value) << std::endl;
       stop("add_mapping: incompatible SEXP encoutered. Currently only int,"
           " numeric and string are supported.");
     }
@@ -44,7 +69,8 @@ static std::shared_ptr<tree_key> add_mapping(uid& key, SEXP& value) {
   return nullptr;
 }
 
-static std::shared_ptr<tree_key> tree_key_cast_SEXP(SEXP& key)
+static std::shared_ptr<tree_key>
+tree_key_cast_SEXP(SEXP& key)
 {
   switch (TYPEOF(key)) {
     case REALSXP: {
@@ -71,24 +97,22 @@ static std::shared_ptr<tree_key> tree_key_cast_SEXP(SEXP& key)
   return nullptr;
 }
 
-class key_visitor
-  : public boost::static_visitor<SEXP>
+static shared_ptr_SEXP_vec
+tree_key_cast_SEXP_vec(std::vector<tree_key>& vec)
 {
-public:
-  SEXP operator()(int& i) const
-  {
-    wrap(i);
+  shared_ptr_SEXP_vec result(new std::vector<SEXP>());
+  //result->reserve(vec.size());
+
+//  transform(vec.begin(), vec.end(), back_inserter(*result),
+//      [](tree_key& x){ return boost::apply_visitor(key_visitor(), x); } );
+
+  for (std::vector<tree_key>::iterator it = vec.begin();
+      it != vec.end(); ++it) {
+    result->push_back(boost::apply_visitor(key_visitor(), (*it)));
   }
 
-  SEXP operator()(std::string& s) const
-  {
-    wrap(s);
-  }
 
-  SEXP operator()(double& d) const
-  {
-    wrap(d);
-  }
-};
+  return result;
+}
 
 #endif // _KEY_VISITOR_H_

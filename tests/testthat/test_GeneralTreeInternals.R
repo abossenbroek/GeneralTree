@@ -24,3 +24,11 @@ test_that("Stored list value is correcty found", {
     expect_equal(GeneralTree:::get_value(init, "c"), list(2));
     expect_equal(GeneralTree:::get_value(init, "b"), list(1));
 })
+
+test_that("Child keys are correclty returned", {
+    init <- GeneralTree:::initialize_tree("a", list(0))
+    init <- GeneralTree:::add_node(init, "a", "b", list(1))
+    init <- GeneralTree:::add_node(init, "a", "c", list(2))
+
+    expect_equal(GeneralTree:::get_childeren_keys(init, "a"), list("b", "c"));
+})

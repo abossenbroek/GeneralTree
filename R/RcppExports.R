@@ -21,3 +21,7 @@ get_value <- function(gti_sexp, key) {
     .Call('GeneralTree_get_value', PACKAGE = 'GeneralTree', gti_sexp, key)
 }
 
+get_childeren_keys <- function(gti_sexp, parent_id) {
+    .Call('GeneralTree_get_childeren_keys', PACKAGE = 'GeneralTree', gti_sexp, parent_id)
+}
+

@@ -66,3 +66,15 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// get_childeren_keys
+std::vector<SEXP> get_childeren_keys(SEXP gti_sexp, SEXP parent_id);
+RcppExport SEXP GeneralTree_get_childeren_keys(SEXP gti_sexpSEXP, SEXP parent_idSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type parent_id(parent_idSEXP);
+    __result = Rcpp::wrap(get_childeren_keys(gti_sexp, parent_id));
+    return __result;
+END_RCPP
+}

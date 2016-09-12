@@ -61,4 +61,18 @@ get_value(SEXP gti_sexp, SEXP key)
   return gti->get_value(key);
 }
 
+// [[Rcpp::export]]
+std::vector<SEXP>
+get_childeren_keys(SEXP gti_sexp, SEXP parent_id)
+{
+  gti_xptr gti(gti_sexp);
+  uid parent_uid = gti->find_uid(parent_id);
+  shared_ptr_key_vec c_keys = gti->get_childeren_keys(parent_uid);
 
+  std::vector<SEXP> c_sexp;
+
+  transform(c_keys->begin(), c_keys->end(), back_inserter(c_sexp),
+      [](tree_key& x){ return boost::apply_visitor(key_visitor(), x); } );
+
+  return(c_sexp);
+}
