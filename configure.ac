@@ -17,19 +17,21 @@
 # along with icd9. If not, see <http:#www.gnu.org/licenses/>.
 
 AC_PREREQ([2.62])
-AC_INIT(GeneralTree)
-AC_COPYRIGHT(Copyright (C) 2014 - 2016  Anton Bossenbroek)
+AC_INIT([GeneralTree], 0.0.1.01, [anton.bossenbroek@me.com])
+AC_COPYRIGHT(Copyright (C) 2016 - 2016  Anton Bossenbroek)
 AC_CONFIG_SRCDIR([src])
 AC_CONFIG_HEADERS([src/config.h:src/config.h.in])
 AC_CONFIG_FILES([src/Makevars])
 AC_CONFIG_MACRO_DIR([tools/m4])
 
+# Now find the compiler and compiler flags to use
 echo "Checking whether R_HOME already set? R_HOME = ${R_HOME}"
 : ${R_HOME:=`R RHOME`}
 if test -z "${R_HOME}"; then
   echo "could not determine R_HOME"
   exit 1
 fi
+
 R_BIN="${R_HOME}/bin/R"
 CC=`"${R_BIN}" CMD config CC`
 CXX=`"${R_BIN}" CMD config CXX`
@@ -50,14 +52,12 @@ AC_PROG_CXX
 AC_TYPE_SIZE_T
 AC_C_INLINE
 
-#BOOST_REQUIRE([1.60.0])
-
 # this only works in C++, since it is a C++ system header...
 AC_LANG_PUSH([C++])
 
 # C++11, autoconf should determine the correct flags
 # https://www.gnu.org/software/autoconf-archive/ax_cxx_compile_stdcxx_11.html
-AX_CXX_COMPILE_STDCXX_11(noext, optional)
+AX_CXX_COMPILE_STDCXX_11(noext, mandatory)
 
 if test "${HAVE_CXX11}" = 1; then
   AC_MSG_CHECKING([Have C++11, so set Makevars flag for R])
@@ -86,4 +86,8 @@ AC_CHECK_HEADER(boost/bimap.hpp, [AC_DEFINE(HAVE_BOOST_BIMAP_HPP, 1, [define as 
 AC_LANG_POP([C++])
 # end testthat test
 
+dnl substitute CPPFLAGS and LIBS
+AC_SUBST(CPPFLAGS)
+AC_SUBST(LIBS)
+dnl and do subsitution in the src/Makevars.in 
 AC_OUTPUT
