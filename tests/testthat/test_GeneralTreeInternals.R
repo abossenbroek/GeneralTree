@@ -41,3 +41,12 @@ test_that("Child keys are correclty returned with mixed keys", {
 
     expect_equal(GeneralTree:::get_childeren_keys(init, "a"), list(0, "b", 1.1));
 })
+
+test_that("Child keys are correclty returned with mixed keys", {
+    init <- GeneralTree:::initialize_tree("a", list(0))
+    init <- GeneralTree:::add_node(init, "a", 0, list(1))
+    init <- GeneralTree:::add_node(init, "a", "b", list(2))
+    init <- GeneralTree:::add_node(init, "a", 1.1, list(2))
+
+    expect_equal(GeneralTree:::get_siblings_keys(init, 0), list("b", 1.1));
+})

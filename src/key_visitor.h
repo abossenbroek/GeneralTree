@@ -98,19 +98,17 @@ tree_key_cast_SEXP(SEXP& key)
 }
 
 static shared_ptr_SEXP_vec
-tree_key_cast_SEXP_vec(std::vector<tree_key>& vec)
+tree_key_cast_SEXP_vec(shared_ptr_key_vec vec)
 {
   shared_ptr_SEXP_vec result(new std::vector<SEXP>());
-  //result->reserve(vec.size());
+  key_visitor* v = new key_visitor();
 
-//  transform(vec.begin(), vec.end(), back_inserter(*result),
-//      [](tree_key& x){ return boost::apply_visitor(key_visitor(), x); } );
+  result->reserve(vec->size());
 
-  for (std::vector<tree_key>::iterator it = vec.begin();
-      it != vec.end(); ++it) {
-    result->push_back(boost::apply_visitor(key_visitor(), (*it)));
-  }
+  transform(vec->begin(), vec->end(), back_inserter(*result),
+      [&](tree_key& x){ return boost::apply_visitor(*v, x); } );
 
+  delete(v);
 
   return result;
 }

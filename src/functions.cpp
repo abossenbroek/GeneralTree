@@ -69,10 +69,20 @@ get_childeren_keys(SEXP gti_sexp, SEXP parent_id)
   uid parent_uid = gti->find_uid(parent_id);
   shared_ptr_key_vec c_keys = gti->get_childeren_keys(parent_uid);
 
-  std::vector<SEXP> c_sexp;
-
-  transform(c_keys->begin(), c_keys->end(), back_inserter(c_sexp),
-      [](tree_key& x){ return boost::apply_visitor(key_visitor(), x); } );
+  std::vector<SEXP> c_sexp(*tree_key_cast_SEXP_vec(c_keys));
 
   return(c_sexp);
+}
+
+// [[Rcpp::export]]
+std::vector<SEXP>
+get_siblings_keys(SEXP gti_sexp, SEXP node_id)
+{
+  gti_xptr gti(gti_sexp);
+  uid node_uid = gti->find_uid(node_id);
+  shared_ptr_key_vec s_keys = gti->get_siblings_keys(node_uid);
+
+  std::vector<SEXP> s_sexp(*tree_key_cast_SEXP_vec(s_keys));
+
+  return(s_sexp);
 }

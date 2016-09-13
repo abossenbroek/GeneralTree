@@ -25,3 +25,7 @@ get_childeren_keys <- function(gti_sexp, parent_id) {
     .Call('GeneralTree_get_childeren_keys', PACKAGE = 'GeneralTree', gti_sexp, parent_id)
 }
 
+get_siblings_keys <- function(gti_sexp, node_id) {
+    .Call('GeneralTree_get_siblings_keys', PACKAGE = 'GeneralTree', gti_sexp, node_id)
+}
+

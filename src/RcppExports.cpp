@@ -78,3 +78,15 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// get_siblings_keys
+std::vector<SEXP> get_siblings_keys(SEXP gti_sexp, SEXP node_id);
+RcppExport SEXP GeneralTree_get_siblings_keys(SEXP gti_sexpSEXP, SEXP node_idSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type node_id(node_idSEXP);
+    __result = Rcpp::wrap(get_siblings_keys(gti_sexp, node_id));
+    return __result;
+END_RCPP
+}
