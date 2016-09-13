@@ -29,3 +29,11 @@ get_siblings_keys <- function(gti_sexp, node_id) {
     .Call('GeneralTree_get_siblings_keys', PACKAGE = 'GeneralTree', gti_sexp, node_id)
 }
 
+get_childeren_values <- function(gti_sexp, parent_id) {
+    .Call('GeneralTree_get_childeren_values', PACKAGE = 'GeneralTree', gti_sexp, parent_id)
+}
+
+get_siblings_values <- function(gti_sexp, node_id) {
+    .Call('GeneralTree_get_siblings_values', PACKAGE = 'GeneralTree', gti_sexp, node_id)
+}
+

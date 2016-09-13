@@ -86,3 +86,26 @@ get_siblings_keys(SEXP gti_sexp, SEXP node_id)
 
   return(s_sexp);
 }
+
+// [[Rcpp::export]]
+std::vector<SEXP>
+get_childeren_values(SEXP gti_sexp, SEXP parent_id)
+{
+  gti_xptr gti(gti_sexp);
+  uid parent_uid = gti->find_uid(parent_id);
+  shared_ptr_SEXP_vec c_sexp = gti->get_childeren_values(parent_uid);
+
+  return(*c_sexp);
+}
+
+// [[Rcpp::export]]
+std::vector<SEXP>
+get_siblings_values(SEXP gti_sexp, SEXP node_id)
+{
+  gti_xptr gti(gti_sexp);
+  uid node_uid = gti->find_uid(node_id);
+  shared_ptr_SEXP_vec s_sexp = gti->get_siblings_values(node_uid);
+
+  return(*s_sexp);
+}
+

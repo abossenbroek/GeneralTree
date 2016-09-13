@@ -50,3 +50,25 @@ test_that("Child keys are correclty returned with mixed keys", {
 
     expect_equal(GeneralTree:::get_siblings_keys(init, 0), list("b", 1.1));
 })
+
+test_that("Child keys are correclty returned with mixed keys", {
+    node_values <- list(list("a"), new.env(), 0.1, "les cochons volant sont éblouissant")
+    init <- GeneralTree:::initialize_tree("a", node_values[[1]])
+    init <- GeneralTree:::add_node(init, "a", 0, node_values[[2]])
+    init <- GeneralTree:::add_node(init, "a", "b", node_values[[3]])
+    init <- GeneralTree:::add_node(init, "a", 1.1, node_values[[4]])
+
+    expect_equal(GeneralTree:::get_childeren_values(init, "a"), node_values[-1])
+})
+
+test_that("Child keys are correclty returned with mixed keys", {
+    node_values <- list(list("a"), new.env(), 0.1, "les cochons volant sont éblouissant")
+    init <- GeneralTree:::initialize_tree("a", node_values[[1]])
+    init <- GeneralTree:::add_node(init, "a", 0, node_values[[2]])
+    init <- GeneralTree:::add_node(init, "a", "b", node_values[[3]])
+    init <- GeneralTree:::add_node(init, "a", 1.1, node_values[[4]])
+
+    expect_equal(GeneralTree:::get_siblings_values(init, 1.1),
+                 node_values[-c(1, 4)])
+})
+

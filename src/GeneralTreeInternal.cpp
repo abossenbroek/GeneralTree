@@ -274,7 +274,7 @@ GeneralTreeInternal::get_siblings_uid(uid node_uid)
   return result;
 }
 
-shared_ptr<std::vector<tree_key> >
+shared_ptr_key_vec
 GeneralTreeInternal::get_childeren_keys(uid parent_uid)
 {
   shared_ptr<std::vector<tree_key> > result(new std::vector<tree_key>);
@@ -291,7 +291,7 @@ GeneralTreeInternal::get_childeren_keys(uid parent_uid)
   return result;
 }
 
-shared_ptr<std::vector<tree_key> >
+shared_ptr_key_vec
 GeneralTreeInternal::get_siblings_keys(uid node_uid)
 {
   shared_ptr<std::vector<tree_key> > result(new std::vector<tree_key>);
@@ -334,10 +334,10 @@ GeneralTreeInternal::get_value(uid node_uid)
 
 
 
-shared_ptr<std::vector<SEXP> >
+shared_ptr_SEXP_vec
 GeneralTreeInternal::get_childeren_values(uid parent_uid)
 {
-  shared_ptr<std::vector<SEXP> > result(new std::vector<SEXP>);
+  shared_ptr_SEXP_vec result(new std::vector<SEXP>);
 
   if (!has_child(parent_uid))
     return result;
@@ -351,10 +351,10 @@ GeneralTreeInternal::get_childeren_values(uid parent_uid)
   return result;
 }
 
-shared_ptr<std::vector<SEXP> >
+shared_ptr_SEXP_vec
 GeneralTreeInternal::get_siblings_values(uid node_uid)
 {
-  shared_ptr<std::vector<SEXP> > result(new std::vector<SEXP>);
+  shared_ptr_SEXP_vec result(new std::vector<SEXP>);
 
   if (!has_siblings(node_uid))
     return result;
@@ -367,5 +367,6 @@ GeneralTreeInternal::get_siblings_values(uid node_uid)
 
   return result;
 }
+
 
 

@@ -56,12 +56,12 @@ public:
   bool is_id_in_tree(SEXP id);
   std::shared_ptr<uids_vector> get_childeren_uid(uid parent_uid);
   std::shared_ptr<uids_vector> get_siblings_uid(uid node_uid);
-  std::shared_ptr<std::vector<tree_key> > get_childeren_keys(uid
-      parent_uid);
-  std::shared_ptr<std::vector<tree_key> > get_siblings_keys(uid node_uid);
-  std::shared_ptr<std::vector<SEXP> > get_childeren_values(uid
-      parent_uid);
-  std::shared_ptr<std::vector<SEXP> > get_siblings_values(uid node_uid);
+  shared_ptr_key_vec  get_childeren_keys(uid parent_uid);
+  shared_ptr_key_vec get_siblings_keys(uid node_uid);
+  shared_ptr_SEXP_vec get_childeren_values(uid parent_uid);
+  shared_ptr_SEXP_vec get_siblings_values(uid node_uid);
+  shared_ptr_key_vec branch_to_list(uid parent_uid);
+
 
   bool cmp(const GeneralTreeInternal& gti);
 };
