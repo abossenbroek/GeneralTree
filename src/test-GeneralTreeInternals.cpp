@@ -1,13 +1,15 @@
 // [[Rcpp::plugins(cpp11)]]
+#include "config.h"
+
 #ifdef HAVE_TESTTHAT_H
 
 #include <testthat.h>
 #include <Rcpp.h>
 
+#include "tree_types.h"
 #include "GeneralTreeInternal.h"
 
 context("GeneralTreeInternal can be created") {
-  test_that("root node can be found in tree") {
     String root_id_string = "a";
     SEXP root_id = wrap(root_id_string);
     // Create a gti
@@ -15,6 +17,7 @@ context("GeneralTreeInternal can be created") {
     // Retrieve the unique id.
     int root_uid = gti.find_uid(root_id);
     // Verify whether it is the correct uid.
+  test_that("root node can be found in tree") {
     expect_true(root_uid == (gti.uid_counter - 1));
   }
 }
@@ -258,9 +261,9 @@ context("GeneralTreeInternal get_childeren_uid and get_siblings_uid work") {
     int sibling_uid = gti.find_uid(sibling_id);
     int sibling2_uid = gti.find_uid(sibling2_id);
     int sibling3_uid = gti.find_uid(sibling3_id);
-    uids_vector first_level = {child_uid, sibling_uid};
-    uids_vector siblings_of_child = {sibling_uid};
-    uids_vector siblings_of_sibling = {child_uid};
+    uid_vector first_level = {child_uid, sibling_uid};
+    uid_vector siblings_of_child = {sibling_uid};
+    uid_vector siblings_of_sibling = {child_uid};
 
 
     // Verify whether all the getters return the proper result of the tree.
@@ -431,87 +434,142 @@ context("GeneralTreeInternal support various key types") {
     int sibling_uid = gti.find_uid(sibling_id);
     int sibling2_uid = gti.find_uid(sibling2_id);
     int sibling3_uid = gti.find_uid(sibling3_id);
-    uids_vector first_level = {child_id_int, sibling_id_int};
-    uids_vector siblings_of_child = {sibling_id_int};
-    uids_vector siblings_of_sibling = {child_id_int};
+    uid_vector first_level = {child_id_int, sibling_id_int};
+    uid_vector siblings_of_child = {sibling_id_int};
+    uid_vector siblings_of_sibling = {child_id_int};
 
 
     // Verify whether all the getters return the proper result of the tree.
     expect_true(gti.get_siblings_uid(root_uid)->size() == 0);
     expect_true(gti.get_siblings_uid(child_uid)->size() ==
         gti.get_siblings_uid(sibling_uid)->size());
-    expect_true((*gti.get_childeren_keys(root_uid)) == first_level);
-    expect_true((*gti.get_siblings_keys(child_uid)) == siblings_of_child);
-    expect_true((*gti.get_siblings_keys(sibling_uid)) == siblings_of_sibling);
+
+    std::vector<uid> res;
+    key_int_visitor* v = new key_int_visitor();
+
+    /*  convert the tree key to integer */
+    key_vec first_level_found(*gti.get_childeren_keys(root_uid));
+    res.reserve(first_level_found.size());
+
+    transform(first_level_found.begin(), first_level_found.end(),
+        back_inserter(res),
+        [&](tree_key& k){ return boost::apply_visitor(*v, k); } );
+
+    /*  test behaviour */
+    expect_true(res == first_level);
+
+    /*  convert the tree key to integer */
+    key_vec siblings_of_child_level_found(*gti.get_siblings_keys(child_uid));
+    res.clear();
+    res.reserve(siblings_of_child_level_found.size());
+
+    transform(siblings_of_child_level_found.begin(), siblings_of_child_level_found.end(),
+        back_inserter(res),
+        [&](tree_key& k){ return boost::apply_visitor(*v, k); } );
+
+    /*  test behaviour */
+    expect_true(res == siblings_of_child);
+
+
+    /*  convert the tree key to integer */
+    key_vec siblings_of_sibling_level_found(*gti.get_siblings_keys(sibling_uid));
+    res.clear();
+    res.reserve(siblings_of_sibling_level_found.size());
+
+    transform(siblings_of_sibling_level_found.begin(),
+        siblings_of_sibling_level_found.end(),
+        back_inserter(res),
+        [&](tree_key& k){ return boost::apply_visitor(*v, k); } );
+
+    /*  test behaviour */
+    expect_true(res == siblings_of_sibling);
   }
+}
 
-  test_that("we get the right keys using double") {
-    double child_id_double = 0.0;
-    double child2_id_double = 0.1;
-    double child3_id_double = 0.2;
-    double root_id_double = 0.3;
-    double sibling_id_double = 0.4;
-    double sibling2_id_double = 0.5;
-    double sibling3_id_double = 0.6;
-    SEXP root_id = wrap(root_id_double);
-    SEXP child_id = wrap(child_id_double);
-    SEXP child2_id = wrap(child2_id_double);
-    SEXP child3_id = wrap(child3_id_double);
-    SEXP sibling_id = wrap(sibling_id_double);
-    SEXP sibling2_id = wrap(sibling2_id_double);
-    SEXP sibling3_id = wrap(sibling3_id_double);
+context("GeneralTreeInternal branch information is correctly reported") {
+  test_that("number of childeren is correctly reported") {
+    SEXP values[] = {
+      NumericVector::create(0),
+      NumericVector::create(1),
+      NumericVector::create(2),
+      NumericVector::create(3),
+      NumericVector::create(4),
+      NumericVector::create(5),
+      NumericVector::create(6),
+      NumericVector::create(7)
+    };
     // Create a gti.
-    GeneralTreeInternal gti(root_id, root_id);
+    GeneralTreeInternal gti(values[0], values[0]);
     // Add child node.
-    gti.add_node(root_id, child_id, child_id);
-    // Add fist sibling.
-    gti.add_node(root_id, sibling_id, sibling_id);
-    // Add child to first sibling.
-    gti.add_node(sibling_id, child2_id, child2_id);
-    // Add sibling to the last child.
-    gti.add_node(sibling_id, sibling2_id, sibling2_id);
-    // Add child to last sibling.
-    gti.add_node(sibling2_id, child3_id, child3_id);
-    gti.add_node(sibling2_id, sibling3_id, sibling3_id);
+    gti.add_node(values[0], values[1], values[1]);
+    gti.add_node(values[0], values[2], values[2]);
+    gti.add_node(values[0], values[3], values[3]);
+    gti.add_node(values[0], values[4], values[4]);
+    gti.add_node(values[0], values[5], values[5]);
+    gti.add_node(values[0], values[6], values[6]);
+    gti.add_node(values[0], values[7], values[7]);
 
-    int root_uid = gti.find_uid(root_id);
-    int child_uid = gti.find_uid(child_id);
-    int child2_uid = gti.find_uid(child2_id);
-    int child3_uid = gti.find_uid(child3_id);
-    int sibling_uid = gti.find_uid(sibling_id);
-    int sibling2_uid = gti.find_uid(sibling2_id);
-    int sibling3_uid = gti.find_uid(sibling3_id);
-    uids_vector first_level = {child_id_double, sibling_id_double};
-    uids_vector siblings_of_child = {sibling_id_double};
-    uids_vector siblings_of_sibling = {child_id_double};
+    int root_uid = gti.find_uid(values[0]);
 
     // Verify whether all the getters return the proper result of the tree.
-    expect_true(gti.get_siblings_uid(root_uid)->size() == 0);
-    expect_true(gti.get_siblings_uid(child_uid)->size() ==
-        gti.get_siblings_uid(sibling_uid)->size());
-    expect_true((*gti.get_childeren_keys(root_uid)) == first_level);
-    expect_true((*gti.get_siblings_keys(child_uid)) == siblings_of_child);
-    expect_true((*gti.get_siblings_keys(sibling_uid)) == siblings_of_sibling);
+    expect_true(gti.count_child_nodes(root_uid) == 7);
   }
-}
 
-context("GeneralTreeInternal correct exceptions are returned") {
-  test_that("correct exceptions") {
-    String child_id_string = "child";
-    String sibling_id_string = "sibling";
-    String root_id_string = "root";
-    SEXP root_id = wrap(root_id_string);
-    SEXP child_id = wrap(child_id_string);
-    SEXP sibling_id = wrap(sibling_id_string);
+  test_that("recursive works for number of childeren") {
+    SEXP values[] = {
+      NumericVector::create(0),
+      NumericVector::create(1),
+      NumericVector::create(2),
+      NumericVector::create(3),
+      NumericVector::create(4),
+      NumericVector::create(5),
+      NumericVector::create(6),
+      NumericVector::create(7)
+    };
+
     // Create a gti.
-    GeneralTreeInternal gti(root_id, root_id);
+    GeneralTreeInternal gti(values[0], values[0]);
     // Add child node.
-    gti.add_node(root_id, child_id, child_id);
+    gti.add_node(values[0], values[1], values[1]);
+    gti.add_node(values[1], values[2], values[2]);
+    gti.add_node(values[2], values[3], values[3]);
+    gti.add_node(values[2], values[4], values[4]);
+    gti.add_node(values[2], values[5], values[5]);
+    gti.add_node(values[2], values[6], values[6]);
+    gti.add_node(values[2], values[7], values[7]);
 
-    expect_error(gti.find_uid(sibling_id));
-    expect_error(gti.get_lchild(gti.uid_counter));
-    expect_error(gti.get_parent(gti.uid_counter));
+    int root_uid = gti.find_uid(values[0]);
+    int child1_uid = gti.find_uid(values[1]);
+    int child2_uid = gti.find_uid(values[2]);
+
+    // Verify whether all the getters return the proper result of the tree.
+    expect_true(gti.count_child_nodes(root_uid) == 1);
+    expect_true(gti.count_child_nodes(child1_uid) == 1);
+    expect_true(gti.count_child_nodes(child2_uid) == 5);
+    expect_true(gti.count_child_nodes(child2_uid) == 5);
+    expect_true(gti.count_child_nodes(root_uid, true) == 7);
+    expect_false(gti.count_child_nodes(child2_uid, true) == 7);
   }
+
 }
 
+//context("GeneralTreeInternal correct exceptions are returned") {
+//  test_that("correct exceptions") {
+//    String child_id_string = "child";
+//    String sibling_id_string = "sibling";
+//    String root_id_string = "root";
+//    SEXP root_id = wrap(root_id_string);
+//    SEXP child_id = wrap(child_id_string);
+//    SEXP sibling_id = wrap(sibling_id_string);
+//    // Create a gti.
+//    GeneralTreeInternal gti(root_id, root_id);
+//    // Add child node.
+//    gti.add_node(root_id, child_id, child_id);
+//
+//    expect_error(gti.find_uid(sibling_id));
+//    expect_error(gti.get_lchild(gti.uid_counter));
+//    expect_error(gti.get_parent(gti.uid_counter));
+//  }
+//}
+//
 #endif //HAVE_TESTTHAT_H

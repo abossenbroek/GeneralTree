@@ -4,11 +4,16 @@
 
 #include <memory>
 #include <algorithm>
-
 #include <string>
+
+#include <boost/phoenix/phoenix.hpp>
+
+
 
 #include "GeneralTreeInternal.h"
 #include "key_visitor.h"
+
+using namespace boost::phoenix::placeholders;
 
 using namespace Rcpp;
 using namespace std;
@@ -162,7 +167,7 @@ GeneralTreeInternal::add_sibling(uid origin_uid, uid sibling_uid)
 
   if (origin_iter == this->uid_to_siblings.end()) {
     origin_iter = (this->uid_to_siblings.insert(uid_uids_pair(origin_uid,
-          uids_vector()))).first;
+          uid_vector()))).first;
   }
 
   origin_iter->second.push_back(sibling_uid);
@@ -219,10 +224,10 @@ GeneralTreeInternal::cmp(const GeneralTreeInternal& gti)
 }
 
 
-shared_ptr<uids_vector>
+shared_ptr_uid_vec
 GeneralTreeInternal::get_childeren_uid(uid parent_uid)
 {
-  shared_ptr<uids_vector> result(new uids_vector());
+  shared_ptr<uid_vector> result(new uid_vector());
 
   // Return empty list if this node does not have any childeren.
   if (!has_child(parent_uid))
@@ -234,17 +239,17 @@ GeneralTreeInternal::get_childeren_uid(uid parent_uid)
 
   // Add the siblings to the list if the node has any siblings.
   if (has_siblings(child_uid)) {
-    shared_ptr<uids_vector> sibling_uids = get_siblings_uid(child_uid);
+    shared_ptr<uid_vector> sibling_uids = get_siblings_uid(child_uid);
     result->insert(result->end(), sibling_uids->begin(), sibling_uids->end());
   }
 
   return result;
 }
 
-shared_ptr<uids_vector>
+shared_ptr_uid_vec
 GeneralTreeInternal::get_siblings_uid(uid node_uid)
 {
-  shared_ptr<uids_vector> result(new uids_vector());
+  shared_ptr<uid_vector> result(new uid_vector());
 
   if (!has_siblings(node_uid))
     return result;
@@ -282,7 +287,7 @@ GeneralTreeInternal::get_childeren_keys(uid parent_uid)
   if (!has_child(parent_uid))
     return result;
 
-  shared_ptr<uids_vector> childeren = get_childeren_uid(parent_uid);
+  shared_ptr<uid_vector> childeren = get_childeren_uid(parent_uid);
   result->reserve(childeren->size());
 
   transform(childeren->begin(), childeren->end(), back_inserter(*result),
@@ -299,7 +304,7 @@ GeneralTreeInternal::get_siblings_keys(uid node_uid)
   if (!has_siblings(node_uid))
     return result;
 
-  shared_ptr<uids_vector> siblings = get_siblings_uid(node_uid);
+  shared_ptr<uid_vector> siblings = get_siblings_uid(node_uid);
   result->reserve(siblings->size());
 
   transform(siblings->begin(), siblings->end(), back_inserter(*result),
@@ -342,7 +347,7 @@ GeneralTreeInternal::get_childeren_values(uid parent_uid)
   if (!has_child(parent_uid))
     return result;
 
-  shared_ptr<uids_vector> childeren = get_childeren_uid(parent_uid);
+  shared_ptr<uid_vector> childeren = get_childeren_uid(parent_uid);
   result->reserve(childeren->size());
 
   transform(childeren->begin(), childeren->end(), back_inserter(*result),
@@ -359,7 +364,7 @@ GeneralTreeInternal::get_siblings_values(uid node_uid)
   if (!has_siblings(node_uid))
     return result;
 
-  shared_ptr<uids_vector> siblings = get_siblings_uid(node_uid);
+  shared_ptr<uid_vector> siblings = get_siblings_uid(node_uid);
   result->reserve(siblings->size());
 
   transform(siblings->begin(), siblings->end(), back_inserter(*result),
@@ -368,5 +373,26 @@ GeneralTreeInternal::get_siblings_values(uid node_uid)
   return result;
 }
 
+unsigned int
+GeneralTreeInternal::count_child_nodes(uid parent_uid, bool recursive)
+{
+  if (!has_child(parent_uid))
+    return 0;
 
+  /* To create a final list we need to reserve space in advance. To achieve
+   * this we will first sum the number of childeren in this branch. */
+  shared_ptr_uid_vec c_nodes = get_childeren_uid(parent_uid);
+
+  unsigned int branch_size = c_nodes->size();
+
+  // If we have a recursive call we need to call this function on all childeren
+  // with childeren.
+  if (recursive) {
+    for (const uid& child_uid : *c_nodes) {
+      branch_size += count_child_nodes(child_uid, recursive);
+    }
+  }
+
+  return branch_size;
+}
 

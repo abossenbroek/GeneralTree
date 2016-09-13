@@ -4,6 +4,7 @@
 #define _KEY_VISITOR_H_
 
 #include <algorithm>
+#include <stdexcept>
 
 #include <boost/variant.hpp>
 
@@ -31,6 +32,28 @@ public:
   SEXP operator()(double& d) const
   {
     return wrap(d);
+  }
+};
+
+class key_int_visitor
+  : public boost::static_visitor<int>
+{
+public:
+  int operator()(int& i) const
+  {
+    return i;
+  }
+
+  int operator()(std::string& s) const
+  {
+    throw std::invalid_argument("Could not cast int to string");
+    return 0;
+  }
+
+  int operator()(double& d) const
+  {
+    throw std::invalid_argument("Could not cast double to string");
+    return 0;
   }
 };
 
@@ -112,5 +135,7 @@ tree_key_cast_SEXP_vec(shared_ptr_key_vec vec)
 
   return result;
 }
+
+
 
 #endif // _KEY_VISITOR_H_
