@@ -2,8 +2,6 @@
 .Rhistory
 .RData
 inst/doc
-**/*~
-**/*.swp
 aclocal.m4
 autom4te.cache
 autoscan.log
