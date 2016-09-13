@@ -1,4 +1,6 @@
 ^.*\.Rproj$
+^.*\.lintr$
+^.*\.editorconfig$
 ^\.Rproj\.user$
 ^\.travis\.yml$
 ^appveyor\.yml$
