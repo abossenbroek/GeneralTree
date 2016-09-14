@@ -6,3 +6,5 @@
 ^appveyor\.yml$
 ^codecov\.yml$
 ^CONDUCT\.md$
+^\.ycm_extra_conf.py$
+^\.vimrc$
