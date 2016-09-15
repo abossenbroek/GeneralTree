@@ -25,9 +25,9 @@ typedef std::map<int, int> uid_to_uid_map;
 typedef std::pair<uid, SEXP> uid_SEXP_pair;
 typedef std::map<uid, SEXP> uid_to_SEXP_map;
 
-typedef std::vector<uid> uid_vector;
+typedef std::vector<uid> uid_vec;
 
-typedef std::map<int, uid_vector> uid_to_uids_map;
+typedef std::map<int, uid_vec> uid_to_uids_map;
 typedef std::pair<int, std::vector<int> > uid_uids_pair;
 
 typedef std::vector<SEXP> SEXP_vec;
@@ -36,6 +36,6 @@ typedef std::vector<tree_key> key_vec;
 typedef std::shared_ptr<std::vector<SEXP> > shared_ptr_SEXP_vec;
 typedef std::shared_ptr<key_vec> shared_ptr_key_vec;
 
-typedef std::shared_ptr<uid_vector> shared_ptr_uid_vec;
+typedef std::shared_ptr<uid_vec> shared_ptr_uid_vec;
 
 #endif // _TREE_TYPES_H

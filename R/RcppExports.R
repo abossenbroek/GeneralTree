@@ -21,16 +21,16 @@ get_value <- function(gti_sexp, key) {
     .Call('GeneralTree_get_value', PACKAGE = 'GeneralTree', gti_sexp, key)
 }
 
-get_childeren_keys <- function(gti_sexp, parent_id) {
-    .Call('GeneralTree_get_childeren_keys', PACKAGE = 'GeneralTree', gti_sexp, parent_id)
+get_children_keys <- function(gti_sexp, parent_id) {
+    .Call('GeneralTree_get_children_keys', PACKAGE = 'GeneralTree', gti_sexp, parent_id)
 }
 
 get_siblings_keys <- function(gti_sexp, node_id) {
     .Call('GeneralTree_get_siblings_keys', PACKAGE = 'GeneralTree', gti_sexp, node_id)
 }
 
-get_childeren_values <- function(gti_sexp, parent_id) {
-    .Call('GeneralTree_get_childeren_values', PACKAGE = 'GeneralTree', gti_sexp, parent_id)
+get_children_values <- function(gti_sexp, parent_id) {
+    .Call('GeneralTree_get_children_values', PACKAGE = 'GeneralTree', gti_sexp, parent_id)
 }
 
 get_siblings_values <- function(gti_sexp, node_id) {

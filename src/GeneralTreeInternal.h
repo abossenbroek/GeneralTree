@@ -60,7 +60,8 @@ public:
   shared_ptr_key_vec get_siblings_keys(uid node_uid);
   shared_ptr_SEXP_vec get_children_values(uid parent_uid);
   shared_ptr_SEXP_vec get_siblings_values(uid node_uid);
-  //shared_ptr_key_vec branch_to_list(uid parent_uid);
+  shared_ptr_key_vec branch_keys_to_list(uid parent_uid, bool recursive = false);
+  shared_ptr_uid_vec branch_uid_to_list(uid parent_uid, bool recursive = false);
   unsigned int count_child_nodes(uid parent_uid, bool recursive = false);
 
   bool cmp(const GeneralTreeInternal& gti);
@@ -188,9 +189,9 @@ namespace Rcpp {
 //  template <> uid_to_uids_map as(SEXP u_u_exp) {
 //    List u_u_m = as<List>(u_u_exp);
 //    std::vector<int> left_vector = u_u_m["left"];
-//    std::vector<uid_vector> right_vector = u_u_m["right"];
+//    std::vector<uid_vec> right_vector = u_u_m["right"];
 //    std::vector<int>::iterator lit;
-//    std::vector<uid_vector>::iterator rit;
+//    std::vector<uid_vec>::iterator rit;
 //
 //    uid_to_uids_map result;
 //

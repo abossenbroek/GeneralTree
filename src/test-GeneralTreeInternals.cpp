@@ -261,9 +261,9 @@ context("GeneralTreeInternal get_children_uid and get_siblings_uid work") {
     int sibling_uid = gti.find_uid(sibling_id);
     int sibling2_uid = gti.find_uid(sibling2_id);
     int sibling3_uid = gti.find_uid(sibling3_id);
-    uid_vector first_level = {child_uid, sibling_uid};
-    uid_vector siblings_of_child = {sibling_uid};
-    uid_vector siblings_of_sibling = {child_uid};
+    uid_vec first_level = {child_uid, sibling_uid};
+    uid_vec siblings_of_child = {sibling_uid};
+    uid_vec siblings_of_sibling = {child_uid};
 
 
     // Verify whether all the getters return the proper result of the tree.
@@ -434,9 +434,9 @@ context("GeneralTreeInternal support various key types") {
     int sibling_uid = gti.find_uid(sibling_id);
     int sibling2_uid = gti.find_uid(sibling2_id);
     int sibling3_uid = gti.find_uid(sibling3_id);
-    uid_vector first_level = {child_id_int, sibling_id_int};
-    uid_vector siblings_of_child = {sibling_id_int};
-    uid_vector siblings_of_sibling = {child_id_int};
+    uid_vec first_level = {child_id_int, sibling_id_int};
+    uid_vec siblings_of_child = {sibling_id_int};
+    uid_vec siblings_of_sibling = {child_id_int};
 
 
     // Verify whether all the getters return the proper result of the tree.
