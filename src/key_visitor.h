@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <stdexcept>
+#include <string>
 
 #include <boost/variant.hpp>
 
@@ -54,6 +55,26 @@ public:
   {
     throw std::invalid_argument("Could not cast double to string");
     return 0;
+  }
+};
+
+class key_string_visitor
+  : public boost::static_visitor<std::string>
+{
+public:
+  std::string operator()(int& i) const
+  {
+    return std::to_string(i);
+  }
+
+  std::string operator()(std::string& s) const
+  {
+    return s;
+  }
+
+  std::string operator()(double& d) const
+  {
+    return std::to_string(d);
   }
 };
 

@@ -325,6 +325,23 @@ GeneralTreeInternal::find_key(uid node_uid)
   return id_iter->second;
 }
 
+
+shared_ptr_SEXP_vec
+GeneralTreeInternal::get_value(shared_ptr_uid_vec node_uid_vec)
+{
+  shared_ptr_SEXP_vec result_SEXP(new SEXP_vec());
+  shared_ptr_key_vec result_keys(new key_vec());
+  result_SEXP->reserve(node_uid_vec->size());
+  result_keys->reserve(node_uid_vec->size());
+
+  transform(node_uid_vec->begin(), node_uid_vec->end(), back_inserter(*result_keys),
+      [this](uid& x){ return find_key(x); } );
+
+  result_SEXP = tree_key_cast_SEXP_vec(result_keys);
+
+  return result_SEXP;
+}
+
 SEXP
 GeneralTreeInternal::get_value(uid node_uid)
 {
@@ -396,15 +413,6 @@ GeneralTreeInternal::count_child_nodes(uid parent_uid, bool recursive)
   return branch_size;
 }
 
-
-shared_ptr_key_vec
-GeneralTreeInternal::branch_keys_to_list(uid parent_uid, bool recursive)
-{
-  shared_ptr_key_vec result(new key_vec());
-  return result;
-}
-
-
 shared_ptr_uid_vec
 GeneralTreeInternal::branch_uid_to_list(uid parent_uid, bool recursive)
 {
@@ -427,6 +435,7 @@ GeneralTreeInternal::branch_uid_to_list(uid parent_uid, bool recursive)
       child_result = branch_uid_to_list(c, recursive);
 
       /*  Append the child result to the current list. */
+      //TODO: research whether memcpy can be used.
       result->insert(end(*result), begin(*child_result), end(*child_result));
     }
   }

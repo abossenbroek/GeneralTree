@@ -44,6 +44,7 @@ public:
 
   int find_uid(SEXP id);
   tree_key find_key(uid node_uid);
+
   uid get_lchild(uid parent_uid);
   bool has_child(uid parent_uid);
   bool has_siblings(uid node_uid);
@@ -53,6 +54,7 @@ public:
   bool has_parent(uid child_uid);
   SEXP get_value(SEXP key);
   SEXP get_value(uid node_uid);
+  shared_ptr_SEXP_vec get_value(shared_ptr_uid_vec node_uid_vec);
   bool is_id_in_tree(SEXP id);
   shared_ptr_uid_vec get_children_uid(uid parent_uid);
   shared_ptr_uid_vec get_siblings_uid(uid node_uid);
@@ -60,7 +62,6 @@ public:
   shared_ptr_key_vec get_siblings_keys(uid node_uid);
   shared_ptr_SEXP_vec get_children_values(uid parent_uid);
   shared_ptr_SEXP_vec get_siblings_values(uid node_uid);
-  shared_ptr_key_vec branch_keys_to_list(uid parent_uid, bool recursive = false);
   shared_ptr_uid_vec branch_uid_to_list(uid parent_uid, bool recursive = false);
   unsigned int count_child_nodes(uid parent_uid, bool recursive = false);
 

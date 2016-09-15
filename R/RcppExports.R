@@ -37,3 +37,7 @@ get_siblings_values <- function(gti_sexp, node_id) {
     .Call('GeneralTree_get_siblings_values', PACKAGE = 'GeneralTree', gti_sexp, node_id)
 }
 
+get_branch_keys <- function(gti_sexp, parent_id, recursive) {
+    .Call('GeneralTree_get_branch_keys', PACKAGE = 'GeneralTree', gti_sexp, parent_id, recursive)
+}
+

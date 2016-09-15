@@ -95,7 +95,7 @@ get_children_values(SEXP gti_sexp, SEXP parent_id)
   uid parent_uid = gti->find_uid(parent_id);
   shared_ptr_SEXP_vec c_sexp = gti->get_children_values(parent_uid);
 
-  return(*c_sexp);
+  return *c_sexp ;
 }
 
 // [[Rcpp::export]]
@@ -106,6 +106,26 @@ get_siblings_values(SEXP gti_sexp, SEXP node_id)
   uid node_uid = gti->find_uid(node_id);
   shared_ptr_SEXP_vec s_sexp = gti->get_siblings_values(node_uid);
 
-  return(*s_sexp);
+  return *s_sexp ;
 }
 
+// [[Rcpp::export]]
+std::vector<SEXP>
+get_branch_keys(SEXP gti_sexp, SEXP parent_id, bool recursive)
+{
+  gti_xptr gti(gti_sexp);
+
+  uid parent_uid = gti->find_uid(parent_id);
+  shared_ptr_SEXP_vec result(new SEXP_vec());
+
+  if (!gti->has_child(parent_uid)) {
+    return *result;
+  }
+
+  shared_ptr_uid_vec branch_uids(gti->branch_uid_to_list(parent_uid, recursive));
+
+  result = gti->get_value(branch_uids);
+
+  return *result;
+
+}
