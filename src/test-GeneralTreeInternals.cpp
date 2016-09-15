@@ -550,7 +550,129 @@ context("GeneralTreeInternal branch information is correctly reported") {
     expect_true(gti.count_child_nodes(root_uid, true) == 7);
     expect_false(gti.count_child_nodes(child2_uid, true) == 7);
   }
+}
 
+context("GeneralTreeInternal branch uid information is correctly reported") {
+  test_that("uids of children is correctly reported with shallow tree") {
+    SEXP values[] = {
+      NumericVector::create(0),
+      NumericVector::create(1),
+      NumericVector::create(2),
+      NumericVector::create(3),
+      NumericVector::create(4),
+      NumericVector::create(5),
+      NumericVector::create(6),
+      NumericVector::create(7)
+    };
+    // Create a gti.
+    GeneralTreeInternal gti(values[0], values[0]);
+    // Add child node.
+    gti.add_node(values[0], values[1], values[1]);
+    gti.add_node(values[0], values[2], values[2]);
+    gti.add_node(values[0], values[3], values[3]);
+    gti.add_node(values[0], values[4], values[4]);
+    gti.add_node(values[0], values[5], values[5]);
+    gti.add_node(values[0], values[6], values[6]);
+    gti.add_node(values[0], values[7], values[7]);
+
+    uid root_uid = gti.find_uid(values[0]);
+    uid_vec expect_childeren = {
+      gti.find_uid(values[1]),
+      gti.find_uid(values[2]),
+      gti.find_uid(values[3]),
+      gti.find_uid(values[4]),
+      gti.find_uid(values[5]),
+      gti.find_uid(values[6]),
+      gti.find_uid(values[7])
+    };
+    uid child_7_uid = gti.find_uid(values[7]);
+
+    /* The proper size vectors are returned. */
+    expect_true(gti.branch_uid_to_list(root_uid, false)->size() == 7);
+    expect_true(gti.branch_uid_to_list(root_uid, true)->size() == 7);
+    expect_true(gti.branch_uid_to_list(child_7_uid, true)->size() == 0);
+
+    /* The proper size vectors are returned. */
+    expect_true(*gti.branch_uid_to_list(root_uid, false) == expect_childeren);
+  }
+
+  test_that("recursive works for number of children") {
+    SEXP values[] = {
+      NumericVector::create(0),
+      NumericVector::create(1),
+      NumericVector::create(2),
+      NumericVector::create(3),
+      NumericVector::create(4),
+      NumericVector::create(5),
+      NumericVector::create(6),
+      NumericVector::create(7)
+    };
+
+    // Create a gti.
+    GeneralTreeInternal gti(values[0], values[0]);
+    // Add child node.
+    gti.add_node(values[0], values[1], values[1]);
+    gti.add_node(values[1], values[2], values[2]);
+    gti.add_node(values[2], values[3], values[3]);
+    gti.add_node(values[2], values[4], values[4]);
+    gti.add_node(values[2], values[5], values[5]);
+    gti.add_node(values[2], values[6], values[6]);
+    gti.add_node(values[2], values[7], values[7]);
+
+    uid root_uid = gti.find_uid(values[0]);
+    uid child1_uid = gti.find_uid(values[1]);
+    uid child2_uid  = gti.find_uid(values[2]);
+    uid_vec expect_childeren_root_first_level = {
+      gti.find_uid(values[1])
+    };
+
+    uid_vec expect_childeren_child1_first_level = {
+      gti.find_uid(values[2])
+    };
+
+    uid_vec expect_childeren_child1_deep = {
+      gti.find_uid(values[2]),
+      gti.find_uid(values[3]),
+      gti.find_uid(values[4]),
+      gti.find_uid(values[5]),
+      gti.find_uid(values[6]),
+      gti.find_uid(values[7])
+    };
+
+    uid_vec expect_childeren_child2_level = {
+      gti.find_uid(values[3]),
+      gti.find_uid(values[4]),
+      gti.find_uid(values[5]),
+      gti.find_uid(values[6]),
+      gti.find_uid(values[7])
+    };
+
+    uid_vec expect_childeren = {
+      gti.find_uid(values[1]),
+      gti.find_uid(values[2]),
+      gti.find_uid(values[3]),
+      gti.find_uid(values[4]),
+      gti.find_uid(values[5]),
+      gti.find_uid(values[6]),
+      gti.find_uid(values[7])
+    };
+
+
+    // Verify whether all the getters return the proper result of the tree.
+    expect_true(*gti.branch_uid_to_list(root_uid, false) ==
+        expect_childeren_root_first_level);
+    expect_true(*gti.branch_uid_to_list(root_uid, true) == expect_childeren);
+
+    expect_true(*gti.branch_uid_to_list(child1_uid, false) ==
+        expect_childeren_child1_first_level);
+    expect_true(*gti.branch_uid_to_list(child1_uid, true) ==
+        expect_childeren_child1_deep);
+
+    expect_true(*gti.branch_uid_to_list(child2_uid, false) ==
+        expect_childeren_child2_level);
+    expect_true(*gti.branch_uid_to_list(child2_uid, true) ==
+        expect_childeren_child2_level);
+  }
 }
 
 context("GeneralTreeInternal correct exceptions are returned") {

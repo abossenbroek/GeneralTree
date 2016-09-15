@@ -419,9 +419,17 @@ GeneralTreeInternal::branch_uid_to_list(uid parent_uid, bool recursive)
   shared_ptr_uid_vec children(get_children_uid(parent_uid));
 
   for (uid c : *children) {
-    //TODO: add code.
+    /* Add the child to the list. */
+    result->push_back(c);
+    /* Only visit the child if it has childeren of itself.   */
+    if (has_child(c) && recursive) {
+      shared_ptr_uid_vec child_result(new uid_vec());
+      child_result = branch_uid_to_list(c, recursive);
+
+      /*  Append the child result to the current list. */
+      result->insert(end(*result), begin(*child_result), end(*child_result));
+    }
   }
 
   return result;
-
 }
