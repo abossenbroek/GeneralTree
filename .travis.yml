@@ -34,6 +34,7 @@ r_packages:
 after_success:
   - test $TRAVIS_R_VERSION_STRING = 'release' && Rscript -e 'covr::codecov()'
   - test $TRAVIS_R_VERSION_STRING = 'release' && Rscript -e 'covr::coveralls()'
+  - test $TRAVIS_R_VERSION_STRING = 'release' && Rscript -e 'lintr::lint_package()'
 
 notifications:
   webhooks:
@@ -43,3 +44,4 @@ notifications:
     on_failure: always  # options: [always|never|change] default: always
     on_start: never     # options: [always|never|change] default: always
   email: true
+
