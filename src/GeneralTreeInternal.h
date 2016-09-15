@@ -54,11 +54,11 @@ public:
   SEXP get_value(SEXP key);
   SEXP get_value(uid node_uid);
   bool is_id_in_tree(SEXP id);
-  shared_ptr_uid_vec get_childeren_uid(uid parent_uid);
+  shared_ptr_uid_vec get_children_uid(uid parent_uid);
   shared_ptr_uid_vec get_siblings_uid(uid node_uid);
-  shared_ptr_key_vec  get_childeren_keys(uid parent_uid);
+  shared_ptr_key_vec  get_children_keys(uid parent_uid);
   shared_ptr_key_vec get_siblings_keys(uid node_uid);
-  shared_ptr_SEXP_vec get_childeren_values(uid parent_uid);
+  shared_ptr_SEXP_vec get_children_values(uid parent_uid);
   shared_ptr_SEXP_vec get_siblings_values(uid node_uid);
   //shared_ptr_key_vec branch_to_list(uid parent_uid);
   unsigned int count_child_nodes(uid parent_uid, bool recursive = false);

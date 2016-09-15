@@ -24,7 +24,7 @@ context("GeneralTreeInternal can be created") {
 
 
 
-context("GeneralTreeInternal can add childeren directly under each other") {
+context("GeneralTreeInternal can add children directly under each other") {
   test_that("we can add a child to the tree directly under the root") {
     String child_id_string = "child";
     String root_id_string = "root";
@@ -141,7 +141,7 @@ context("GeneralTreeInternal can add siblings") {
     expect_true(gti.get_parent(sibling2_uid) == root_uid);
   }
 
-  test_that("we can add several siblings and childeren") {
+  test_that("we can add several siblings and children") {
     String child_id_string = "child";
     String child2_id_string = "child2";
     String child3_id_string = "child3";
@@ -189,7 +189,7 @@ context("GeneralTreeInternal can add siblings") {
 
 
 context("GeneralTreeInternal returns correct values") {
-  test_that("we can add several siblings and childeren") {
+  test_that("we can add several siblings and children") {
     String child_id_string = "child";
     String child2_id_string = "child2";
     String child3_id_string = "child3";
@@ -224,7 +224,7 @@ context("GeneralTreeInternal returns correct values") {
   }
 }
 
-context("GeneralTreeInternal get_childeren_uid and get_siblings_uid work") {
+context("GeneralTreeInternal get_children_uid and get_siblings_uid work") {
   test_that("we get the right uids") {
     String child_id_string = "child";
     String child2_id_string = "child2";
@@ -270,7 +270,7 @@ context("GeneralTreeInternal get_childeren_uid and get_siblings_uid work") {
     expect_true(gti.get_siblings_uid(root_uid)->size() == 0);
     expect_true(gti.get_siblings_uid(child_uid)->size() ==
         gti.get_siblings_uid(sibling_uid)->size());
-    expect_true((*gti.get_childeren_uid(root_uid)) == first_level);
+    expect_true((*gti.get_children_uid(root_uid)) == first_level);
     expect_true((*gti.get_siblings_uid(child_uid)) == siblings_of_child);
     expect_true((*gti.get_siblings_uid(sibling_uid)) == siblings_of_sibling);
   }
@@ -320,7 +320,7 @@ context("GeneralTreeInternal get_childeren_uid and get_siblings_uid work") {
     expect_true(gti.get_siblings_keys(root_uid)->size() == 0);
     expect_true(gti.get_siblings_keys(child_uid)->size() ==
         gti.get_siblings_keys(sibling_uid)->size());
-    expect_true((*gti.get_childeren_keys(root_uid)) == first_level);
+    expect_true((*gti.get_children_keys(root_uid)) == first_level);
     expect_true((*gti.get_siblings_keys(child_uid)) == siblings_of_child);
     expect_true((*gti.get_siblings_keys(sibling_uid)) == siblings_of_sibling);
   }
@@ -369,7 +369,7 @@ context("GeneralTreeInternal get_childeren_uid and get_siblings_uid work") {
     expect_true(gti.get_siblings_values(root_uid)->size() == 0);
     expect_true(gti.get_siblings_values(child_uid)->size() ==
         gti.get_siblings_values(sibling_uid)->size());
-    expect_true((*gti.get_childeren_values(root_uid)) == first_level);
+    expect_true((*gti.get_children_values(root_uid)) == first_level);
     expect_true((*gti.get_siblings_values(child_uid)) == siblings_of_child);
     expect_true((*gti.get_siblings_values(sibling_uid)) == siblings_of_sibling);
   }
@@ -448,7 +448,7 @@ context("GeneralTreeInternal support various key types") {
     key_int_visitor* v = new key_int_visitor();
 
     /*  convert the tree key to integer */
-    key_vec first_level_found(*gti.get_childeren_keys(root_uid));
+    key_vec first_level_found(*gti.get_children_keys(root_uid));
     res.reserve(first_level_found.size());
 
     transform(first_level_found.begin(), first_level_found.end(),
@@ -487,7 +487,7 @@ context("GeneralTreeInternal support various key types") {
 }
 
 context("GeneralTreeInternal branch information is correctly reported") {
-  test_that("number of childeren is correctly reported") {
+  test_that("number of children is correctly reported") {
     SEXP values[] = {
       NumericVector::create(0),
       NumericVector::create(1),
@@ -515,7 +515,7 @@ context("GeneralTreeInternal branch information is correctly reported") {
     expect_true(gti.count_child_nodes(root_uid) == 7);
   }
 
-  test_that("recursive works for number of childeren") {
+  test_that("recursive works for number of children") {
     SEXP values[] = {
       NumericVector::create(0),
       NumericVector::create(1),

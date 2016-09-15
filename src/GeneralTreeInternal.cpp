@@ -225,11 +225,11 @@ GeneralTreeInternal::cmp(const GeneralTreeInternal& gti)
 
 
 shared_ptr_uid_vec
-GeneralTreeInternal::get_childeren_uid(uid parent_uid)
+GeneralTreeInternal::get_children_uid(uid parent_uid)
 {
   shared_ptr<uid_vector> result(new uid_vector());
 
-  // Return empty list if this node does not have any childeren.
+  // Return empty list if this node does not have any children.
   if (!has_child(parent_uid))
     return result;
 
@@ -280,17 +280,17 @@ GeneralTreeInternal::get_siblings_uid(uid node_uid)
 }
 
 shared_ptr_key_vec
-GeneralTreeInternal::get_childeren_keys(uid parent_uid)
+GeneralTreeInternal::get_children_keys(uid parent_uid)
 {
   shared_ptr<std::vector<tree_key> > result(new std::vector<tree_key>);
 
   if (!has_child(parent_uid))
     return result;
 
-  shared_ptr<uid_vector> childeren = get_childeren_uid(parent_uid);
-  result->reserve(childeren->size());
+  shared_ptr<uid_vector> children = get_children_uid(parent_uid);
+  result->reserve(children->size());
 
-  transform(childeren->begin(), childeren->end(), back_inserter(*result),
+  transform(children->begin(), children->end(), back_inserter(*result),
       [this](uid& x){ return find_key(x); } );
 
   return result;
@@ -340,17 +340,17 @@ GeneralTreeInternal::get_value(uid node_uid)
 
 
 shared_ptr_SEXP_vec
-GeneralTreeInternal::get_childeren_values(uid parent_uid)
+GeneralTreeInternal::get_children_values(uid parent_uid)
 {
   shared_ptr_SEXP_vec result(new std::vector<SEXP>);
 
   if (!has_child(parent_uid))
     return result;
 
-  shared_ptr<uid_vector> childeren = get_childeren_uid(parent_uid);
-  result->reserve(childeren->size());
+  shared_ptr<uid_vector> children = get_children_uid(parent_uid);
+  result->reserve(children->size());
 
-  transform(childeren->begin(), childeren->end(), back_inserter(*result),
+  transform(children->begin(), children->end(), back_inserter(*result),
       [this](uid& x){ return get_value(x); } );
 
   return result;
@@ -380,13 +380,13 @@ GeneralTreeInternal::count_child_nodes(uid parent_uid, bool recursive)
     return 0;
 
   /* To create a final list we need to reserve space in advance. To achieve
-   * this we will first sum the number of childeren in this branch. */
-  shared_ptr_uid_vec c_nodes = get_childeren_uid(parent_uid);
+   * this we will first sum the number of children in this branch. */
+  shared_ptr_uid_vec c_nodes = get_children_uid(parent_uid);
 
   unsigned int branch_size = c_nodes->size();
 
-  // If we have a recursive call we need to call this function on all childeren
-  // with childeren.
+  /* If we have a recursive call we need to call this function on all children
+   * with children.  */
   if (recursive) {
     for (const uid& child_uid : *c_nodes) {
       branch_size += count_child_nodes(child_uid, recursive);

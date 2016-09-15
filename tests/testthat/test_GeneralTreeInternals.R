@@ -30,7 +30,7 @@ test_that("Child keys are correclty returned", {
     init <- GeneralTree:::add_node(init, "a", "b", list(1))
     init <- GeneralTree:::add_node(init, "a", "c", list(2))
 
-    expect_equal(GeneralTree:::get_childeren_keys(init, "a"), list("b", "c"));
+    expect_equal(GeneralTree:::get_children_keys(init, "a"), list("b", "c"));
 })
 
 test_that("Child keys are correclty returned with mixed keys", {
@@ -39,7 +39,7 @@ test_that("Child keys are correclty returned with mixed keys", {
     init <- GeneralTree:::add_node(init, "a", "b", list(2))
     init <- GeneralTree:::add_node(init, "a", 1.1, list(2))
 
-    expect_equal(GeneralTree:::get_childeren_keys(init, "a"), list(0, "b", 1.1));
+    expect_equal(GeneralTree:::get_children_keys(init, "a"), list(0, "b", 1.1));
 })
 
 test_that("Child keys are correclty returned with mixed keys", {
@@ -58,7 +58,7 @@ test_that("Child keys are correclty returned with mixed keys", {
     init <- GeneralTree:::add_node(init, "a", "b", node_values[[3]])
     init <- GeneralTree:::add_node(init, "a", 1.1, node_values[[4]])
 
-    expect_equal(GeneralTree:::get_childeren_values(init, "a"), node_values[-1])
+    expect_equal(GeneralTree:::get_children_values(init, "a"), node_values[-1])
 })
 
 test_that("Child keys are correclty returned with mixed keys", {
