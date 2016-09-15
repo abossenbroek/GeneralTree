@@ -15,7 +15,7 @@ context("GeneralTreeInternal can be created") {
     // Create a gti
     GeneralTreeInternal gti(root_id, root_id);
     // Retrieve the unique id.
-    int root_uid = gti.find_uid(root_id);
+    uid root_uid = gti.find_uid(root_id);
     // Verify whether it is the correct uid.
   test_that("root node can be found in tree") {
     expect_true(root_uid == (gti.uid_counter - 1));
@@ -34,7 +34,7 @@ context("GeneralTreeInternal can add children directly under each other") {
     GeneralTreeInternal gti(root_id, root_id);
     // Add child node.
     gti.add_node(root_id, child_id, child_id);
-    int child_uid = gti.find_uid(child_id);
+    uid child_uid = gti.find_uid(child_id);
     // Verify whether it is the correct uid.
     expect_true(child_uid == (gti.uid_counter - 1));
   }
@@ -48,8 +48,8 @@ context("GeneralTreeInternal can add children directly under each other") {
     GeneralTreeInternal gti(root_id, root_id);
     // Add child node.
     gti.add_node(root_id, child_id, child_id);
-    int root_uid = gti.find_uid(root_id);
-    int child_uid = gti.find_uid(child_id);
+    uid root_uid = gti.find_uid(root_id);
+    uid child_uid = gti.find_uid(child_id);
     // Verify whether all the getters return the proper result of the tree.
     expect_false(gti.has_siblings(child_uid));
     expect_true(gti.has_child(root_uid));
@@ -70,9 +70,9 @@ context("GeneralTreeInternal can add children directly under each other") {
     gti.add_node(root_id, child_id, child_id);
     gti.add_node(child_id, child2_id, child2_id);
 
-    int root_uid = gti.find_uid(root_id);
-    int child_uid = gti.find_uid(child_id);
-    int child2_uid = gti.find_uid(child2_id);
+    uid root_uid = gti.find_uid(root_id);
+    uid child_uid = gti.find_uid(child_id);
+    uid child2_uid = gti.find_uid(child2_id);
 
     // Verify whether all the getters return the proper result of the tree.
     expect_false(gti.has_siblings(child_uid));
@@ -98,9 +98,9 @@ context("GeneralTreeInternal can add siblings") {
     gti.add_node(root_id, child_id, child_id);
     gti.add_node(root_id, sibling_id, sibling_id);
 
-    int root_uid = gti.find_uid(root_id);
-    int child_uid = gti.find_uid(child_id);
-    int sibling_uid = gti.find_uid(sibling_id);
+    uid root_uid = gti.find_uid(root_id);
+    uid child_uid = gti.find_uid(child_id);
+    uid sibling_uid = gti.find_uid(sibling_id);
 
     // Verify whether all the getters return the proper result of the tree.
     expect_true(gti.has_siblings(child_uid));
@@ -125,10 +125,10 @@ context("GeneralTreeInternal can add siblings") {
     gti.add_node(root_id, sibling_id, sibling_id);
     gti.add_node(root_id, sibling2_id, sibling2_id);
 
-    int root_uid = gti.find_uid(root_id);
-    int child_uid = gti.find_uid(child_id);
-    int sibling_uid = gti.find_uid(sibling_id);
-    int sibling2_uid = gti.find_uid(sibling2_id);
+    uid root_uid = gti.find_uid(root_id);
+    uid child_uid = gti.find_uid(child_id);
+    uid sibling_uid = gti.find_uid(sibling_id);
+    uid sibling2_uid = gti.find_uid(sibling2_id);
 
     // Verify whether all the getters return the proper result of the tree.
     expect_true(gti.has_siblings(child_uid));
@@ -170,13 +170,13 @@ context("GeneralTreeInternal can add siblings") {
     gti.add_node(sibling2_id, child3_id, child3_id);
     gti.add_node(sibling2_id, sibling3_id, sibling3_id);
 
-    int root_uid = gti.find_uid(root_id);
-    int child_uid = gti.find_uid(child_id);
-    int child2_uid = gti.find_uid(child2_id);
-    int child3_uid = gti.find_uid(child3_id);
-    int sibling_uid = gti.find_uid(sibling_id);
-    int sibling2_uid = gti.find_uid(sibling2_id);
-    int sibling3_uid = gti.find_uid(sibling3_id);
+    uid root_uid = gti.find_uid(root_id);
+    uid child_uid = gti.find_uid(child_id);
+    uid child2_uid = gti.find_uid(child2_id);
+    uid child3_uid = gti.find_uid(child3_id);
+    uid sibling_uid = gti.find_uid(sibling_id);
+    uid sibling2_uid = gti.find_uid(sibling2_id);
+    uid sibling3_uid = gti.find_uid(sibling3_id);
 
     // Verify whether all the getters return the proper result of the tree.
     expect_true(gti.get_parent(child_uid) == root_uid);
@@ -254,13 +254,13 @@ context("GeneralTreeInternal get_children_uid and get_siblings_uid work") {
     gti.add_node(sibling2_id, child3_id, child3_id);
     gti.add_node(sibling2_id, sibling3_id, sibling3_id);
 
-    int root_uid = gti.find_uid(root_id);
-    int child_uid = gti.find_uid(child_id);
-    int child2_uid = gti.find_uid(child2_id);
-    int child3_uid = gti.find_uid(child3_id);
-    int sibling_uid = gti.find_uid(sibling_id);
-    int sibling2_uid = gti.find_uid(sibling2_id);
-    int sibling3_uid = gti.find_uid(sibling3_id);
+    uid root_uid = gti.find_uid(root_id);
+    uid child_uid = gti.find_uid(child_id);
+    uid child2_uid = gti.find_uid(child2_id);
+    uid child3_uid = gti.find_uid(child3_id);
+    uid sibling_uid = gti.find_uid(sibling_id);
+    uid sibling2_uid = gti.find_uid(sibling2_id);
+    uid sibling3_uid = gti.find_uid(sibling3_id);
     uid_vec first_level = {child_uid, sibling_uid};
     uid_vec siblings_of_child = {sibling_uid};
     uid_vec siblings_of_sibling = {child_uid};
@@ -304,13 +304,13 @@ context("GeneralTreeInternal get_children_uid and get_siblings_uid work") {
     gti.add_node(sibling2_id, child3_id, child3_id);
     gti.add_node(sibling2_id, sibling3_id, sibling3_id);
 
-    int root_uid = gti.find_uid(root_id);
-    int child_uid = gti.find_uid(child_id);
-    int child2_uid = gti.find_uid(child2_id);
-    int child3_uid = gti.find_uid(child3_id);
-    int sibling_uid = gti.find_uid(sibling_id);
-    int sibling2_uid = gti.find_uid(sibling2_id);
-    int sibling3_uid = gti.find_uid(sibling3_id);
+    uid root_uid = gti.find_uid(root_id);
+    uid child_uid = gti.find_uid(child_id);
+    uid child2_uid = gti.find_uid(child2_id);
+    uid child3_uid = gti.find_uid(child3_id);
+    uid sibling_uid = gti.find_uid(sibling_id);
+    uid sibling2_uid = gti.find_uid(sibling2_id);
+    uid sibling3_uid = gti.find_uid(sibling3_id);
     std::vector<tree_key> first_level = {child_id_string, sibling_id_string};
     std::vector<tree_key> siblings_of_child = {sibling_id_string};
     std::vector<tree_key> siblings_of_sibling = {child_id_string};
@@ -354,13 +354,13 @@ context("GeneralTreeInternal get_children_uid and get_siblings_uid work") {
     gti.add_node(sibling2_id, child3_id, child3_id);
     gti.add_node(sibling2_id, sibling3_id, sibling3_id);
 
-    int root_uid = gti.find_uid(root_id);
-    int child_uid = gti.find_uid(child_id);
-    int child2_uid = gti.find_uid(child2_id);
-    int child3_uid = gti.find_uid(child3_id);
-    int sibling_uid = gti.find_uid(sibling_id);
-    int sibling2_uid = gti.find_uid(sibling2_id);
-    int sibling3_uid = gti.find_uid(sibling3_id);
+    uid root_uid = gti.find_uid(root_id);
+    uid child_uid = gti.find_uid(child_id);
+    uid child2_uid = gti.find_uid(child2_id);
+    uid child3_uid = gti.find_uid(child3_id);
+    uid sibling_uid = gti.find_uid(sibling_id);
+    uid sibling2_uid = gti.find_uid(sibling2_id);
+    uid sibling3_uid = gti.find_uid(sibling3_id);
     std::vector<SEXP> first_level = {child_id, sibling_id};
     std::vector<SEXP> siblings_of_child = {sibling_id};
     std::vector<SEXP> siblings_of_sibling = {child_id};
@@ -382,7 +382,7 @@ context("GeneralTreeInternal support various key types") {
     // Create a gti
     GeneralTreeInternal gti(root_id, root_id);
     // Retrieve the unique id.
-    int root_uid = gti.find_uid(root_id);
+    uid root_uid = gti.find_uid(root_id);
     // Verify whether it is the correct uid.
     expect_true(root_uid == (gti.uid_counter - 1));
   }
@@ -393,7 +393,7 @@ context("GeneralTreeInternal support various key types") {
     // Create a gti
     GeneralTreeInternal gti(root_id, root_id);
     // Retrieve the unique id.
-    int root_uid = gti.find_uid(root_id);
+    uid root_uid = gti.find_uid(root_id);
     // Verify whether it is the correct uid.
     expect_true(root_uid == (gti.uid_counter - 1));
   }
@@ -427,13 +427,13 @@ context("GeneralTreeInternal support various key types") {
     gti.add_node(sibling2_id, child3_id, child3_id);
     gti.add_node(sibling2_id, sibling3_id, sibling3_id);
 
-    int root_uid = gti.find_uid(root_id);
-    int child_uid = gti.find_uid(child_id);
-    int child2_uid = gti.find_uid(child2_id);
-    int child3_uid = gti.find_uid(child3_id);
-    int sibling_uid = gti.find_uid(sibling_id);
-    int sibling2_uid = gti.find_uid(sibling2_id);
-    int sibling3_uid = gti.find_uid(sibling3_id);
+    uid root_uid = gti.find_uid(root_id);
+    uid child_uid = gti.find_uid(child_id);
+    uid child2_uid = gti.find_uid(child2_id);
+    uid child3_uid = gti.find_uid(child3_id);
+    uid sibling_uid = gti.find_uid(sibling_id);
+    uid sibling2_uid = gti.find_uid(sibling2_id);
+    uid sibling3_uid = gti.find_uid(sibling3_id);
     uid_vec first_level = {child_id_int, sibling_id_int};
     uid_vec siblings_of_child = {sibling_id_int};
     uid_vec siblings_of_sibling = {child_id_int};
@@ -509,7 +509,7 @@ context("GeneralTreeInternal branch information is correctly reported") {
     gti.add_node(values[0], values[6], values[6]);
     gti.add_node(values[0], values[7], values[7]);
 
-    int root_uid = gti.find_uid(values[0]);
+    uid root_uid = gti.find_uid(values[0]);
 
     // Verify whether all the getters return the proper result of the tree.
     expect_true(gti.count_child_nodes(root_uid) == 7);
@@ -538,9 +538,9 @@ context("GeneralTreeInternal branch information is correctly reported") {
     gti.add_node(values[2], values[6], values[6]);
     gti.add_node(values[2], values[7], values[7]);
 
-    int root_uid = gti.find_uid(values[0]);
-    int child1_uid = gti.find_uid(values[1]);
-    int child2_uid = gti.find_uid(values[2]);
+    uid root_uid = gti.find_uid(values[0]);
+    uid child1_uid = gti.find_uid(values[1]);
+    uid child2_uid = gti.find_uid(values[2]);
 
     // Verify whether all the getters return the proper result of the tree.
     expect_true(gti.count_child_nodes(root_uid) == 1);
