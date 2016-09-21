@@ -118,10 +118,6 @@ get_branch_keys(SEXP gti_sexp, SEXP parent_id, bool recursive)
   uid parent_uid = gti->find_uid(parent_id);
   shared_ptr_SEXP_vec result(new SEXP_vec());
 
-  if (!gti->has_child(parent_uid)) {
-    return *result;
-  }
-
   shared_ptr_uid_vec branch_uids(gti->branch_uid_to_list(parent_uid, recursive));
 
   result = gti->get_value(branch_uids);

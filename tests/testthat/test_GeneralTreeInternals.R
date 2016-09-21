@@ -61,6 +61,16 @@ test_that("Child keys are correclty returned with mixed keys", {
     expect_equal(GeneralTree:::get_children_values(init, "a"), node_values[-1])
 })
 
+test_that("Branch keys is correctly returned in singelton tree.", {
+    node_keys <- list("a")
+    node_values <- list(list("a"))
+    init <- GeneralTree:::initialize_tree(node_keys[[1]], node_values[[1]])
+
+    expect_equal(GeneralTree:::get_branch_keys(init, node_keys[[1]], recursive = F),
+                 node_keys)
+})
+
+
 test_that("Branch keys are correclty returned with mixed keys", {
     node_keys <- list("a", 0, "b", 1.1, 1.2)
     node_values <- list(list("a"), new.env(), 0.1,

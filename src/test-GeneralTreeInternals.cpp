@@ -555,6 +555,25 @@ context("GeneralTreeInternal branch information is correctly reported") {
 }
 
 context("GeneralTreeInternal branch uid information is correctly reported") {
+test_that("uids of branch is correctly reported on singleton tree") {
+    SEXP values[] = {
+      NumericVector::create(0)
+    };
+    // Create a gti.
+    GeneralTreeInternal gti(values[0], values[0]);
+
+    uid root_uid = gti.find_uid(values[0]);
+    uid_vec expect_branch = {
+      gti.find_uid(values[0])
+    };
+
+    /* The proper size vectors are returned. */
+    expect_true(gti.branch_uid_to_list(root_uid, false)->size() == 1);
+
+    /* The proper size vectors are returned. */
+    expect_true(*gti.branch_uid_to_list(root_uid, false) == expect_branch);
+  }
+
   test_that("uids of children is correctly reported with shallow tree") {
     SEXP values[] = {
       NumericVector::create(0),
