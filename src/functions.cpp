@@ -129,3 +129,14 @@ get_branch_keys(SEXP gti_sexp, SEXP parent_id, bool recursive)
   return *result;
 
 }
+
+// [[Rcpp::export]]
+bool
+has_child(SEXP gti_sexp, SEXP node_id)
+{
+  gti_xptr gti(gti_sexp);
+
+  uid node_uid = gti->find_uid(node_id);
+
+  return gti->has_child(node_uid);
+}

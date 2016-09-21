@@ -127,3 +127,15 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// has_child
+bool has_child(SEXP gti_sexp, SEXP node_id);
+RcppExport SEXP GeneralTree_has_child(SEXP gti_sexpSEXP, SEXP node_idSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type node_id(node_idSEXP);
+    __result = Rcpp::wrap(has_child(gti_sexp, node_id));
+    return __result;
+END_RCPP
+}
