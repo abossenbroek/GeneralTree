@@ -463,7 +463,8 @@ context("GeneralTreeInternal support various key types") {
     res.clear();
     res.reserve(siblings_of_child_level_found.size());
 
-    transform(siblings_of_child_level_found.begin(), siblings_of_child_level_found.end(),
+    transform(siblings_of_child_level_found.begin(),
+        siblings_of_child_level_found.end(),
         back_inserter(res),
         [&](tree_key& k){ return boost::apply_visitor(*v, k); } );
 
@@ -472,7 +473,8 @@ context("GeneralTreeInternal support various key types") {
 
 
     /*  convert the tree key to integer */
-    key_vec siblings_of_sibling_level_found(*gti.get_siblings_keys(sibling_uid));
+    key_vec
+      siblings_of_sibling_level_found(*gti.get_siblings_keys(sibling_uid));
     res.clear();
     res.reserve(siblings_of_sibling_level_found.size());
 
@@ -577,6 +579,7 @@ context("GeneralTreeInternal branch uid information is correctly reported") {
 
     uid root_uid = gti.find_uid(values[0]);
     uid_vec expect_childeren = {
+      gti.find_uid(values[0]),
       gti.find_uid(values[1]),
       gti.find_uid(values[2]),
       gti.find_uid(values[3]),
@@ -588,9 +591,9 @@ context("GeneralTreeInternal branch uid information is correctly reported") {
     uid child_7_uid = gti.find_uid(values[7]);
 
     /* The proper size vectors are returned. */
-    expect_true(gti.branch_uid_to_list(root_uid, false)->size() == 7);
-    expect_true(gti.branch_uid_to_list(root_uid, true)->size() == 7);
-    expect_true(gti.branch_uid_to_list(child_7_uid, true)->size() == 0);
+    expect_true(gti.branch_uid_to_list(root_uid, false)->size() == 8);
+    expect_true(gti.branch_uid_to_list(root_uid, true)->size() == 8);
+    expect_true(gti.branch_uid_to_list(child_7_uid, true)->size() == 1);
 
     /* The proper size vectors are returned. */
     expect_true(*gti.branch_uid_to_list(root_uid, false) == expect_childeren);
@@ -623,14 +626,17 @@ context("GeneralTreeInternal branch uid information is correctly reported") {
     uid child1_uid = gti.find_uid(values[1]);
     uid child2_uid  = gti.find_uid(values[2]);
     uid_vec expect_childeren_root_first_level = {
+      gti.find_uid(values[0]),
       gti.find_uid(values[1])
     };
 
     uid_vec expect_childeren_child1_first_level = {
+      gti.find_uid(values[1]),
       gti.find_uid(values[2])
     };
 
     uid_vec expect_childeren_child1_deep = {
+      gti.find_uid(values[1]),
       gti.find_uid(values[2]),
       gti.find_uid(values[3]),
       gti.find_uid(values[4]),
@@ -640,6 +646,7 @@ context("GeneralTreeInternal branch uid information is correctly reported") {
     };
 
     uid_vec expect_childeren_child2_level = {
+      gti.find_uid(values[2]),
       gti.find_uid(values[3]),
       gti.find_uid(values[4]),
       gti.find_uid(values[5]),
@@ -648,6 +655,7 @@ context("GeneralTreeInternal branch uid information is correctly reported") {
     };
 
     uid_vec expect_childeren = {
+      gti.find_uid(values[0]),
       gti.find_uid(values[1]),
       gti.find_uid(values[2]),
       gti.find_uid(values[3]),

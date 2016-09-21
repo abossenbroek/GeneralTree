@@ -74,14 +74,14 @@ test_that("Branch keys are correclty returned with mixed keys", {
     init <- GeneralTree:::add_node(init, node_keys[[3]], node_keys[[5]], node_values[[5]])
 
     expect_equal(GeneralTree:::get_branch_keys(init, node_keys[[1]], recursive = F),
-                 node_keys[-c(1, 4, 5)])
+                 node_keys[-c(4, 5)])
     expect_equal(GeneralTree:::get_branch_keys(init, node_keys[[1]], recursive = T),
-                 node_keys[-1])
+                 node_keys)
 
     expect_equal(GeneralTree:::get_branch_keys(init, node_keys[[3]], recursive = F),
-                 node_keys[c(4, 5)])
+                 node_keys[c(3, 4, 5)])
     expect_equal(GeneralTree:::get_branch_keys(init, node_keys[[3]], recursive = T),
-                 node_keys[c(4, 5)])
+                 node_keys[c(3, 4, 5)])
 
 
 })

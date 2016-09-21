@@ -418,19 +418,24 @@ GeneralTreeInternal::branch_uid_to_list(uid parent_uid, bool recursive)
 {
   shared_ptr_uid_vec result(new uid_vec());
 
+  result->push_back(parent_uid);
+
   if (!has_child(parent_uid))
     return result;
 
   /* Reserve sufficient space to store all the child nodes. */
-  result->reserve(count_child_nodes(parent_uid, recursive));
+  result->reserve(count_child_nodes(parent_uid, recursive) + 1);
 
+
+  /* Retrieve all the child nodes. */
   shared_ptr_uid_vec children(get_children_uid(parent_uid));
 
-  for (uid c : *children) {
-    /* Add the child to the list. */
-    result->push_back(c);
-    /* Only visit the child if it has childeren of itself.   */
-    if (has_child(c) && recursive) {
+  /* If the call is recursive we need to add every child's result to the list,
+   * otherwise we can simply convert the child to uid and add the result to the
+   * list. */
+  if (recursive) {
+    /* Iterate through the child nodes to convert them to uids. */
+    for (uid c : *children) {
       shared_ptr_uid_vec child_result(new uid_vec());
       child_result = branch_uid_to_list(c, recursive);
 
@@ -438,6 +443,8 @@ GeneralTreeInternal::branch_uid_to_list(uid parent_uid, bool recursive)
       //TODO: research whether memcpy can be used.
       result->insert(end(*result), begin(*child_result), end(*child_result));
     }
+  } else {
+    result->insert(end(*result), begin(*children), end(*children));
   }
 
   return result;
