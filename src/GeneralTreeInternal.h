@@ -5,52 +5,44 @@
 
 #include <Rcpp.h>
 
-#include <map>
 #include <vector>
-
-#include <boost/variant.hpp>
-#include <boost/bimap.hpp>
-#include <boost/bimap/multiset_of.hpp>
-
-#include <boost/shared_ptr.hpp>
-
 #include <map>
 #include <string>
 #include <utility>
 #include <memory>
 
+
+#include <boost/variant.hpp>
+#include <boost/bimap.hpp>
+#include <boost/bimap/multiset_of.hpp>
+
 #include "tree_types.h"
 #include "key_visitor.h"
 
+#include "TreeNode.h"
+
 // nocov start
 
-using namespace Rcpp;
-
-#define NON_EXISTENT -1
-
-class TreeNode {
-public:
-  uid my_uid;
-  tree_key key;
-  SEXP data;
-  uid child;
-  uid_vec left_siblings;
-  uid parent;
-
-  TreeNode(uid my_uid_, tree_key key_, SEXP data_, uid child_, uid parent_) :
-    my_uid(my_uid_), key(key_), data(data_), child(child_), parent(parent_) {}
-
-  TreeNode(uid my_uid_, tree_key key_, SEXP data_, uid child_) :
-    my_uid(my_uid_), key(key_), data(data_), child(child_), parent(NON_EXISTENT) {}
-};
-
 class TreeInternal {
-public:
-  uid uid_counter;
-  uid_to_tree_node uid_to_node;
+private:
+  uid_id_bimap uid_to_key;
+  tree_node_sp_vec nodes;
+  uid insert_node(tree_node_sp& new_node);
 
-  TreeInteral(SEXP root_id, SEXP root_data);
-  TreeInteral();
+public:
+  TreeInternal(SEXP root_id, SEXP root_data);
+  TreeInternal();
+  virtual ~TreeInternal()
+  {}
+
+  void add_node(SEXP parent, SEXP child, SEXP data);
+  uid find_uid(SEXP id);
+  tree_node_sp find_node(SEXP id);
+  uid get_uid();
+  SEXP get_data(SEXP id);
+  bool has_child(SEXP id);
+  bool has_siblings(SEXP id);
+  tree_node_sp get_parent(SEXP id);
 };
 
 class GeneralTreeInternal;
@@ -85,7 +77,7 @@ public:
   bool is_id_in_tree(SEXP id);
   shared_ptr_uid_vec get_children_uid(uid parent_uid);
   shared_ptr_uid_vec get_siblings_uid(uid node_uid);
-  shared_ptr_key_vec  get_children_keys(uid parent_uid);
+  shared_ptr_key_vec get_children_keys(uid parent_uid);
   shared_ptr_key_vec get_siblings_keys(uid node_uid);
   shared_ptr_SEXP_vec get_children_values(uid parent_uid);
   shared_ptr_SEXP_vec get_siblings_values(uid node_uid);

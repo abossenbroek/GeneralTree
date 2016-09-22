@@ -22,8 +22,6 @@ context("GeneralTreeInternal can be created") {
   }
 }
 
-
-
 context("GeneralTreeInternal can add children directly under each other") {
   test_that("we can add a child to the tree directly under the root") {
     String child_id_string = "child";
