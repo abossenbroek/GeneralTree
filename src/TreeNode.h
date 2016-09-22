@@ -71,11 +71,11 @@ public:
     return siblings.size() != 0;
   }
 
-  void add_sibling(std::shared_ptr<TreeNode> new_sibling) {
+  void add_sibling(const std::shared_ptr<TreeNode>& new_sibling) {
     siblings.push_back(new_sibling);
   }
 
-  void set_parent(std::shared_ptr<TreeNode> parent_) {
+  void set_parent(const std::shared_ptr<TreeNode>& parent_) {
     parent = parent_;
   }
 
@@ -86,7 +86,7 @@ public:
     return parent;
   }
 
-  void add_child(std::shared_ptr<TreeNode> new_child);
+  void add_child(const std::shared_ptr<TreeNode>& new_child);
 };
 
 typedef std::shared_ptr<TreeNode> tree_node_sp;
