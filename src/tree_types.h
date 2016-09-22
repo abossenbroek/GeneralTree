@@ -19,6 +19,9 @@ typedef boost::variant<double, int, std::string> tree_key;
 typedef boost::bimap<int, boost::bimaps::multiset_of<tree_key> > uid_id_bimap;
 typedef uid_id_bimap::value_type uid_id_pair;
 
+typedef boost::bimap<int, boost::bimaps::multiset_of<TreeNode> > uid_to_tree_node;
+typedef boost::bimap::value_type uid_tree_node_pair;
+
 typedef std::pair<int, int> uid_uid_pair;
 typedef std::map<int, int> uid_to_uid_map;
 

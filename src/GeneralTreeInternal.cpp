@@ -32,6 +32,32 @@ GeneralTreeInternal::GeneralTreeInternal()
 {
 }
 
+
+TreeInternal::TreeInternal(SEXP root_id, SEXP root_data)
+{
+  uid_counter = 0;
+
+  shared_ptr<tree_key> root_key = add_mapping(uid_counter, root_id);
+
+  /* Create a root node without a child or parent. */
+  shared_ptr<TreeNode> root_node = new TreeNode(uid_counter, *root_key, root_data, NON_EXISTENT);
+
+  /* Add the new node to the list. */
+  uid_to_node.insert(uid_tree_node_pair(uid_counter, *root_node));
+
+
+  this->uid_to_id.insert(uid_id_pair(this->uid_counter, *root_key));
+  this->uid_to_data.insert(uid_SEXP_pair(this->uid_counter, root_data));
+
+  this->uid_counter++;
+}
+
+TreeInternal::TreeInternal()
+{
+}
+
+
+
 SEXP
 GeneralTreeInternal::get_value(SEXP key)
 {

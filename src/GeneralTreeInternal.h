@@ -26,6 +26,33 @@
 
 using namespace Rcpp;
 
+#define NON_EXISTENT -1
+
+class TreeNode {
+public:
+  uid my_uid;
+  tree_key key;
+  SEXP data;
+  uid child;
+  uid_vec left_siblings;
+  uid parent;
+
+  TreeNode(uid my_uid_, tree_key key_, SEXP data_, uid child_, uid parent_) :
+    my_uid(my_uid_), key(key_), data(data_), child(child_), parent(parent_) {}
+
+  TreeNode(uid my_uid_, tree_key key_, SEXP data_, uid child_) :
+    my_uid(my_uid_), key(key_), data(data_), child(child_), parent(NON_EXISTENT) {}
+};
+
+class TreeInternal {
+public:
+  uid uid_counter;
+  uid_to_tree_node uid_to_node;
+
+  TreeInteral(SEXP root_id, SEXP root_data);
+  TreeInteral();
+};
+
 class GeneralTreeInternal;
 
 class GeneralTreeInternal {
