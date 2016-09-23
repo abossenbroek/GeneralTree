@@ -59,6 +59,14 @@ public:
     return data;
   }
 
+  std::vector<std::shared_ptr<TreeNode> >* get_siblings() {
+    return &siblings;
+  }
+
+  std::shared_ptr<TreeNode> get_left_child() {
+    return left_child;
+  }
+
   void set_uid(uid const& new_uid) {
     my_uid = new_uid;
   }
@@ -91,7 +99,7 @@ public:
 
 typedef std::shared_ptr<TreeNode> tree_node_sp;
 typedef std::vector<tree_node_sp> tree_node_sp_vec;
-
+typedef std::shared_ptr<tree_node_sp_vec> tree_node_sp_vec_sp;
 
 
 #endif /* _TREENODE_H_ */
