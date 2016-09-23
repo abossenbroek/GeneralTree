@@ -114,7 +114,7 @@ add_mapping(uid& key, SEXP& value) {
 }
 
 static std::shared_ptr<tree_key>
-tree_key_cast_SEXP(SEXP& key)
+tree_key_cast_SEXP(const SEXP& key)
 {
   switch (TYPEOF(key)) {
     case REALSXP: {

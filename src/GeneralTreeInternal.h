@@ -30,20 +30,21 @@ private:
   uid insert_node(tree_node_sp& new_node);
 
 public:
-  TreeInternal(SEXP root_id, SEXP root_data);
+  TreeInternal(const SEXP& root_id, const SEXP& root_data);
   TreeInternal();
   virtual ~TreeInternal()
   {}
 
-  void add_node(SEXP parent, SEXP child, SEXP data);
-  uid find_uid(SEXP id);
-  tree_node_sp find_node(SEXP id);
-  uid get_uid();
-  SEXP get_data(SEXP id);
-  bool has_child(SEXP id);
-  bool has_siblings(SEXP id);
-  tree_node_sp get_parent(SEXP id);
-  std::shared_ptr<tree_node_sp_vec> get_children(const SEXP& id, bool recursive = false);
+  void add_node(const SEXP& parent, const SEXP& child, const SEXP& data);
+  uid find_uid(const SEXP& id) const;
+  tree_node_sp find_node(const SEXP& id) const;
+  uid get_uid() const;
+  SEXP get_data(const SEXP& id) const;
+  bool has_child(const SEXP& id) const;
+  bool has_siblings(const SEXP& id) const;
+  tree_node_sp get_parent(const SEXP& id) const;
+  std::shared_ptr<tree_node_sp_vec> get_children(const SEXP& parent_id, bool recursive = false);
+  std::shared_ptr<const tree_node_sp_vec> get_children(const SEXP& parent_id, bool recursive = false) const;
 };
 
 class GeneralTreeInternal;

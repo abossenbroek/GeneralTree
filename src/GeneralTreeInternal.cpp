@@ -27,7 +27,7 @@ GeneralTreeInternal::GeneralTreeInternal()
 }
 
 
-TreeInternal::TreeInternal(SEXP root_id, SEXP root_data)
+TreeInternal::TreeInternal(const SEXP& root_id, const SEXP& root_data)
 {
   shared_ptr<tree_key> root_key = tree_key_cast_SEXP(root_id);
 
@@ -42,7 +42,7 @@ TreeInternal::TreeInternal()
 }
 
 void
-TreeInternal::add_node(SEXP parent_id, SEXP child_id, SEXP data)
+TreeInternal::add_node(const SEXP& parent_id, const SEXP& child_id, const SEXP& data)
 {
   /* resolve the uid of the parent so that we can set pointers. */
   tree_node_sp parent;
@@ -65,7 +65,7 @@ TreeInternal::add_node(SEXP parent_id, SEXP child_id, SEXP data)
 }
 
 uid
-TreeInternal::find_uid(SEXP id)
+TreeInternal::find_uid(const SEXP& id) const
 {
   shared_ptr<tree_key> search_key = tree_key_cast_SEXP(id);
 
@@ -79,7 +79,7 @@ TreeInternal::find_uid(SEXP id)
 }
 
 tree_node_sp
-TreeInternal::find_node(SEXP id)
+TreeInternal::find_node(const SEXP& id) const
 {
   uid node_uid = find_uid(id);
 
@@ -87,7 +87,7 @@ TreeInternal::find_node(SEXP id)
 }
 
 uid
-TreeInternal::get_uid()
+TreeInternal::get_uid() const
 {
   return nodes.size();
 }
@@ -106,38 +106,47 @@ TreeInternal::insert_node(tree_node_sp& new_node)
 }
 
 SEXP
-TreeInternal::get_data(SEXP id)
+TreeInternal::get_data(const SEXP& id) const
 {
   tree_node_sp node_found = find_node(id);
   return node_found->get_data();
 }
 
 bool
-TreeInternal::has_child(SEXP id)
+TreeInternal::has_child(const SEXP& id) const
 {
   tree_node_sp node_found = find_node(id);
   return node_found->has_left_child();
 }
 
 bool
-TreeInternal::has_siblings(SEXP id)
+TreeInternal::has_siblings(const SEXP& id) const
 {
   tree_node_sp node_found = find_node(id);
   return node_found->has_siblings();
 }
 
 tree_node_sp
-TreeInternal::get_parent(SEXP id)
+TreeInternal::get_parent(const SEXP& id) const
 {
   tree_node_sp node_found = find_node(id);
   return node_found->get_parent();
 }
 
 shared_ptr<tree_node_sp_vec>
-TreeInternal::get_children(const SEXP& id, bool recursive)
+TreeInternal::get_children(const SEXP& parent_id, bool recursive)
 {
   /* Retrieve the parent node. */
-  tree_node_sp parent_node_found = find_node(id);
+  tree_node_sp parent_node_found = find_node(parent_id);
+
+  return parent_node_found->get_children(recursive);
+}
+
+shared_ptr<const tree_node_sp_vec>
+TreeInternal::get_children(const SEXP& parent_id, bool recursive) const
+{
+  /* Retrieve the parent node. */
+  tree_node_sp parent_node_found = find_node(parent_id);
 
   return parent_node_found->get_children(recursive);
 }

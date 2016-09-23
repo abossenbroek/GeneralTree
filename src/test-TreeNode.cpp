@@ -6,6 +6,7 @@
 #include <testthat.h>
 #include <Rcpp.h>
 
+#include <memory>
 
 #include "tree_types.h"
 #include "GeneralTreeInternal.h"
@@ -210,6 +211,14 @@ context("TreeInternal get_childeren works correctly") {
     test_that("recursive works when retrieving children list first level") {
       expect_true(*gti.get_children(values[0]) == level_one_not_recursive);
       expect_true(*gti.get_children(values[0], true) == level_one_recursive);
+    }
+
+    test_that("const recursive works when retrieving children list first level") {
+      const TreeInternal* gti_const = const_cast<const TreeInternal*>(&gti);
+      std::shared_ptr<const tree_node_sp_vec> result_non_recursive = gti_const->get_children(values[0]);
+      std::shared_ptr<const tree_node_sp_vec> result_recursive = gti_const->get_children(values[0], true);
+      expect_true(*result_non_recursive == level_one_not_recursive);
+      expect_true(*result_recursive == level_one_recursive);
     }
 
     tree_node_sp_vec level_two_not_recursive = {
