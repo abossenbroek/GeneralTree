@@ -17,31 +17,15 @@ add_node <- function(gti_sexp, parent_id, id, data) {
     .Call('GeneralTree_add_node', PACKAGE = 'GeneralTree', gti_sexp, parent_id, id, data)
 }
 
-get_value <- function(gti_sexp, key) {
-    .Call('GeneralTree_get_value', PACKAGE = 'GeneralTree', gti_sexp, key)
+get_data <- function(gti_sexp, key) {
+    .Call('GeneralTree_get_data', PACKAGE = 'GeneralTree', gti_sexp, key)
 }
 
-get_children_keys <- function(gti_sexp, parent_id) {
-    .Call('GeneralTree_get_children_keys', PACKAGE = 'GeneralTree', gti_sexp, parent_id)
+get_children_keys <- function(gti_sexp, parent_id, recursive = FALSE) {
+    .Call('GeneralTree_get_children_keys', PACKAGE = 'GeneralTree', gti_sexp, parent_id, recursive)
 }
 
-get_siblings_keys <- function(gti_sexp, node_id) {
-    .Call('GeneralTree_get_siblings_keys', PACKAGE = 'GeneralTree', gti_sexp, node_id)
-}
-
-get_children_values <- function(gti_sexp, parent_id) {
-    .Call('GeneralTree_get_children_values', PACKAGE = 'GeneralTree', gti_sexp, parent_id)
-}
-
-get_siblings_values <- function(gti_sexp, node_id) {
-    .Call('GeneralTree_get_siblings_values', PACKAGE = 'GeneralTree', gti_sexp, node_id)
-}
-
-get_branch_keys <- function(gti_sexp, parent_id, recursive) {
-    .Call('GeneralTree_get_branch_keys', PACKAGE = 'GeneralTree', gti_sexp, parent_id, recursive)
-}
-
-has_child <- function(gti_sexp, node_id) {
-    .Call('GeneralTree_has_child', PACKAGE = 'GeneralTree', gti_sexp, node_id)
+get_children_data <- function(gti_sexp, parent_id, recursive = FALSE) {
+    .Call('GeneralTree_get_children_data', PACKAGE = 'GeneralTree', gti_sexp, parent_id, recursive)
 }
 

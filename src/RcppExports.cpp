@@ -54,88 +54,41 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// get_value
-SEXP get_value(SEXP gti_sexp, SEXP key);
-RcppExport SEXP GeneralTree_get_value(SEXP gti_sexpSEXP, SEXP keySEXP) {
+// get_data
+SEXP get_data(SEXP gti_sexp, SEXP key);
+RcppExport SEXP GeneralTree_get_data(SEXP gti_sexpSEXP, SEXP keySEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
     Rcpp::traits::input_parameter< SEXP >::type key(keySEXP);
-    __result = Rcpp::wrap(get_value(gti_sexp, key));
+    __result = Rcpp::wrap(get_data(gti_sexp, key));
     return __result;
 END_RCPP
 }
 // get_children_keys
-std::vector<SEXP> get_children_keys(SEXP gti_sexp, SEXP parent_id);
-RcppExport SEXP GeneralTree_get_children_keys(SEXP gti_sexpSEXP, SEXP parent_idSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type parent_id(parent_idSEXP);
-    __result = Rcpp::wrap(get_children_keys(gti_sexp, parent_id));
-    return __result;
-END_RCPP
-}
-// get_siblings_keys
-std::vector<SEXP> get_siblings_keys(SEXP gti_sexp, SEXP node_id);
-RcppExport SEXP GeneralTree_get_siblings_keys(SEXP gti_sexpSEXP, SEXP node_idSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type node_id(node_idSEXP);
-    __result = Rcpp::wrap(get_siblings_keys(gti_sexp, node_id));
-    return __result;
-END_RCPP
-}
-// get_children_values
-std::vector<SEXP> get_children_values(SEXP gti_sexp, SEXP parent_id);
-RcppExport SEXP GeneralTree_get_children_values(SEXP gti_sexpSEXP, SEXP parent_idSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type parent_id(parent_idSEXP);
-    __result = Rcpp::wrap(get_children_values(gti_sexp, parent_id));
-    return __result;
-END_RCPP
-}
-// get_siblings_values
-std::vector<SEXP> get_siblings_values(SEXP gti_sexp, SEXP node_id);
-RcppExport SEXP GeneralTree_get_siblings_values(SEXP gti_sexpSEXP, SEXP node_idSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type node_id(node_idSEXP);
-    __result = Rcpp::wrap(get_siblings_values(gti_sexp, node_id));
-    return __result;
-END_RCPP
-}
-// get_branch_keys
-std::vector<SEXP> get_branch_keys(SEXP gti_sexp, SEXP parent_id, bool recursive);
-RcppExport SEXP GeneralTree_get_branch_keys(SEXP gti_sexpSEXP, SEXP parent_idSEXP, SEXP recursiveSEXP) {
+std::vector<SEXP> get_children_keys(SEXP gti_sexp, SEXP parent_id, bool recursive);
+RcppExport SEXP GeneralTree_get_children_keys(SEXP gti_sexpSEXP, SEXP parent_idSEXP, SEXP recursiveSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
     Rcpp::traits::input_parameter< SEXP >::type parent_id(parent_idSEXP);
     Rcpp::traits::input_parameter< bool >::type recursive(recursiveSEXP);
-    __result = Rcpp::wrap(get_branch_keys(gti_sexp, parent_id, recursive));
+    __result = Rcpp::wrap(get_children_keys(gti_sexp, parent_id, recursive));
     return __result;
 END_RCPP
 }
-// has_child
-bool has_child(SEXP gti_sexp, SEXP node_id);
-RcppExport SEXP GeneralTree_has_child(SEXP gti_sexpSEXP, SEXP node_idSEXP) {
+// get_children_data
+std::vector<SEXP> get_children_data(SEXP gti_sexp, SEXP parent_id, bool recursive);
+RcppExport SEXP GeneralTree_get_children_data(SEXP gti_sexpSEXP, SEXP parent_idSEXP, SEXP recursiveSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type node_id(node_idSEXP);
-    __result = Rcpp::wrap(has_child(gti_sexp, node_id));
+    Rcpp::traits::input_parameter< SEXP >::type parent_id(parent_idSEXP);
+    Rcpp::traits::input_parameter< bool >::type recursive(recursiveSEXP);
+    __result = Rcpp::wrap(get_children_data(gti_sexp, parent_id, recursive));
     return __result;
 END_RCPP
 }

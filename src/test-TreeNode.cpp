@@ -11,11 +11,11 @@
 #include "tree_types.h"
 #include "GeneralTreeInternal.h"
 
-context("TreeInternal can be created") {
+context("GeneralTreeInternal can be created") {
     String root_id_string = "a";
     SEXP root_id = wrap(root_id_string);
     // Create a gti
-    TreeInternal ti(root_id, root_id);
+    GeneralTreeInternal ti(root_id, root_id);
     // Retrieve the unique id.
     uid root_uid = ti.find_uid(root_id);
     // Verify whether it is the correct uid.
@@ -32,7 +32,7 @@ context("TreeNode attributes work as expected") {
   SEXP child_id = wrap(child_id_string);
   SEXP child2_id = wrap(child2_id_string);
   // Create a gti.
-  TreeInternal gti(root_id, root_id);
+  GeneralTreeInternal gti(root_id, root_id);
 
   tree_node_sp root = gti.find_node(root_id);
 
@@ -69,14 +69,14 @@ context("TreeNode attributes work as expected") {
 }
 
 
-context("TreeInternal can add children directly under each other") {
+context("GeneralTreeInternal can add children directly under each other") {
   test_that("we can add a child to the tree directly under the root") {
     String child_id_string = "child";
     String root_id_string = "root";
     SEXP root_id = wrap(root_id_string);
     SEXP child_id = wrap(child_id_string);
     // Create a gti.
-    TreeInternal gti(root_id, root_id);
+    GeneralTreeInternal gti(root_id, root_id);
     // Add child node.
     gti.add_node(root_id, child_id, child_id);
     uid child_uid = gti.find_uid(child_id);
@@ -90,7 +90,7 @@ context("TreeInternal can add children directly under each other") {
     SEXP root_id = wrap(root_id_string);
     SEXP child_id = wrap(child_id_string);
     // Create a gti.
-    TreeInternal gti(root_id, root_id);
+    GeneralTreeInternal gti(root_id, root_id);
     // Add child node.
     gti.add_node(root_id, child_id, child_id);
     uid root_uid = gti.find_uid(root_id);
@@ -110,7 +110,7 @@ context("TreeInternal can add children directly under each other") {
     SEXP child_id = wrap(child_id_string);
     SEXP child2_id = wrap(child2_id_string);
     // Create a gti.
-    TreeInternal gti(root_id, root_id);
+    GeneralTreeInternal gti(root_id, root_id);
     // Add child node.
     gti.add_node(root_id, child_id, child_id);
     gti.add_node(child_id, child2_id, child2_id);
@@ -128,7 +128,7 @@ context("TreeInternal can add children directly under each other") {
   }
 }
 
-context("TreeInternal returns correct values") {
+context("GeneralTreeInternal returns correct values") {
   test_that("we can add several siblings and children") {
     String child_id_string = "child";
     String child2_id_string = "child2";
@@ -145,7 +145,7 @@ context("TreeInternal returns correct values") {
     SEXP sibling2_id = wrap(sibling2_id_string);
     SEXP sibling3_id = wrap(sibling3_id_string);
     // Create a gti.
-    TreeInternal gti(root_id, root_id);
+    GeneralTreeInternal gti(root_id, root_id);
     // Add child node.
     gti.add_node(root_id, child_id, child_id);
     // Add fist sibling.
@@ -164,7 +164,7 @@ context("TreeInternal returns correct values") {
   }
 }
 
-context("TreeInternal get_childeren works correctly") {
+context("GeneralTreeInternal get_childeren works correctly") {
     SEXP values[] = {
       NumericVector::create(0),
       NumericVector::create(1),
@@ -191,7 +191,7 @@ context("TreeInternal get_childeren works correctly") {
     //     |
     //     \ 4
     //  Create the tree above.
-    TreeInternal gti(values[0], values[0]);
+    GeneralTreeInternal gti(values[0], values[0]);
     // Add child node.
     gti.add_node(values[0], values[1], values[1]);
     gti.add_node(values[1], values[2], values[2]);
@@ -251,7 +251,7 @@ context("TreeInternal get_childeren works correctly") {
     }
 
     test_that("const recursive works when retrieving children list first level") {
-      const TreeInternal* gti_const = const_cast<const TreeInternal*>(&gti);
+      const GeneralTreeInternal* gti_const = const_cast<const GeneralTreeInternal*>(&gti);
       tree_node_c_sp_vec_sp result_non_recursive = gti_const->get_children(values[0]);
       tree_node_c_sp_vec_sp result_recursive = gti_const->get_children(values[0], true);
       expect_true(*result_non_recursive == level_one_not_recursive_c);
@@ -279,7 +279,7 @@ context("TreeInternal get_childeren works correctly") {
     }
 }
 
-context("TreeInternal get_childeren_keys works correctly") {
+context("GeneralTreeInternal get_childeren_keys works correctly") {
     SEXP values[] = {
       NumericVector::create(0),
       NumericVector::create(1),
@@ -305,7 +305,7 @@ context("TreeInternal get_childeren_keys works correctly") {
     //     |
     //     \ 4
     //  Create the tree above.
-    TreeInternal gti(values[0], values[0]);
+    GeneralTreeInternal gti(values[0], values[0]);
     // Add child node.
     gti.add_node(values[0], values[1], values[1]);
     gti.add_node(values[1], values[2], values[2]);
@@ -359,7 +359,7 @@ context("TreeInternal get_childeren_keys works correctly") {
     }
 }
 
-context("TreeInternal get_childeren_data works correctly") {
+context("GeneralTreeInternal get_childeren_data works correctly") {
     SEXP values[] = {
       NumericVector::create(0),
       NumericVector::create(1),
@@ -385,7 +385,7 @@ context("TreeInternal get_childeren_data works correctly") {
     //     |
     //     \ 4
     //  Create the tree above.
-    TreeInternal gti(values[0], values[0]);
+    GeneralTreeInternal gti(values[0], values[0]);
     // Add child node.
     gti.add_node(values[0], values[1], values[1]);
     gti.add_node(values[1], values[2], values[2]);

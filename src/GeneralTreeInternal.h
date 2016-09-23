@@ -21,16 +21,16 @@
 
 // nocov start
 
-class TreeInternal {
+class GeneralTreeInternal {
 private:
   uid_id_bimap uid_to_key;
   tree_node_sp_vec nodes;
   uid insert_node(tree_node_sp& new_node);
 
 public:
-  TreeInternal(const SEXP& root_id, const SEXP& root_data);
-  TreeInternal();
-  virtual ~TreeInternal()
+  GeneralTreeInternal(const SEXP& root_id, const SEXP& root_data);
+  GeneralTreeInternal();
+  virtual ~GeneralTreeInternal()
   {}
 
   void add_node(const SEXP& parent, const SEXP& child, const SEXP& data);
@@ -46,48 +46,31 @@ public:
 
   SEXP_vec_sp get_children_keys(const SEXP& parent_id, bool recursive = false) const;
   SEXP_vec_sp get_children_data(const SEXP& parent_id, bool recursive = false) const;
-};
 
-class GeneralTreeInternal;
+  tree_node_sp_vec* get_nodes() const {
+    return const_cast<tree_node_sp_vec*>(&nodes);
+  }
 
-class GeneralTreeInternal {
-public:
-  uid uid_counter;
-  uid_id_bimap uid_to_id;
-  uid_to_SEXP_map uid_to_data;
-  uid_to_uid_map uid_to_child;
-  uid_to_uid_map uid_to_parent;
-  uid_to_uids_map uid_to_siblings;
+  friend bool operator== (const GeneralTreeInternal& lhs,
+      const GeneralTreeInternal& rhs)
+  {
+    bool result = true;
 
-  GeneralTreeInternal(SEXP root_id, SEXP root_data);
-  GeneralTreeInternal();
+    if (lhs.get_nodes()->size() != rhs.get_nodes()->size()) {
+      return false;
+    }
 
-  void add_node(SEXP parent, SEXP child, SEXP data);
+    for (int i = 0; i < lhs.get_nodes()->size(); ++i) {
+      result = result && lhs.get_nodes()->at(i) == rhs.get_nodes()->at(i);
+    }
 
-  int find_uid(SEXP id);
-  tree_key find_key(uid node_uid);
+    return result;
+  }
 
-  uid get_lchild(uid parent_uid);
-  bool has_child(uid parent_uid);
-  bool has_siblings(uid node_uid);
-  void add_sibling(uid origin_uid, uid sibling_uid);
-  void set_parent(uid parent_uid, uid child_uid);
-  uid get_parent(uid child_uid);
-  bool has_parent(uid child_uid);
-  SEXP get_value(SEXP key);
-  SEXP get_value(uid node_uid);
-  shared_ptr_SEXP_vec get_value(shared_ptr_uid_vec node_uid_vec);
-  bool is_id_in_tree(SEXP id);
-  shared_ptr_uid_vec get_children_uid(uid parent_uid);
-  shared_ptr_uid_vec get_siblings_uid(uid node_uid);
-  shared_ptr_key_vec get_children_keys(uid parent_uid);
-  shared_ptr_key_vec get_siblings_keys(uid node_uid);
-  shared_ptr_SEXP_vec get_children_values(uid parent_uid);
-  shared_ptr_SEXP_vec get_siblings_values(uid node_uid);
-  shared_ptr_uid_vec branch_uid_to_list(uid parent_uid, bool recursive = false);
-  unsigned int count_child_nodes(uid parent_uid, bool recursive = false);
-
-  bool cmp(const GeneralTreeInternal& gti);
+  friend bool operator!= (const GeneralTreeInternal& lhs, const
+      GeneralTreeInternal& rhs) {
+    return !(lhs == rhs);
+  }
 };
 
 namespace Rcpp {
