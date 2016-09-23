@@ -142,6 +142,23 @@ TreeInternal::get_children(const SEXP& parent_id, bool recursive)
   return parent_node_found->get_children(recursive);
 }
 
+
+SEXP_vec_sp
+TreeInternal::get_children_keys(const SEXP& parent_id, bool recursive) const
+{
+  tree_node_c_sp parent_node_found = find_node(parent_id);
+
+  SEXP_vec_sp result(new SEXP_vec());
+  tree_node_c_sp_vec_sp children = parent_node_found->get_children(recursive);
+
+  result->reserve(children->size());
+
+  transform(children->begin(), children->end(), back_inserter(*result),
+      [](shared_ptr<const TreeNode> x){ return x->get_key(); });
+
+  return result;
+}
+
 tree_node_c_sp_vec_sp
 TreeInternal::get_children(const SEXP& parent_id, bool recursive) const
 {
