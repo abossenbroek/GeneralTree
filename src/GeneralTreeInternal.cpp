@@ -142,11 +142,11 @@ TreeInternal::get_children(const SEXP& parent_id, bool recursive)
   return parent_node_found->get_children(recursive);
 }
 
-shared_ptr<const tree_node_sp_vec>
+tree_node_c_sp_vec_sp
 TreeInternal::get_children(const SEXP& parent_id, bool recursive) const
 {
   /* Retrieve the parent node. */
-  tree_node_sp parent_node_found = find_node(parent_id);
+  tree_node_c_sp parent_node_found = find_node(parent_id);
 
   return parent_node_found->get_children(recursive);
 }

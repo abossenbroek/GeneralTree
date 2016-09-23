@@ -44,7 +44,7 @@ public:
   bool has_siblings(const SEXP& id) const;
   tree_node_sp get_parent(const SEXP& id) const;
   std::shared_ptr<tree_node_sp_vec> get_children(const SEXP& parent_id, bool recursive = false);
-  std::shared_ptr<const tree_node_sp_vec> get_children(const SEXP& parent_id, bool recursive = false) const;
+  tree_node_c_sp_vec_sp get_children(const SEXP& parent_id, bool recursive = false) const;
 };
 
 class GeneralTreeInternal;

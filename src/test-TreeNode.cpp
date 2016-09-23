@@ -198,6 +198,11 @@ context("TreeInternal get_childeren works correctly") {
       added_nodes[1]
     };
 
+    tree_node_c_sp_vec level_one_not_recursive_c = {
+      std::const_pointer_cast<const TreeNode>(added_nodes[1])
+    };
+
+
     tree_node_sp_vec level_one_recursive = {
       added_nodes[1],
       added_nodes[2],
@@ -208,6 +213,18 @@ context("TreeInternal get_childeren works correctly") {
       added_nodes[7]
     };
 
+    tree_node_c_sp_vec level_one_recursive_c = {
+      std::const_pointer_cast<const TreeNode>(added_nodes[1]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[2]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[3]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[4]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[5]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[6]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[7])
+    };
+
+
+
     test_that("recursive works when retrieving children list first level") {
       expect_true(*gti.get_children(values[0]) == level_one_not_recursive);
       expect_true(*gti.get_children(values[0], true) == level_one_recursive);
@@ -215,10 +232,10 @@ context("TreeInternal get_childeren works correctly") {
 
     test_that("const recursive works when retrieving children list first level") {
       const TreeInternal* gti_const = const_cast<const TreeInternal*>(&gti);
-      std::shared_ptr<const tree_node_sp_vec> result_non_recursive = gti_const->get_children(values[0]);
-      std::shared_ptr<const tree_node_sp_vec> result_recursive = gti_const->get_children(values[0], true);
-      expect_true(*result_non_recursive == level_one_not_recursive);
-      expect_true(*result_recursive == level_one_recursive);
+      tree_node_c_sp_vec_sp result_non_recursive = gti_const->get_children(values[0]);
+      tree_node_c_sp_vec_sp result_recursive = gti_const->get_children(values[0], true);
+      expect_true(*result_non_recursive == level_one_not_recursive_c);
+      expect_true(*result_recursive == level_one_recursive_c);
     }
 
     tree_node_sp_vec level_two_not_recursive = {

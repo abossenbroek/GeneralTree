@@ -25,6 +25,9 @@ typedef std::shared_ptr<TreeNode> tree_node_sp;
 typedef std::vector<tree_node_sp> tree_node_sp_vec;
 typedef std::shared_ptr<tree_node_sp_vec> tree_node_sp_vec_sp;
 
+typedef std::shared_ptr<const TreeNode> tree_node_c_sp;
+typedef std::vector<tree_node_c_sp> tree_node_c_sp_vec;
+typedef std::shared_ptr<tree_node_c_sp_vec> tree_node_c_sp_vec_sp;
 
 class TreeNode : public std::enable_shared_from_this< TreeNode > {
 private:
@@ -58,11 +61,11 @@ public:
   {
   }
 
-  tree_key get_key() {
+  tree_key get_key() const {
     return key;
   }
 
-  SEXP get_data() {
+  SEXP get_data() const {
     return data;
   }
 
@@ -70,7 +73,14 @@ public:
     return &siblings;
   }
 
-  std::shared_ptr<TreeNode> get_left_child() {
+  std::shared_ptr<TreeNode> get_parent() const {
+    if (parent.get() == nullptr) {
+      throw std::runtime_error("Node does not have a parent.");
+    }
+    return parent;
+  }
+
+  std::shared_ptr<TreeNode> get_left_child() const {
     return left_child;
   }
 
@@ -78,11 +88,11 @@ public:
     my_uid = new_uid;
   }
 
-  bool has_left_child() {
+  bool has_left_child() const {
     return left_child.get() != nullptr;
   }
 
-  bool has_siblings() {
+  bool has_siblings() const {
     return siblings.size() != 0;
   }
 
@@ -94,16 +104,11 @@ public:
     parent = parent_;
   }
 
-  std::shared_ptr<TreeNode> get_parent() {
-    if (parent.get() == nullptr) {
-      throw std::runtime_error("Node does not have a parent.");
-    }
-    return parent;
-  }
-
   void add_child(const std::shared_ptr<TreeNode>& new_child);
 
   tree_node_sp_vec_sp get_children(bool recursive = false);
+
+  tree_node_c_sp_vec_sp get_children(bool recursive = false) const;
 };
 
 #endif /* _TREENODE_H_ */
