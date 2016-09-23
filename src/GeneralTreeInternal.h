@@ -43,6 +43,7 @@ public:
   bool has_child(SEXP id);
   bool has_siblings(SEXP id);
   tree_node_sp get_parent(SEXP id);
+  std::shared_ptr<tree_node_sp_vec> get_children(const SEXP& id, bool recursive = false);
 };
 
 class GeneralTreeInternal;

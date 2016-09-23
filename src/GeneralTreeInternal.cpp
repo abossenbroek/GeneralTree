@@ -133,6 +133,36 @@ TreeInternal::get_parent(SEXP id)
   return node_found->get_parent();
 }
 
+
+shared_ptr<tree_node_sp_vec>
+TreeInternal::get_children(const SEXP& id, bool recursive)
+{
+  /* Will be used to reserve the size of the final array. */
+  size_t num_children = 0;
+  /* Retrieve the parent node. */
+  tree_node_sp parent_node_found = find_node(id);
+
+  /* Create a vector to store the results */
+  tree_node_sp_vec_sp children(new tree_node_sp_vec());
+
+  /* If the parent has a left child we add it to the results. */
+  if (parent_node_found->has_left_child())
+  {
+    children->push_back(parent_node_found->get_left_child());
+
+    /* If the child has siblings we add those to the list too. */
+    if (parent_node_found->get_left_child()->has_siblings()) {
+      tree_node_sp_vec* siblings = parent_node_found->get_left_child()->get_siblings();
+      num_children = 1 + siblings->size();
+
+      children->reserve(num_children);
+      children->insert(end(*children), begin(*siblings), end(*siblings));
+    }
+  }
+
+  return children;
+}
+
 SEXP
 GeneralTreeInternal::get_value(SEXP key)
 {
