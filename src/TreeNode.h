@@ -19,6 +19,13 @@
 
 using namespace Rcpp;
 
+class TreeNode;
+
+typedef std::shared_ptr<TreeNode> tree_node_sp;
+typedef std::vector<tree_node_sp> tree_node_sp_vec;
+typedef std::shared_ptr<tree_node_sp_vec> tree_node_sp_vec_sp;
+
+
 class TreeNode : public std::enable_shared_from_this< TreeNode > {
 private:
   uid my_uid;
@@ -95,11 +102,8 @@ public:
   }
 
   void add_child(const std::shared_ptr<TreeNode>& new_child);
+
+  tree_node_sp_vec_sp get_children(bool recursive = false);
 };
-
-typedef std::shared_ptr<TreeNode> tree_node_sp;
-typedef std::vector<tree_node_sp> tree_node_sp_vec;
-typedef std::shared_ptr<tree_node_sp_vec> tree_node_sp_vec_sp;
-
 
 #endif /* _TREENODE_H_ */
