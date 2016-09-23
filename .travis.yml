@@ -1,47 +1,36 @@
-# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 language: r
 sudo: false
 cache: packages
-
-# Set CXX1X for R-devel, as R-devel does not detect CXX1X support for gcc 4.6.3,
-# this was causing hunspell installation to fail
 before_install:
-  - if [[ "$TRAVIS_R_VERSION_STRING" = 'devel' ]]; then mkdir ~/.R && echo 'CXX1X=g++ -std=c++0x -g -O2 -fPIC' > ~/.R/Makevars; fi
-  - tlmgr install index
-
-# The git config settings are not setup on travis by default
+- if [[ "$TRAVIS_R_VERSION_STRING" = 'devel' ]]; then mkdir ~/.R && echo 'CXX1X=g++
+  -std=c++0x -g -O2 -fPIC' > ~/.R/Makevars; fi
+- tlmgr install index
 before_script:
-    - git config --global user.name "travis"
-    - git config --global user.email "travis@example.org"
-
+- git config --global user.name "travis"
+- git config --global user.email "travis@example.org"
 addons:
   apt:
     packages:
-      - libxml2-dev
-#      libv8-3.14-dev
-
+    - libxml2-dev
 r:
-  - release
-  - devel
-  - 3.2.4
-
+- release
+- devel
+- 3.2.4
 r_github_packages:
-  - jimhester/covr
-
+- jimhester/covr
 r_packages:
-  - xml2
-
+- xml2
 after_success:
-  - test $TRAVIS_R_VERSION_STRING = 'release' && Rscript -e 'covr::codecov()'
-  - test $TRAVIS_R_VERSION_STRING = 'release' && Rscript -e 'covr::coveralls()'
-  - test $TRAVIS_R_VERSION_STRING = 'release' && Rscript -e 'lintr::lint_package()'
-
+- test $TRAVIS_R_VERSION_STRING = 'release' && Rscript -e 'covr::codecov()'
+- test $TRAVIS_R_VERSION_STRING = 'release' && Rscript -e 'covr::coveralls()'
+- test $TRAVIS_R_VERSION_STRING = 'release' && Rscript -e 'lintr::lint_package()'
 notifications:
   webhooks:
     urls:
-      - https://webhooks.gitter.im/e/d30a16d1ede5c5bf507d
-    on_success: change  # options: [always|never|change] default: always
-    on_failure: always  # options: [always|never|change] default: always
-    on_start: never     # options: [always|never|change] default: always
+    - https://webhooks.gitter.im/e/d30a16d1ede5c5bf507d
+    on_success: change
+    on_failure: always
+    on_start: never
   email: true
-
+  slack:
+    secure: s8K6lB/XutB7FPrkF0v+S8cgN33/pA0Vpg4auIYoEVhCfn2eNJIljvlJKouDDkavqx3kNk3esaJj7qTdcF6bNdUS6dI/w0KiBfU3PiFocQioniG55/obfgv6ymTDsl2z3K3Uh6wLHGcIc/OPdZqPrJVJw3ClLyXqXf9KmTM+SMvUOC31uEJXeKnvi1ErE48tFyVVRVC1Jgzs3rMi/MN4+DX9sKOoUcQ4qYfE4e8/SbCPNP7P29YbEh3naxPF1X6fyjH53k3ypCNTBoHbNM8Lc45S5WVvJI3v9ExNHBXa4rvT4VpIsOTd+lhkcNEyAQriWpPS/NYBTv2eP2LSyAH6jDFt2TkgUESod0RslCSwvlorEy9CTeV8nQGobsFQb7ej8bfSeiuVyK9KDBhYs8etnb1xF+M9v9qCiNNSo73DpWS7H9VE365hVa95fyaxr21oT91FRkf6q+ht6gsSbsOlXZunFiB5uCysMTPdLKLGyXa59AKp6Ml4kP/ywBeUD1S7nPYICERrXa9cAi86bV+49fb6Zvr4BS8gYHyneQmXT+ladY0CdrBaa+Upq9HGpeh80q24AWq2Q3C7ABJJfhOcYUX0rnAYgccGSsmu5HuZMvKbF79Wu6XpakAix+1PZ18zfdom9J1IYJSW488E4iWhbVNt90MHTkfFb9gZeDUT+0g=
