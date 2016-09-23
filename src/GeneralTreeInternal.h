@@ -45,6 +45,7 @@ public:
   tree_node_c_sp_vec_sp get_children(const SEXP& parent_id, bool recursive = false) const;
 
   SEXP_vec_sp get_children_keys(const SEXP& parent_id, bool recursive = false) const;
+  SEXP_vec_sp get_children_data(const SEXP& parent_id, bool recursive = false) const;
 };
 
 class GeneralTreeInternal;
