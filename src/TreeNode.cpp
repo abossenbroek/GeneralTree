@@ -42,13 +42,29 @@ TreeNode::get_children(bool recursive) const {
     /* Finally, if we were called recursively we need to call the function on
      * all child nodes. */
     if (recursive) {
-      for (auto c : *children) {
+      tree_node_c_sp_vec_sp current_children(new tree_node_c_sp_vec(*children));
+
+      int last_position = 0;
+      for (auto c : *current_children) {
         /* If c has children we call the function and add the results. */
         if (c->has_left_child()) {
           tree_node_c_sp_vec_sp sub_children = c->get_children(recursive);
           num_children += sub_children->size();
           children->reserve(num_children);
-          children->insert(end(*children), begin(*sub_children), end(*sub_children));
+
+          /* We want to insert the sub children after the child so that the
+           * results are depth first. */
+          tree_node_c_sp_vec::iterator iter = (children->begin() + last_position);
+          for (int i = 0; iter != children->end(); ++iter) {
+            if (*c == **iter) {
+              last_position = i;
+              break;
+            }
+            ++i;
+          }
+          iter++;
+
+          children->insert(iter, begin(*sub_children), end(*sub_children));
         }
       }
     }
@@ -80,13 +96,29 @@ TreeNode::get_children(bool recursive) {
     /* Finally, if we were called recursively we need to call the function on
      * all child nodes. */
     if (recursive) {
-      for (auto c : *children) {
+      tree_node_sp_vec_sp current_children(new tree_node_sp_vec(*children));
+
+
+      for (auto c : *current_children) {
+        int last_position = 0;
         /* If c has children we call the function and add the results. */
         if (c->has_left_child()) {
           tree_node_sp_vec_sp sub_children = c->get_children(recursive);
           num_children += sub_children->size();
           children->reserve(num_children);
-          children->insert(end(*children), begin(*sub_children), end(*sub_children));
+          /* We want to insert the sub children after the child so that the
+           * results are depth first. */
+          tree_node_sp_vec::iterator iter = (children->begin() + last_position);
+          for (int i = 0; iter != children->end(); ++iter) {
+            if (*c == **iter) {
+              last_position = i;
+              break;
+            }
+            ++i;
+          }
+          iter++;
+
+          children->insert(iter, begin(*sub_children), end(*sub_children));
         }
       }
     }

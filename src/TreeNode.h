@@ -69,8 +69,22 @@ public:
     return data;
   }
 
+  uid get_uid() const {
+    return my_uid;
+  }
+
   std::vector<std::shared_ptr<TreeNode> >* get_siblings() {
     return &siblings;
+  }
+
+  friend bool operator== (const TreeNode& lhs, const TreeNode& rhs)
+  {
+    return lhs.get_key() == rhs.get_key() && lhs.get_uid() == rhs.get_uid() &&
+      lhs.get_data() == rhs.get_data();
+  }
+
+  friend bool operator!= (const TreeNode& lhs, const TreeNode& rhs) {
+    return !(lhs == rhs);
   }
 
   std::shared_ptr<TreeNode> get_parent() const {
