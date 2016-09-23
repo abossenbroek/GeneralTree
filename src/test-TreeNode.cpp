@@ -127,4 +127,109 @@ context("TreeInternal can add children directly under each other") {
   }
 }
 
+context("TreeInternal returns correct values") {
+  test_that("we can add several siblings and children") {
+    String child_id_string = "child";
+    String child2_id_string = "child2";
+    String child3_id_string = "child3";
+    String root_id_string = "root";
+    String sibling_id_string = "sibling";
+    String sibling2_id_string = "sibling2";
+    String sibling3_id_string = "sibling3";
+    SEXP root_id = wrap(root_id_string);
+    SEXP child_id = wrap(child_id_string);
+    SEXP child2_id = wrap(child2_id_string);
+    SEXP child3_id = wrap(child3_id_string);
+    SEXP sibling_id = wrap(sibling_id_string);
+    SEXP sibling2_id = wrap(sibling2_id_string);
+    SEXP sibling3_id = wrap(sibling3_id_string);
+    // Create a gti.
+    TreeInternal gti(root_id, root_id);
+    // Add child node.
+    gti.add_node(root_id, child_id, child_id);
+    // Add fist sibling.
+    gti.add_node(root_id, sibling_id, sibling_id);
+    // Add child to first sibling.
+    gti.add_node(sibling_id, child2_id, child2_id);
+    // Add sibling to the last child.
+    gti.add_node(sibling_id, sibling2_id, sibling2_id);
+    // Add child to last sibling.
+    gti.add_node(sibling2_id, child3_id, child3_id);
+    gti.add_node(sibling2_id, sibling3_id, sibling3_id);
+
+    // Verify whether all the getters return the proper result of the tree.
+    expect_true(gti.get_data(root_id) == root_id);
+    expect_true(gti.get_data(sibling3_id) == sibling3_id);
+  }
+}
+
+context("TreeInternal get_childeren works correctly") {
+    SEXP values[] = {
+      NumericVector::create(0),
+      NumericVector::create(1),
+      NumericVector::create(2),
+      NumericVector::create(3),
+      NumericVector::create(4),
+      NumericVector::create(5),
+      NumericVector::create(6),
+      NumericVector::create(7)
+    };
+
+    // Create a gti.
+    TreeInternal gti(values[0], values[0]);
+    // Add child node.
+    gti.add_node(values[0], values[1], values[1]);
+    gti.add_node(values[1], values[2], values[2]);
+    gti.add_node(values[2], values[3], values[3]);
+    gti.add_node(values[2], values[4], values[4]);
+    gti.add_node(values[2], values[5], values[5]);
+    gti.add_node(values[5], values[6], values[6]);
+    gti.add_node(values[5], values[7], values[7]);
+
+    tree_node_sp_vec added_nodes;
+    added_nodes.reserve(8);
+
+    for (auto val : values) {
+      added_nodes.push_back(gti.find_node(val));
+    }
+
+    tree_node_sp_vec level_one_not_recursive = {
+      added_nodes[1]
+    };
+
+    tree_node_sp_vec level_one_recursive = {
+      added_nodes[1],
+      added_nodes[2],
+      added_nodes[3],
+      added_nodes[4],
+      added_nodes[5],
+      added_nodes[6],
+      added_nodes[7]
+    };
+
+    test_that("recursive works when retrieving children list first level") {
+      expect_true(*gti.get_children(values[0]) == level_one_not_recursive);
+      expect_true(*gti.get_children(values[0], true) == level_one_recursive);
+    }
+
+    tree_node_sp_vec level_two_not_recursive = {
+      added_nodes[2]
+    };
+
+    tree_node_sp_vec level_two_recursive = {
+      added_nodes[2],
+      added_nodes[3],
+      added_nodes[4],
+      added_nodes[5],
+      added_nodes[6],
+      added_nodes[7]
+    };
+
+    test_that("recursive works when retrieving children list second level") {
+      expect_true(*gti.get_children(values[1]) == level_two_not_recursive);
+      expect_true(*gti.get_children(values[1], true) == level_two_recursive);
+    }
+
+}
+
 #endif
