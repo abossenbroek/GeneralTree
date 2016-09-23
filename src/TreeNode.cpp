@@ -45,6 +45,7 @@ TreeNode::get_children(bool recursive) const {
       tree_node_c_sp_vec_sp current_children(new tree_node_c_sp_vec(*children));
 
       int last_position = 0;
+
       for (auto c : *current_children) {
         /* If c has children we call the function and add the results. */
         if (c->has_left_child()) {
@@ -57,7 +58,7 @@ TreeNode::get_children(bool recursive) const {
           tree_node_c_sp_vec::iterator iter = (children->begin() + last_position);
           for (int i = 0; iter != children->end(); ++iter) {
             if (*c == **iter) {
-              last_position = i;
+              last_position += i;
               break;
             }
             ++i;
@@ -65,6 +66,10 @@ TreeNode::get_children(bool recursive) const {
           iter++;
 
           children->insert(iter, begin(*sub_children), end(*sub_children));
+          /* We add the size of sub_children to the number that we can skip
+           * since we are sure that in the next iteration the child for which
+           * we will be looking will not be in that part of the vector. */
+          last_position += sub_children->size();
         }
       }
     }
@@ -111,7 +116,7 @@ TreeNode::get_children(bool recursive) {
           tree_node_sp_vec::iterator iter = (children->begin() + last_position);
           for (int i = 0; iter != children->end(); ++iter) {
             if (*c == **iter) {
-              last_position = i;
+              last_position += i;
               break;
             }
             ++i;
@@ -119,6 +124,10 @@ TreeNode::get_children(bool recursive) {
           iter++;
 
           children->insert(iter, begin(*sub_children), end(*sub_children));
+          /* We add the size of sub_children to the number that we can skip
+           * since we are sure that in the next iteration the child for which
+           * we will be looking will not be in that part of the vector. */
+          last_position += sub_children->size();
         }
       }
     }
