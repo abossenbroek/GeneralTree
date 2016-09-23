@@ -29,10 +29,8 @@ GeneralTreeInternal::GeneralTreeInternal()
 
 TreeInternal::TreeInternal(const SEXP& root_id, const SEXP& root_data)
 {
-  shared_ptr<tree_key> root_key = tree_key_cast_SEXP(root_id);
-
   /* Create a root node without a child or parent. */
-  shared_ptr<TreeNode> root_node = make_shared<TreeNode>(*root_key, root_data);
+  shared_ptr<TreeNode> root_node = make_shared<TreeNode>(root_id, root_data);
 
   insert_node(root_node);
 }
@@ -53,9 +51,8 @@ TreeInternal::add_node(const SEXP& parent_id, const SEXP& child_id, const SEXP& 
   } catch (...) {
     ::Rf_error("c++ exception (unknown reason)");
   }
-  shared_ptr<tree_key> child_key = tree_key_cast_SEXP(child_id);
 
-  tree_node_sp child = make_shared<TreeNode>(*child_key, data);
+  tree_node_sp child = make_shared<TreeNode>(child_id, data);
 
   /* Add child to parent. */
   parent->add_child(child);
@@ -95,12 +92,15 @@ TreeInternal::get_uid() const
 uid
 TreeInternal::insert_node(tree_node_sp& new_node)
 {
+  SEXP new_node_key = new_node->get_key();
+  shared_ptr<tree_key> search_key = tree_key_cast_SEXP(new_node_key);
+
   nodes.push_back(new_node);
   int new_uid = nodes.size() - 1;
   new_node->set_uid(new_uid);
-  /* Copy the data so that we can store it separately in the bimap. */
-  tree_key new_key = new_node->get_key();
-  uid_to_key.insert(uid_id_pair(new_uid, new_key));
+
+  /* Store in a bimap to allow big-oh log(n) search. */
+  uid_to_key.insert(uid_id_pair(new_uid, *search_key));
 
   return new_uid;
 }

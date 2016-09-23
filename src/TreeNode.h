@@ -32,24 +32,24 @@ typedef std::shared_ptr<tree_node_c_sp_vec> tree_node_c_sp_vec_sp;
 class TreeNode : public std::enable_shared_from_this< TreeNode > {
 private:
   uid my_uid;
-  tree_key key;
+  SEXP key;
   SEXP data;
   std::shared_ptr<TreeNode> left_child;
   std::vector<std::shared_ptr<TreeNode> > siblings;
   std::shared_ptr<TreeNode> parent;
 
 public:
-  TreeNode(uid& my_uid_, tree_key& key_, SEXP& data_,
+  TreeNode(const uid& my_uid_, const SEXP& key_, const SEXP& data_,
       std::shared_ptr<TreeNode> const& left_child_, std::shared_ptr<TreeNode> const& parent_) :
     my_uid(my_uid_), key(key_), data(data_), left_child(left_child_),
     parent(parent_)
   {}
 
-  TreeNode(tree_key const& key_, SEXP const& data_) :
+  TreeNode(SEXP const& key_, SEXP const& data_) :
     my_uid(INVALID_UID), key(key_), data(data_)
   {}
 
-  TreeNode(uid const& my_uid_, tree_key const& key_, SEXP const& data_) :
+  TreeNode(uid const& my_uid_, SEXP const& key_, SEXP const& data_) :
     my_uid(my_uid_), key(key_), data(data_)
   {}
 
@@ -61,7 +61,7 @@ public:
   {
   }
 
-  tree_key get_key() const {
+  SEXP get_key() const {
     return key;
   }
 
@@ -121,7 +121,6 @@ public:
   void add_child(const std::shared_ptr<TreeNode>& new_child);
 
   tree_node_sp_vec_sp get_children(bool recursive = false);
-
   tree_node_c_sp_vec_sp get_children(bool recursive = false) const;
 };
 

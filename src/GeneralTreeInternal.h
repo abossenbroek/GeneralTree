@@ -11,8 +11,6 @@
 #include <utility>
 #include <memory>
 
-
-#include <boost/variant.hpp>
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
 

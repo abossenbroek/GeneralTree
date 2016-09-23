@@ -18,10 +18,6 @@ typedef boost::variant<double, int, std::string> tree_key;
 typedef boost::bimap<int, boost::bimaps::multiset_of<tree_key> > uid_id_bimap;
 typedef uid_id_bimap::value_type uid_id_pair;
 
-//TODO
-//typedef std::shared_ptr<TreeNode> tree_node_sp;
-//typedef std::vector<tree_node_sp> tree_node_sp_vec;
-
 typedef std::pair<int, int> uid_uid_pair;
 typedef std::map<int, int> uid_to_uid_map;
 
@@ -35,6 +31,9 @@ typedef std::pair<int, std::vector<int> > uid_uids_pair;
 
 typedef std::vector<SEXP> SEXP_vec;
 typedef std::vector<tree_key> key_vec;
+
+typedef std::vector<const SEXP> SEXP_c_vec;
+typedef std::shared_ptr<SEXP_c_vec> SEXP_c_vec_sp;
 
 typedef std::shared_ptr<std::vector<SEXP> > shared_ptr_SEXP_vec;
 typedef std::shared_ptr<key_vec> shared_ptr_key_vec;
