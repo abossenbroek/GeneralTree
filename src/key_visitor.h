@@ -78,41 +78,6 @@ public:
   }
 };
 
-
-/*
- * This function stores an mapping from key to SEXP.
- *
- * The purpose of this function is that at a later stage we can call the
- * right visitor on our variant to return the intended type from the tree.
- */
-static std::shared_ptr<tree_key>
-add_mapping(uid& key, SEXP& value) {
-  switch (TYPEOF(value)) {
-    case REALSXP: {
-        std::shared_ptr<tree_key> result(new tree_key(as<NumericVector>(value)[0]));
-        return result;
-    }
-
-    case INTSXP: {
-       std::shared_ptr<tree_key> result(new tree_key(as<IntegerVector>(value)[0]));
-       return result;
-    }
-
-    case STRSXP: {
-       std::shared_ptr<tree_key> result(new tree_key(as<String>(value)));
-       return result;
-    }
-
-    default: {
-      // Rcerr << "found value: " << TYPEOF(value) << std::endl;
-      stop("add_mapping: incompatible SEXP encoutered. Currently only int,"
-          " numeric and string are supported.");
-    }
-  }
-
-  return nullptr;
-}
-
 static tree_key_sp
 tree_key_cast_SEXP(const SEXP& key)
 {
@@ -133,7 +98,7 @@ tree_key_cast_SEXP(const SEXP& key)
     }
 
     default: {
-      stop("add_mapping: incompatible SEXP encoutered. Currently only int,"
+      stop("tree_key_cast_SEXP: incompatible SEXP encoutered. Currently only int,"
           " numeric and string are supported.");
     }
   }
