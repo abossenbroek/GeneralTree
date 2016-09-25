@@ -53,7 +53,7 @@ context("TreeNode attributes work as expected") {
     expect_error(root_c->get_tree_siblings());
   }
   test_that("find_uid yields exception") {
-    expect_error(gti->find_uid(child_id));
+    expect_error(gti.find_uid(child_id));
   }
 
 
@@ -638,5 +638,7 @@ context("GeneralTreeInternal get_siblings_data works correctly") {
       expect_true(*gti.get_siblings_data(values[5]) == siblings_five);
     }
 }
+
+
 
 #endif
