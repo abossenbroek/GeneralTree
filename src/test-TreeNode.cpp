@@ -35,6 +35,7 @@ context("TreeNode attributes work as expected") {
   GeneralTreeInternal gti(root_id, root_id);
 
   tree_node_sp root = gti.find_node(root_id);
+  tree_node_c_sp root_c = gti.find_node(root_id);
 
   test_that("has_siblings yields correct values") {
     expect_false(root->has_siblings());
@@ -45,6 +46,18 @@ context("TreeNode attributes work as expected") {
   test_that("get_parent yields exception") {
     expect_error(root->get_parent());
   }
+  test_that("get_tree_siblings yields exception") {
+    expect_error(root->get_tree_siblings());
+  }
+  test_that("const get_tree_siblings yields exception") {
+    expect_error(root_c->get_tree_siblings());
+  }
+  test_that("find_uid yields exception") {
+    expect_error(gti->find_uid(child_id));
+  }
+
+
+
 
   gti.add_node(root_id, child_id, child_id);
 
@@ -66,6 +79,8 @@ context("TreeNode attributes work as expected") {
   test_that("has_left_child yields correct values") {
     expect_false(child1->has_left_child());
   }
+
+
 }
 
 
@@ -623,4 +638,5 @@ context("GeneralTreeInternal get_siblings_data works correctly") {
       expect_true(*gti.get_siblings_data(values[5]) == siblings_five);
     }
 }
+
 #endif
