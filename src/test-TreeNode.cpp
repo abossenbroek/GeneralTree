@@ -780,8 +780,6 @@ context("Comparison works") {
     test_that("Comparison returns false on unequal root") {
       expect_false(gti == gti_diff_root);
     }
-
-
 }
 
 #endif

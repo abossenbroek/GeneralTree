@@ -35,16 +35,16 @@ GeneralTreeInternal::GeneralTreeInternal(const GeneralTreeInternal& to_clone)
   tree_node_c_sp_vec_sp tree = const_pointer_cast<const TreeNode>(to_clone.get_root())->get_children(true);
 
   for (auto it = tree->begin(); it != tree->end(); ++it)
-    add_node((*it)->get_parent()->get_key(), (*it)->get_key(), (*it)->get_data());
+    add_node((*it)->get_parent()->get_uid(), (*it)->get_key(), (*it)->get_data());
 }
 
 GeneralTreeInternal::GeneralTreeInternal()
 {
 }
 
-void
-GeneralTreeInternal::add_node(const SEXP& parent_id, const SEXP& child_id,
-    const SEXP& data)
+uid
+GeneralTreeInternal::add_node(const SEXP& parent_id, const SEXP& child_key,
+    const SEXP& child_data)
 {
   /* resolve the uid of the parent so that we can set pointers. */
   tree_node_sp parent;
@@ -56,14 +56,38 @@ GeneralTreeInternal::add_node(const SEXP& parent_id, const SEXP& child_id,
     ::Rf_error("c++ exception (unknown reason)");
   }
 
-  tree_node_sp child = make_shared<TreeNode>(child_id, data);
+  tree_node_sp child = make_shared<TreeNode>(child_key, child_data);
 
   /* Add child to parent. */
   parent->add_child(child);
 
   /* Add child to internal storage. */
-  insert_node(child);
+  return insert_node(child);
 }
+
+uid
+GeneralTreeInternal::add_node(const uid& parent_uid, const SEXP& child_key,
+    const SEXP& child_data)
+{
+  /* resolve the uid of the parent so that we can set pointers. */
+  tree_node_sp parent;
+  try {
+    parent = nodes[parent_uid];
+  } catch (std::exception &ex) {
+    forward_exception_to_r(ex);
+  } catch (...) {
+    ::Rf_error("c++ exception (unknown reason)");
+  }
+
+  tree_node_sp child = make_shared<TreeNode>(child_key, child_data);
+
+  /* Add child to parent. */
+  parent->add_child(child);
+
+  /* Add child to internal storage. */
+  return insert_node(child);
+}
+
 
 uid
 GeneralTreeInternal::find_uid(const SEXP& id) const

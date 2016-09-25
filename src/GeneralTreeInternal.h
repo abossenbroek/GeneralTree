@@ -39,7 +39,9 @@ public:
   virtual ~GeneralTreeInternal()
   {}
 
-  void add_node(const SEXP& parent, const SEXP& child, const SEXP& data);
+  uid add_node(const SEXP& parent, const SEXP& child_key, const SEXP& child_data);
+  uid add_node(const uid& parent_uid, const SEXP& child_key, const SEXP& child_data);
+
   uid find_uid(const SEXP& id) const;
   tree_node_sp find_node(const SEXP& id) const;
   uid get_uid() const;
