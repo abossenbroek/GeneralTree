@@ -26,6 +26,9 @@ private:
   uid_id_bimap uid_to_key;
   tree_node_sp_vec nodes;
   uid insert_node(tree_node_sp& new_node);
+  SEXP_vec_sp get_info_from_children(const SEXP& parent_id, bool recursive,
+      bool get_key) const;
+  SEXP_vec_sp get_info_from_siblings(const SEXP& node_id, bool get_key) const;
 
 public:
   GeneralTreeInternal(const SEXP& root_id, const SEXP& root_data);
@@ -50,6 +53,10 @@ public:
 
   std::shared_ptr<tree_node_sp_vec> get_siblings(const SEXP& node_id);
   tree_node_c_sp_vec_sp get_siblings(const SEXP& node_id) const;
+
+  SEXP_vec_sp get_siblings_keys(const SEXP& node_id) const;
+  SEXP_vec_sp get_siblings_data(const SEXP& node_id) const;
+
 
 
   tree_node_sp_vec* get_nodes() const {

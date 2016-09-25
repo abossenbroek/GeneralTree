@@ -129,9 +129,19 @@ GeneralTreeInternal::get_children(const SEXP& parent_id, bool recursive)
   return parent_node_found->get_children(recursive);
 }
 
+template<typename Container_source, typename Container_dest>
+void get_info (const Container_source& src, Container_dest& dst, bool get_key) {
+  if (get_key)
+    transform(begin(*src), end(*src), back_inserter(*dst),
+        [](shared_ptr<const TreeNode> x){ return x->get_key(); });
+  else
+    transform(begin(*src), end(*src), back_inserter(*dst),
+        [](shared_ptr<const TreeNode> x){ return x->get_data(); });
+}
 
 SEXP_vec_sp
-GeneralTreeInternal::get_children_keys(const SEXP& parent_id, bool recursive) const
+GeneralTreeInternal::get_info_from_children(const SEXP& parent_id,
+    bool recursive, bool get_key) const
 {
   tree_node_c_sp parent_node_found = find_node(parent_id);
 
@@ -140,26 +150,38 @@ GeneralTreeInternal::get_children_keys(const SEXP& parent_id, bool recursive) co
 
   result->reserve(children->size());
 
-  transform(children->begin(), children->end(), back_inserter(*result),
-      [](shared_ptr<const TreeNode> x){ return x->get_key(); });
+  get_info(children, result, get_key);
+
+ return result;
+}
+
+SEXP_vec_sp
+GeneralTreeInternal::get_info_from_siblings(const SEXP& node_id, bool get_key) const
+{
+  tree_node_c_sp node_found = find_node(node_id);
+
+  SEXP_vec_sp result(new SEXP_vec());
+  tree_node_c_sp_vec_sp siblings = node_found->get_tree_siblings();
+
+  result->reserve(siblings->size());
+
+  get_info(siblings, result, get_key);
 
   return result;
+}
+
+
+
+SEXP_vec_sp
+GeneralTreeInternal::get_children_keys(const SEXP& parent_id, bool recursive) const
+{
+  return get_info_from_children(parent_id, recursive, true);
 }
 
 SEXP_vec_sp
 GeneralTreeInternal::get_children_data(const SEXP& parent_id, bool recursive) const
 {
-  tree_node_c_sp parent_node_found = find_node(parent_id);
-
-  SEXP_vec_sp result(new SEXP_vec());
-  tree_node_c_sp_vec_sp children = parent_node_found->get_children(recursive);
-
-  result->reserve(children->size());
-
-  transform(children->begin(), children->end(), back_inserter(*result),
-      [](shared_ptr<const TreeNode> x){ return x->get_data(); });
-
-  return result;
+  return get_info_from_children(parent_id, recursive, false);
 }
 
 tree_node_c_sp_vec_sp
@@ -189,4 +211,14 @@ GeneralTreeInternal::get_siblings(const SEXP& node_id) const
   return node_found->get_tree_siblings();
 }
 
+SEXP_vec_sp
+GeneralTreeInternal::get_siblings_keys(const SEXP& node_id) const
+{
+  return get_info_from_siblings(node_id, true);
+}
 
+SEXP_vec_sp
+GeneralTreeInternal::get_siblings_data(const SEXP& node_id) const
+{
+  return get_info_from_siblings(node_id, false);
+}

@@ -6,16 +6,23 @@
 using namespace std;
 using namespace Rcpp;
 
-template<class InputIterator, class T>
-  InputIterator find_ptr (InputIterator first, InputIterator last, const T& val)
-{
-  while (first!=last) {
-    if (**first==*val) return first;
-    ++first;
-  }
-  return last;
-}
+template<typename Container, class T>
+Container find_erase (Container& vec, const T& val) {
 
+  auto start = begin(*vec);
+  auto last = end(*vec);
+
+  while (start != last) {
+    if (**start == *val)
+      break;
+    ++start;
+  }
+
+  if (start != last)
+    vec->erase(start);
+
+  return vec;
+}
 
 void
 TreeNode::add_child(const std::shared_ptr<TreeNode>& new_child) {
@@ -147,7 +154,6 @@ TreeNode::get_children(bool recursive) {
   return children;
 }
 
-
 tree_node_sp_vec_sp
 TreeNode::get_tree_siblings()
 {
@@ -156,12 +162,8 @@ TreeNode::get_tree_siblings()
 
   tree_node_sp_vec_sp results = parent->get_children();
 
-  auto iter = find_ptr(results->begin(), results->end(), this);
-
-  if (iter != results->end())
-    results->erase(iter);
-
-  return results;
+  /* Remove the current node from the list of children and return the result. */
+  return find_erase(results, this);
 }
 
 tree_node_c_sp_vec_sp
@@ -174,12 +176,8 @@ TreeNode::get_tree_siblings() const
 
   tree_node_c_sp_vec_sp results = c_parent->get_children();
 
-  auto iter = find_ptr(results->begin(), results->end(), this);
-
-  if (iter != results->end())
-    results->erase(iter);
-
-  return results;
+  /* Remove the current node from the list of children and return the result. */
+  return find_erase(results, this);
 }
 
 
