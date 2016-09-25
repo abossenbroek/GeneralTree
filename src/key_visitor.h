@@ -113,7 +113,7 @@ add_mapping(uid& key, SEXP& value) {
   return nullptr;
 }
 
-static std::shared_ptr<tree_key>
+static tree_key_sp
 tree_key_cast_SEXP(const SEXP& key)
 {
   switch (TYPEOF(key)) {
@@ -140,23 +140,5 @@ tree_key_cast_SEXP(const SEXP& key)
 
   return nullptr;
 }
-
-static shared_ptr_SEXP_vec
-tree_key_cast_SEXP_vec(shared_ptr_key_vec vec)
-{
-  shared_ptr_SEXP_vec result(new std::vector<SEXP>());
-  key_visitor* v = new key_visitor();
-
-  result->reserve(vec->size());
-
-  transform(vec->begin(), vec->end(), back_inserter(*result),
-      [&](tree_key& x){ return boost::apply_visitor(*v, x); } );
-
-  delete(v);
-
-  return result;
-}
-
-
 
 #endif // _KEY_VISITOR_H_
