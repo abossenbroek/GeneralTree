@@ -38,7 +38,6 @@ GeneralTreeInternal::GeneralTreeInternal(const GeneralTreeInternal& to_clone)
     add_node((*it)->get_parent()->get_key(), (*it)->get_key(), (*it)->get_data());
 }
 
-
 GeneralTreeInternal::GeneralTreeInternal()
 {
 }
@@ -187,8 +186,6 @@ GeneralTreeInternal::get_info_from_siblings(const SEXP& node_id, bool get_key) c
 
   return result;
 }
-
-
 
 SEXP_vec_sp
 GeneralTreeInternal::get_children_keys(const SEXP& parent_id, bool recursive) const

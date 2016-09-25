@@ -25,6 +25,7 @@ class GeneralTreeInternal {
 private:
   uid_id_bimap uid_to_key;
   tree_node_sp_vec nodes;
+  tree_node_sp root;
   uid insert_node(tree_node_sp& new_node);
   SEXP_vec_sp get_info_from_children(const SEXP& parent_id, bool recursive,
       bool get_key) const;
@@ -32,6 +33,8 @@ private:
 
 public:
   GeneralTreeInternal(const SEXP& root_id, const SEXP& root_data);
+  GeneralTreeInternal(const GeneralTreeInternal& to_clone);
+
   GeneralTreeInternal();
   virtual ~GeneralTreeInternal()
   {}
@@ -57,7 +60,9 @@ public:
   SEXP_vec_sp get_siblings_keys(const SEXP& node_id) const;
   SEXP_vec_sp get_siblings_data(const SEXP& node_id) const;
 
-
+  tree_node_sp get_root() const {
+    return root;
+  }
 
   tree_node_sp_vec* get_nodes() const {
     return const_cast<tree_node_sp_vec*>(&nodes);
@@ -68,13 +73,20 @@ public:
   {
     bool result = true;
 
-    if (lhs.get_nodes()->size() != rhs.get_nodes()->size()) {
+    if (*lhs.get_root() != *rhs.get_root())
       return false;
-    }
 
-    for (int i = 0; i < lhs.get_nodes()->size(); ++i) {
-      result = result && lhs.get_nodes()->at(i) == rhs.get_nodes()->at(i);
-    }
+
+    tree_node_c_sp_vec_sp lhs_tree =
+      std::const_pointer_cast<const TreeNode>(lhs.get_root())->get_children(true);
+    tree_node_c_sp_vec_sp rhs_tree =
+      std::const_pointer_cast<const TreeNode>(rhs.get_root())->get_children(true);
+
+    if (lhs_tree->size() != rhs_tree->size())
+      return false;
+
+    for (int i = 0; i < lhs_tree->size(); ++i)
+      result = result && *lhs_tree->at(i) == *rhs_tree->at(i);
 
     return result;
   }
