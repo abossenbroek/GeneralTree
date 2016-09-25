@@ -170,3 +170,23 @@ GeneralTreeInternal::get_children(const SEXP& parent_id, bool recursive) const
 
   return parent_node_found->get_children(recursive);
 }
+
+std::shared_ptr<tree_node_sp_vec>
+GeneralTreeInternal::get_siblings(const SEXP& node_id)
+{
+  /* Retrieve the parent node. */
+  tree_node_sp node_found = find_node(node_id);
+
+  return node_found->get_tree_siblings();
+}
+
+tree_node_c_sp_vec_sp
+GeneralTreeInternal::get_siblings(const SEXP& node_id) const
+{
+  /* Retrieve the parent node. */
+  tree_node_c_sp node_found = find_node(node_id);
+
+  return node_found->get_tree_siblings();
+}
+
+

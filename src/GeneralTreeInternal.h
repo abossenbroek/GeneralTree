@@ -41,11 +41,16 @@ public:
   bool has_child(const SEXP& id) const;
   bool has_siblings(const SEXP& id) const;
   tree_node_sp get_parent(const SEXP& id) const;
+
   std::shared_ptr<tree_node_sp_vec> get_children(const SEXP& parent_id, bool recursive = false);
   tree_node_c_sp_vec_sp get_children(const SEXP& parent_id, bool recursive = false) const;
 
   SEXP_vec_sp get_children_keys(const SEXP& parent_id, bool recursive = false) const;
   SEXP_vec_sp get_children_data(const SEXP& parent_id, bool recursive = false) const;
+
+  std::shared_ptr<tree_node_sp_vec> get_siblings(const SEXP& node_id);
+  tree_node_c_sp_vec_sp get_siblings(const SEXP& node_id) const;
+
 
   tree_node_sp_vec* get_nodes() const {
     return const_cast<tree_node_sp_vec*>(&nodes);

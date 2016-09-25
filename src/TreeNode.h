@@ -114,6 +114,10 @@ public:
     siblings.push_back(new_sibling);
   }
 
+  bool has_parent() const {
+    return parent.get() != nullptr;
+  }
+
   void set_parent(const std::shared_ptr<TreeNode>& parent_) {
     parent = parent_;
   }
@@ -122,6 +126,9 @@ public:
 
   tree_node_sp_vec_sp get_children(bool recursive = false);
   tree_node_c_sp_vec_sp get_children(bool recursive = false) const;
+
+  tree_node_sp_vec_sp get_tree_siblings();
+  tree_node_c_sp_vec_sp get_tree_siblings() const;
 };
 
 #endif /* _TREENODE_H_ */

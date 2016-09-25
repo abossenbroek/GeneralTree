@@ -6,6 +6,17 @@
 using namespace std;
 using namespace Rcpp;
 
+template<class InputIterator, class T>
+  InputIterator find_ptr (InputIterator first, InputIterator last, const T& val)
+{
+  while (first!=last) {
+    if (**first==*val) return first;
+    ++first;
+  }
+  return last;
+}
+
+
 void
 TreeNode::add_child(const std::shared_ptr<TreeNode>& new_child) {
   new_child->set_parent(shared_from_this());
@@ -135,3 +146,40 @@ TreeNode::get_children(bool recursive) {
 
   return children;
 }
+
+
+tree_node_sp_vec_sp
+TreeNode::get_tree_siblings()
+{
+  if(!has_parent())
+      throw std::runtime_error("Node does not have a parent.");
+
+  tree_node_sp_vec_sp results = parent->get_children();
+
+  auto iter = find_ptr(results->begin(), results->end(), this);
+
+  if (iter != results->end())
+    results->erase(iter);
+
+  return results;
+}
+
+tree_node_c_sp_vec_sp
+TreeNode::get_tree_siblings() const
+{
+  if(!has_parent())
+      throw std::runtime_error("Node does not have a parent.");
+
+  tree_node_c_sp c_parent = const_pointer_cast<const TreeNode>(parent);
+
+  tree_node_c_sp_vec_sp results = c_parent->get_children();
+
+  auto iter = find_ptr(results->begin(), results->end(), this);
+
+  if (iter != results->end())
+    results->erase(iter);
+
+  return results;
+}
+
+
