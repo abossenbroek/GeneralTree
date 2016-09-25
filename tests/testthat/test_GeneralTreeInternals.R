@@ -71,39 +71,3 @@ test_that("Siblings data are correclty returned with mixed keys", {
     expect_equal(GeneralTree:::get_siblings_data(init, "b"), node_values[-c(1, 3)])
 })
 
-
-# test_that("Branch keys is correctly returned in singelton tree.", {
-#     node_keys <- list("a")
-#     node_values <- list(list("a"))
-#     init <- GeneralTree:::initialize_tree(node_keys[[1]], node_values[[1]])
-# 
-#     expect_equal(GeneralTree:::get_branch_keys(init, node_keys[[1]], recursive = F),
-#                  node_keys)
-# })
-# 
-# 
-# test_that("Branch keys are correclty returned with mixed keys", {
-#     node_keys <- list("a", 0, "b", 1.1, 1.2)
-#     node_values <- list(list("a"), new.env(), 0.1,
-#                         "les cochons volant sont éblouissant",
-#                         1.2)
-#     init <- GeneralTree:::initialize_tree(node_keys[[1]], node_values[[1]])
-#     init <- GeneralTree:::add_node(init, node_keys[[1]],node_keys[[2]],
-#                                    node_values[[2]])
-#     init <- GeneralTree:::add_node(init, node_keys[[1]], node_keys[[3]], node_values[[3]])
-#     init <- GeneralTree:::add_node(init, node_keys[[3]], node_keys[[4]], node_values[[4]])
-#     init <- GeneralTree:::add_node(init, node_keys[[3]], node_keys[[5]], node_values[[5]])
-# 
-#     expect_equal(GeneralTree:::get_branch_keys(init, node_keys[[1]], recursive = F),
-#                  node_keys[-c(4, 5)])
-#     expect_equal(GeneralTree:::get_branch_keys(init, node_keys[[1]], recursive = T),
-#                  node_keys)
-# 
-#     expect_equal(GeneralTree:::get_branch_keys(init, node_keys[[3]], recursive = F),
-#                  node_keys[c(3, 4, 5)])
-#     expect_equal(GeneralTree:::get_branch_keys(init, node_keys[[3]], recursive = T),
-#                  node_keys[c(3, 4, 5)])
-# 
-# 
-# })
-# 
