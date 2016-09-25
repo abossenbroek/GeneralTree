@@ -1,6 +1,29 @@
 language: r
 sudo: false
 cache: packages
+
+matrix:
+  include:
+    - os: linux
+      dist: precise
+      sudo: false
+    - os: linux
+      dist: trusty
+      env: R_CODECOV=true
+      r_check_args: '--use-valgrind'
+    - os: osx
+      osx_image: xcode8
+      latex: false
+    - os: osx
+      osx_image: xcode8
+      before_install:
+        - brew install libxml2
+        - brew link --force libxml2
+      latex: false
+    - os: osx
+      osx_image: beta-xcode6.1
+      disable_homebrew: true
+
 before_install:
 - if [[ "$TRAVIS_R_VERSION_STRING" = 'devel' ]]; then mkdir ~/.R && echo 'CXX1X=g++
   -std=c++0x -g -O2 -fPIC' > ~/.R/Makevars; fi
@@ -23,10 +46,9 @@ r_github_packages:
 r_packages:
 - xml2
 after_success:
-- test $TRAVIS_R_VERSION_STRING = 'release' && R -d valgrind -f tests/testthat.R
-- test $TRAVIS_R_VERSION_STRING = 'release' && Rscript -e 'covr::codecov()'
-- test $TRAVIS_R_VERSION_STRING = 'release' && Rscript -e 'covr::coveralls()'
-- test $TRAVIS_R_VERSION_STRING = 'release' && Rscript -e 'lintr::lint_package()'
+  - if [[ "${R_CODECOV}" ]]; then R -e 'covr::codecov()'; fi
+  - if [[ "${R_CODECOV}" ]]; then R -e 'covr::coveralls()'; fi
+  - if [[ "${R_LINTR}" ]]; then R -e 'lintr::lint_package()'; fi
 notifications:
   webhooks:
     urls:
