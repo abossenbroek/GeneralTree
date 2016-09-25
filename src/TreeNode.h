@@ -77,9 +77,36 @@ public:
     return &siblings;
   }
 
+  std::vector<std::shared_ptr<TreeNode> >* get_siblings() const {
+    return const_cast<std::vector<std::shared_ptr<TreeNode> >*>(&siblings);
+  }
+
   friend bool operator== (const TreeNode& lhs, const TreeNode& rhs)
   {
-    return lhs.get_key() == rhs.get_key() && lhs.get_data() == rhs.get_data();
+    bool result = true;
+
+    if (lhs.has_left_child() && rhs.has_left_child()) {
+      result = result && *lhs.get_left_child() == *rhs.get_left_child();
+    } else if (!lhs.has_left_child() != !rhs.has_left_child()) {
+      /* Either lhs or rhs does not have a child so result is false. */
+      return false;
+    }
+
+    if (lhs.has_siblings() && rhs.has_siblings()) {
+      /* Verify whether the size of both are equal. */
+      if (lhs.get_siblings()->size() != rhs.get_siblings()->size())
+        return false;
+
+      /* Compare all the siblings. */
+      for (int i = 0; i < lhs.get_siblings()->size(); ++i)
+        result = result && *lhs.get_siblings()->at(i) ==
+          *rhs.get_siblings()->at(i);
+    } else if (!lhs.has_siblings() != !rhs.has_siblings()) {
+      /* Either lhs or rhs does not have siblings so result is false. */
+      return false;
+    }
+
+    return result && lhs.get_key() == rhs.get_key() && lhs.get_data() == rhs.get_data();
   }
 
   friend bool operator!= (const TreeNode& lhs, const TreeNode& rhs) {
