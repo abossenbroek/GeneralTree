@@ -19,7 +19,25 @@ GeneralTreeInternal::GeneralTreeInternal(const SEXP& root_id, const SEXP&
   shared_ptr<TreeNode> root_node = make_shared<TreeNode>(root_id, root_data);
 
   insert_node(root_node);
+  root = root_node;
 }
+
+GeneralTreeInternal::GeneralTreeInternal(const GeneralTreeInternal& to_clone)
+{
+  /* First copy the root. */
+  shared_ptr<TreeNode> root_node = make_shared<TreeNode>(to_clone.get_root()->get_key(),
+      to_clone.get_root()->get_data());
+
+  insert_node(root_node);
+  root = root_node;
+
+  /* Get complete list of children. */
+  tree_node_c_sp_vec_sp tree = const_pointer_cast<const TreeNode>(to_clone.get_root())->get_children(true);
+
+  for (auto it = tree->begin(); it != tree->end(); ++it)
+    add_node((*it)->get_parent()->get_key(), (*it)->get_key(), (*it)->get_data());
+}
+
 
 GeneralTreeInternal::GeneralTreeInternal()
 {

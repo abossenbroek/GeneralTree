@@ -12,7 +12,6 @@
 using namespace Rcpp;
 using namespace std;
 
-
 // [[Rcpp::export]]
 SEXP
 initialize_tree(SEXP id, SEXP data)
@@ -100,4 +99,17 @@ get_siblings_data(SEXP gti_sexp, SEXP node_id)
 
   return *c_sexp ;
 }
+
+// [[Rcpp::export]]
+SEXP
+copy(SEXP gti_sexp)
+{
+  gti_xptr gti(gti_sexp);
+  GeneralTreeInternal* new_tree = new GeneralTreeInternal(*(gti.get()));
+  gti_xptr p(new_tree, true);
+
+  return p;
+}
+
+
 

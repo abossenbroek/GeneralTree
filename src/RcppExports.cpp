@@ -116,3 +116,14 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// copy
+SEXP copy(SEXP gti_sexp);
+RcppExport SEXP GeneralTree_copy(SEXP gti_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    __result = Rcpp::wrap(copy(gti_sexp));
+    return __result;
+END_RCPP
+}

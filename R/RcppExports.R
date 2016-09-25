@@ -37,3 +37,7 @@ get_siblings_data <- function(gti_sexp, node_id) {
     .Call('GeneralTree_get_siblings_data', PACKAGE = 'GeneralTree', gti_sexp, node_id)
 }
 
+copy <- function(gti_sexp) {
+    .Call('GeneralTree_copy', PACKAGE = 'GeneralTree', gti_sexp)
+}
+

@@ -79,8 +79,7 @@ public:
 
   friend bool operator== (const TreeNode& lhs, const TreeNode& rhs)
   {
-    return lhs.get_key() == rhs.get_key() && lhs.get_uid() == rhs.get_uid() &&
-      lhs.get_data() == rhs.get_data();
+    return lhs.get_key() == rhs.get_key() && lhs.get_data() == rhs.get_data();
   }
 
   friend bool operator!= (const TreeNode& lhs, const TreeNode& rhs) {
