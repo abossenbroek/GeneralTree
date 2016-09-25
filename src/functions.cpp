@@ -81,3 +81,23 @@ get_children_data(SEXP gti_sexp, SEXP parent_id, bool recursive = false)
   return *c_sexp ;
 }
 
+// [[Rcpp::export]]
+std::vector<SEXP>
+get_siblings_keys(SEXP gti_sexp, SEXP node_id)
+{
+  gti_xptr gti(gti_sexp);
+  SEXP_vec_sp c_keys = gti->get_siblings_keys(node_id);
+
+  return(*c_keys);
+}
+
+// [[Rcpp::export]]
+std::vector<SEXP>
+get_siblings_data(SEXP gti_sexp, SEXP node_id)
+{
+  gti_xptr gti(gti_sexp);
+  SEXP_vec_sp c_sexp = gti->get_siblings_data(node_id);
+
+  return *c_sexp ;
+}
+

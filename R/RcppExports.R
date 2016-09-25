@@ -29,3 +29,11 @@ get_children_data <- function(gti_sexp, parent_id, recursive = FALSE) {
     .Call('GeneralTree_get_children_data', PACKAGE = 'GeneralTree', gti_sexp, parent_id, recursive)
 }
 
+get_siblings_keys <- function(gti_sexp, node_id) {
+    .Call('GeneralTree_get_siblings_keys', PACKAGE = 'GeneralTree', gti_sexp, node_id)
+}
+
+get_siblings_data <- function(gti_sexp, node_id) {
+    .Call('GeneralTree_get_siblings_data', PACKAGE = 'GeneralTree', gti_sexp, node_id)
+}
+
