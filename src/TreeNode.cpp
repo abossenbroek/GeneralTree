@@ -2,6 +2,7 @@
 #include <Rcpp.h>
 
 #include <memory>
+#include <algorithm>
 
 using namespace std;
 using namespace Rcpp;
@@ -190,4 +191,20 @@ TreeNode::operator SEXP() const
   serialization["parent_uid"] = wrap(get_parent_uid());
 
   return serialization;
+}
+
+const unsigned int
+TreeNode::tree_depth() const
+{
+  unsigned int result = 0;
+
+  if (has_siblings()) {
+    for (auto it = begin(siblings); it != end(siblings); ++it)
+      result = max(result, (*it)->tree_depth());
+  }
+
+  if (has_left_child())
+    result = max(result, 1 + left_child->tree_depth());
+
+  return result;
 }

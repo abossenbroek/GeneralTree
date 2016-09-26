@@ -163,6 +163,8 @@ public:
 
   tree_node_sp_vec_sp get_tree_siblings();
   tree_node_c_sp_vec_sp get_tree_siblings() const;
+
+  const unsigned int tree_depth() const;
 };
 
 #endif /* _TREENODE_H_ */

@@ -782,4 +782,54 @@ context("Comparison works") {
     }
 }
 
+context("Tree depth is correctly reported") {
+  SEXP values[] = {
+      NumericVector::create(0),
+      NumericVector::create(1),
+      NumericVector::create(2),
+      NumericVector::create(3),
+      NumericVector::create(4),
+      NumericVector::create(5),
+      NumericVector::create(6),
+      NumericVector::create(7),
+      NumericVector::create(8),
+      NumericVector::create(9),
+      NumericVector::create(10)
+    };
+
+    // 0
+    // \ 1
+    //   \ 2
+    //     - 3
+    //     - 5
+    //     | - 6
+    //     | | - 8
+    //     | | - 9
+    //     | \ 7
+    //     |
+    //     \ 4
+    //  Create the tree above.
+    GeneralTreeInternal gti(values[0], values[0]);
+
+    // Add child node.
+    gti.add_node(values[0], values[1], values[1]);
+
+    test_that("Depth is correctly computed for simple tree") {
+      expect_true(gti.tree_depth() == 1);
+    }
+
+    gti.add_node(values[1], values[2], values[2]);
+    gti.add_node(values[2], values[3], values[3]);
+    gti.add_node(values[2], values[5], values[5]);
+    gti.add_node(values[5], values[6], values[6]);
+    gti.add_node(values[5], values[7], values[7]);
+    gti.add_node(values[6], values[8], values[8]);
+    gti.add_node(values[6], values[9], values[9]);
+    gti.add_node(values[2], values[4], values[4]);
+
+    test_that("Depth is correctly computed for simple tree") {
+      expect_true(gti.tree_depth() == 5);
+    }
+}
+
 #endif
