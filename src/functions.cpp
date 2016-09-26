@@ -1,8 +1,6 @@
 // [[Rcpp::depends(BH)]]
 #include <Rcpp.h>
 
-#include <boost/shared_ptr.hpp>
-
 #include <string>
 
 
@@ -111,5 +109,11 @@ copy(SEXP gti_sexp)
   return p;
 }
 
+// [[Rcpp::export]]
+SEXP
+serialize(SEXP gti_sexp)
+{
+  gti_xptr gti(gti_sexp);
 
-
+  return wrap(*gti);
+}

@@ -127,3 +127,14 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// serialize
+SEXP serialize(SEXP gti_sexp);
+RcppExport SEXP GeneralTree_serialize(SEXP gti_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    __result = Rcpp::wrap(serialize(gti_sexp));
+    return __result;
+END_RCPP
+}

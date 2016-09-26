@@ -180,4 +180,14 @@ TreeNode::get_tree_siblings() const
   return find_erase(results, this);
 }
 
+TreeNode::operator SEXP() const
+{
+  List serialization;
 
+  serialization["key"] = key;
+  serialization["data"] = data;
+  serialization["uid"] = wrap(my_uid);
+  serialization["parent_uid"] = wrap(get_parent_uid());
+
+  return serialization;
+}

@@ -3,7 +3,7 @@
 #ifndef _GENERALTREEINTERNALS_H_
 #define _GENERALTREEINTERNALS_H_
 
-#include <Rcpp.h>
+#include <RcppCommon.h>
 
 #include <vector>
 #include <map>
@@ -18,8 +18,6 @@
 #include "key_visitor.h"
 
 #include "TreeNode.h"
-
-// nocov start
 
 class GeneralTreeInternal {
 private:
@@ -62,6 +60,8 @@ public:
   SEXP_vec_sp get_siblings_keys(const SEXP& node_id) const;
   SEXP_vec_sp get_siblings_data(const SEXP& node_id) const;
 
+  operator SEXP() const;
+
   tree_node_sp get_root() const {
     return root;
   }
@@ -99,58 +99,7 @@ public:
   }
 };
 
-namespace Rcpp {
-//  /* Convert a bimap tree mapping to a R structure. */
-//  template <> SEXP wrap(const uid_SEXP_bimap& mapping) {
-//    std::vector<int> left_vector;
-//    std::vector<SEXP> right_vector;
-//
-//    for (uid_SEXP_bimap::left_const_iterator id_iter = mapping.left.begin(),
-//         iend = mapping.left.end();
-//         id_iter != iend; ++id_iter) {
-//      left_vector.push_back(id_iter->first);
-//      right_vector.push_back(id_iter->second);
-//    }
-//
-//    return List::create(Named("left") = wrap(left_vector), Named("right") = wrap(right_vector));
-//  }
-//
-//  /* Convert a R structure to a bimap tree mapping. */
-//  template <> uid_SEXP_bimap as(SEXP t_m_exp) {
-//    List t_m = as<List>(t_m_exp);
-//    std::vector<int> left_vector = t_m["left"];
-//    std::vector<SEXP> right_vector = t_m["right"];
-//    std::vector<int>::iterator lit;
-//    std::vector<SEXP>::iterator rit;
-//
-//    uid_SEXP_bimap result;
-//
-//    for (lit = left_vector.begin(),
-//         rit = right_vector.begin();
-//         lit != left_vector.end();
-//         ++lit, ++rit) {
-//      result.insert(uid_SEXP_pair(*lit, *rit));
-//    }
-//
-//    return(result);
-//  }
-//
-//  /* Convert a bimap tree mapping to a R structure. */
-//  template <> SEXP wrap(const uid_id_bimap& mapping) {
-//    std::vector<int> left_vector;
-//    std::vector<tree_key> right_vector;
-//
-//    for (uid_id_bimap::left_const_iterator id_iter = mapping.left.begin(),
-//         iend = mapping.left.end();
-//         id_iter != iend; ++id_iter) {
-//      left_vector.push_back(id_iter->first);
-//      right_vector.push_back(id_iter->second);
-//    }
-//
-//    return List::create(Named("left") = wrap(left_vector), Named("right") = wrap(right_vector));
-//  }
-//
-//  /* Convert a R structure to a bimap tree mapping. */
+  //  /* Convert a R structure to a bimap tree mapping. */
 //  template <> uid_id_bimap as(SEXP t_m_exp) {
 //    List t_m = as<List>(t_m_exp);
 //    std::vector<int> left_vector = t_m["left"];
@@ -263,11 +212,9 @@ namespace Rcpp {
 //    return gti;
 //  }
 //
-}
+//}
 
 typedef Rcpp::XPtr<GeneralTreeInternal> gti_xptr;
 
-
-// nocov end
 
 #endif // _GENERALTREEINTERNALS_H_

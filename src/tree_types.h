@@ -4,12 +4,11 @@
 #ifndef _TREE_TYPES_H
 #define _TREE_TYPES_H
 
-#include <Rcpp.h>
+#include <RcppCommon.h>
 #include <boost/variant.hpp>
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
-
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 //typedef std::string tree_key;
 typedef int uid;

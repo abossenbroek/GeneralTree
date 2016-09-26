@@ -5,7 +5,7 @@
 
 #include "config.h"
 
-#include <Rcpp.h>
+#include <RcppCommon.h>
 
 #include <map>
 #include <vector>
@@ -13,7 +13,6 @@
 #include <memory>
 
 #define INVALID_UID -1
-
 
 #include "tree_types.h"
 
@@ -79,6 +78,13 @@ public:
 
   std::vector<std::shared_ptr<TreeNode> >* get_siblings() const {
     return const_cast<std::vector<std::shared_ptr<TreeNode> >*>(&siblings);
+  }
+
+  const uid get_parent_uid() const {
+    if (!has_parent())
+      return INVALID_UID;
+
+    return parent->get_uid();
   }
 
   friend bool operator== (const TreeNode& lhs, const TreeNode& rhs)
@@ -147,6 +153,8 @@ public:
   void set_parent(const std::shared_ptr<TreeNode>& parent_) {
     parent = parent_;
   }
+
+  operator SEXP() const;
 
   void add_child(const std::shared_ptr<TreeNode>& new_child);
 

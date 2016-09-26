@@ -41,3 +41,7 @@ copy <- function(gti_sexp) {
     .Call('GeneralTree_copy', PACKAGE = 'GeneralTree', gti_sexp)
 }
 
+serialize <- function(gti_sexp) {
+    .Call('GeneralTree_serialize', PACKAGE = 'GeneralTree', gti_sexp)
+}
+

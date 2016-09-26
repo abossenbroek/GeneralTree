@@ -261,3 +261,29 @@ GeneralTreeInternal::get_siblings_data(const SEXP& node_id) const
 {
   return get_info_from_siblings(node_id, false);
 }
+
+GeneralTreeInternal::operator SEXP() const
+{
+  List serialization;
+
+  serialization["root"] = wrap(*root);
+
+  List node_uids(no_init(nodes.size()));
+  List node_keys(no_init(nodes.size()));
+  List node_data(no_init(nodes.size()));
+  List node_parents(no_init(nodes.size()));
+
+  for (int i = 0; i < nodes.size(); ++i) {
+    node_uids[i] = nodes.at(i)->get_uid();
+    node_keys[i] = nodes.at(i)->get_key();
+    node_data[i] = nodes.at(i)->get_data();
+    node_parents[i] = nodes.at(i)->get_parent_uid();
+  }
+
+  serialization["uids"] = node_uids;
+  serialization["keys"] = node_keys;
+  serialization["data"] = node_data;
+  serialization["parents"] = node_parents;
+
+  return serialization;
+}
