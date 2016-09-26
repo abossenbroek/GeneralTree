@@ -24,20 +24,6 @@ Container find_erase (Container& vec, const T& val) {
   return vec;
 }
 
-TreeNode::TreeNode(SEXP tn)
-{
-  try {
-    List object = as<List>(tn);
-    key = object["key"];
-    data = object["data"];
-    my_uid = INVALID_UID;
-  } catch (std::exception &ex) {
-    forward_exception_to_r(ex);
-  } catch (...) {
-    ::Rf_error("c++ exception (unknown reason)");
-  }
-}
-
 void
 TreeNode::add_child(const std::shared_ptr<TreeNode>& new_child) {
   new_child->set_parent(shared_from_this());
@@ -200,6 +186,8 @@ TreeNode::operator SEXP() const
 
   serialization["key"] = key;
   serialization["data"] = data;
+  serialization["uid"] = wrap(my_uid);
+  serialization["parent_uid"] = wrap(get_parent_uid());
 
   return serialization;
 }
