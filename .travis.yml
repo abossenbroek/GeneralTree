@@ -16,12 +16,16 @@ matrix:
     - os: linux
       dist: trusty
       sudo: required
-      r_check_args: '--use-valgrind'
-      r: oldrel
+      r: devel
     - os: linux
       dist: trusty
       sudo: required
-      r_check_args: '--use-valgrind'
+      r: oldrel
+    - os: osx
+      osx_image: xcode8
+      latex: false
+      r_build_args: '--no-build-vignettes'
+      r_check_args: '--ignore-vignettes --no-examples'
       r: devel
     - os: osx
       osx_image: xcode8
@@ -36,15 +40,6 @@ matrix:
         - brew link --force libxml2
       latex: false
       r: release
-      r_build_args: '--no-build-vignettes'
-      r_check_args: '--ignore-vignettes --no-examples'
-    - os: osx
-      osx_image: xcode8
-      before_install:
-        - brew install libxml2
-        - brew link --force libxml2
-      latex: false
-      r: devel
       r_build_args: '--no-build-vignettes'
       r_check_args: '--ignore-vignettes --no-examples'
     - os: osx
