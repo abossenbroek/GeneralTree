@@ -171,56 +171,45 @@ GeneralTreeInternal::get_children(const SEXP& parent_id, bool recursive)
 }
 
 template<typename Container_source, typename Container_dest>
-void get_info (const Container_source& src, Container_dest& dst, bool get_key) {
-  if (get_key)
-    transform(begin(*src), end(*src), back_inserter(*dst),
-        [](shared_ptr<const TreeNode> x){ return x->get_key(); });
-  else
-    transform(begin(*src), end(*src), back_inserter(*dst),
-        [](shared_ptr<const TreeNode> x){ return x->get_data(); });
-}
-
-SEXP_vec_sp
-GeneralTreeInternal::get_info_from_children(const SEXP& parent_id,
-    bool recursive, bool get_key) const
+void
+get_info(const Container_source& src, Container_dest& dst, const ListFunctor& lf)
 {
-  tree_node_c_sp parent_node_found = find_node(parent_id);
-
-  SEXP_vec_sp result(new SEXP_vec());
-  tree_node_c_sp_vec_sp children = parent_node_found->get_children(recursive);
-
-  result->reserve(children->size());
-
-  get_info(children, result, get_key);
-
- return result;
+    transform(begin(*src), end(*src), back_inserter(*dst),
+        [&](shared_ptr<const TreeNode> x){ return lf.Process(*x); });
 }
 
 SEXP_vec_sp
-GeneralTreeInternal::get_info_from_siblings(const SEXP& node_id, bool get_key) const
+GeneralTreeInternal::access_tree_node_vec(const SEXP& node_id,
+    const AccessFunctor &af,
+    const ListFunctor& lf) const
 {
   tree_node_c_sp node_found = find_node(node_id);
 
   SEXP_vec_sp result(new SEXP_vec());
-  tree_node_c_sp_vec_sp siblings = node_found->get_tree_siblings();
+  /* Get the nodes using the access functor. */
+  tree_node_c_sp_vec_sp tn_vec = af.tree_accessor(*node_found);
 
-  result->reserve(siblings->size());
+  result->reserve(tn_vec->size());
 
-  get_info(siblings, result, get_key);
+  get_info(tn_vec, result, lf);
 
   return result;
 }
 
 SEXP_vec_sp
-GeneralTreeInternal::get_children_keys(const SEXP& parent_id, bool recursive) const
+GeneralTreeInternal::get_children_keys(const SEXP& parent_id,
+    bool recursive) const
 {
-  return get_info_from_children(parent_id, recursive, true);
+  return access_tree_node_vec(parent_id, AccessChildrenFunctor(recursive),
+      GetKeyFunctor());
 }
 
 SEXP_vec_sp
-GeneralTreeInternal::get_children_data(const SEXP& parent_id, bool recursive) const
+GeneralTreeInternal::get_children_data(const SEXP& parent_id,
+    bool recursive) const
 {
-  return get_info_from_children(parent_id, recursive, false);
+  return access_tree_node_vec(parent_id, AccessChildrenFunctor(recursive),
+      GetDataFunctor());
 }
 
 tree_node_c_sp_vec_sp
@@ -253,13 +242,13 @@ GeneralTreeInternal::get_siblings(const SEXP& node_id) const
 SEXP_vec_sp
 GeneralTreeInternal::get_siblings_keys(const SEXP& node_id) const
 {
-  return get_info_from_siblings(node_id, true);
+  return access_tree_node_vec(node_id, AccessSiblingsFunctor(), GetKeyFunctor());
 }
 
 SEXP_vec_sp
 GeneralTreeInternal::get_siblings_data(const SEXP& node_id) const
 {
-  return get_info_from_siblings(node_id, false);
+  return access_tree_node_vec(node_id, AccessSiblingsFunctor(), GetDataFunctor());
 }
 
 GeneralTreeInternal::operator SEXP() const
@@ -304,4 +293,15 @@ GeneralTreeInternal::get_branch(const SEXP& node_id) const
   return node_found->get_branch();
 }
 
+SEXP_vec_sp
+GeneralTreeInternal::get_branch_keys(const SEXP& node_id) const
+{
+  return access_tree_node_vec(node_id, AccessBranchFunctor(), GetKeyFunctor());
+}
+
+SEXP_vec_sp
+GeneralTreeInternal::get_branch_data(const SEXP& node_id) const
+{
+  return access_tree_node_vec(node_id, AccessBranchFunctor(), GetDataFunctor());
+}
 

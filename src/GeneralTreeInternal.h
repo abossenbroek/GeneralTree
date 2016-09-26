@@ -19,15 +19,59 @@
 
 #include "TreeNode.h"
 
+struct ListFunctor {
+  virtual SEXP Process(const TreeNode& tn) const = 0;
+};
+
+struct GetDataFunctor : public ListFunctor {
+  SEXP Process(const TreeNode& tn) const {
+    return tn.get_data();
+  }
+};
+
+struct GetKeyFunctor : public ListFunctor {
+  SEXP Process(const TreeNode& tn) const {
+    return tn.get_key();
+  }
+};
+
 class GeneralTreeInternal {
 private:
   uid_id_bimap uid_to_key;
   tree_node_sp_vec nodes;
   tree_node_sp root;
   uid insert_node(tree_node_sp& new_node);
-  SEXP_vec_sp get_info_from_children(const SEXP& parent_id, bool recursive,
-      bool get_key) const;
-  SEXP_vec_sp get_info_from_siblings(const SEXP& node_id, bool get_key) const;
+
+  struct AccessFunctor {
+    virtual tree_node_c_sp_vec_sp tree_accessor(const TreeNode& tn) const = 0;
+  };
+
+  struct AccessChildrenFunctor : public AccessFunctor {
+  private:
+    bool recursive;
+
+  public:
+    AccessChildrenFunctor(bool recursive_) : recursive(recursive_) {}
+
+    tree_node_c_sp_vec_sp tree_accessor(const TreeNode& tn) const {
+      return tn.get_children(recursive);
+    }
+  };
+
+  struct AccessSiblingsFunctor : public AccessFunctor {
+    tree_node_c_sp_vec_sp tree_accessor(const TreeNode& tn) const {
+      return tn.get_tree_siblings();
+    }
+  };
+
+  struct AccessBranchFunctor : public AccessFunctor {
+    tree_node_c_sp_vec_sp tree_accessor(const TreeNode& tn) const {
+      return tn.get_branch();
+    }
+  };
+
+  SEXP_vec_sp access_tree_node_vec(const SEXP& node_id, const AccessFunctor& af,
+      const ListFunctor& lf) const;
 
 public:
   GeneralTreeInternal(const SEXP& root_id, const SEXP& root_data);
@@ -63,6 +107,8 @@ public:
   std::shared_ptr<tree_node_sp_vec> get_branch(const SEXP& node_id);
   tree_node_c_sp_vec_sp get_branch(const SEXP& node_id) const;
 
+  SEXP_vec_sp get_branch_keys(const SEXP& node_id) const;
+  SEXP_vec_sp get_branch_data(const SEXP& node_id) const;
 
   operator SEXP() const;
 
@@ -108,6 +154,5 @@ public:
 };
 
 typedef Rcpp::XPtr<GeneralTreeInternal> gti_xptr;
-
 
 #endif // _GENERALTREEINTERNALS_H_

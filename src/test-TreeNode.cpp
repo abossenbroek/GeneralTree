@@ -276,6 +276,7 @@ context("GeneralTreeInternal get_branch works correctly") {
       expect_true(*gti.get_branch(values[5]) == branch_five);
     }
 }
+
 context("GeneralTreeInternal get_childeren works correctly") {
     SEXP values[] = {
       NumericVector::create(0),
