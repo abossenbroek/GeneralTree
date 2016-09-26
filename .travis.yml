@@ -10,13 +10,16 @@ matrix:
     - os: linux
       dist: trusty
       sudo: required
-      env: R_CODECOV=true
       r_check_args: '--use-valgrind'
       r: release
     - os: linux
       dist: trusty
       sudo: required
       env: R_CODECOV=true
+      r: release
+    - os: linux
+      dist: trusty
+      sudo: required
       r_check_args: '--as-cran'
       r: release
     - os: linux
