@@ -36,10 +36,6 @@ addons:
     packages:
     - libxml2-dev
     - valgrind
-r:
-- release
-- devel
-- 3.2.4
 r_github_packages:
 - jimhester/covr
 - jimhester/lintr
