@@ -1,5 +1,4 @@
 language: r
-sudo: false
 cache: packages
 
 matrix:
@@ -7,27 +6,44 @@ matrix:
     - os: linux
       dist: precise
       sudo: false
+      r: 
+        - release
+        - devel
+        - 3.2.4
     - os: linux
       dist: trusty
+      sudo: required
       env: R_CODECOV=true
       r_check_args: '--use-valgrind'
+      r:
+        - release
+        - devel
+        - 3.2.4
     - os: osx
       osx_image: xcode8
       latex: false
+      r_build_args: '--no-build-vignettes'
+      r_check_args: '--ignore-vignettes --no-examples'
+      r: release
     - os: osx
       osx_image: xcode8
       before_install:
         - brew install libxml2
         - brew link --force libxml2
       latex: false
+      r: release
+      r_build_args: '--no-build-vignettes'
+      r_check_args: '--ignore-vignettes --no-examples'
     - os: osx
       osx_image: beta-xcode6.1
       disable_homebrew: true
+      r: release
+      r_build_args: '--no-build-vignettes'
+      r_check_args: '--ignore-vignettes --no-examples'
 
 before_install:
-- if [[ "$TRAVIS_R_VERSION_STRING" = 'devel' ]]; then mkdir ~/.R && echo 'CXX1X=g++
-  -std=c++0x -g -O2 -fPIC' > ~/.R/Makevars; fi
-- tlmgr install index
+- if [[ "$TRAVIS_R_VERSION_STRING" = 'devel' ]]; then mkdir ~/.R && echo 'CXX1X=g++ -std=c++0x -g -O2 -fPIC' > ~/.R/Makevars; fi
+
 before_script:
 - git config --global user.name "travis"
 - git config --global user.email "travis@example.org"
@@ -42,9 +58,9 @@ r_github_packages:
 r_packages:
 - xml2
 after_success:
-  - if [[ "${R_CODECOV}" ]]; then R -e 'covr::codecov()'; fi
-  - if [[ "${R_CODECOV}" ]]; then R -e 'covr::coveralls()'; fi
-  - if [[ "${R_LINTR}" ]]; then R -e 'lintr::lint_package()'; fi
+  - if [[ "${R_CODECOV}" && "$TRAVIS_R_VERSION_STRING" = 'release' ]]; then R -e 'covr::codecov()'; fi
+  - if [[ "${R_CODECOV}" && "$TRAVIS_R_VERSION_STRING" = 'release' ]]; then R -e 'covr::coveralls()'; fi
+  - if [[ "${R_LINTR}" && "$TRAVIS_R_VERSION_STRING" = 'release' ]]; then R -e 'lintr::lint_package()'; fi
 notifications:
   webhooks:
     urls:
