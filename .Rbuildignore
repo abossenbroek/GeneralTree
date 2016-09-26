@@ -8,4 +8,5 @@
 ^CONDUCT\.md$
 ^\.ycm_extra_conf.py$
 ^\.maker$
+^\.vimrc$
 ^\Makefile$$
