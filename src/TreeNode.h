@@ -164,6 +164,9 @@ public:
   tree_node_sp_vec_sp get_tree_siblings();
   tree_node_c_sp_vec_sp get_tree_siblings() const;
 
+  tree_node_sp_vec_sp get_branch();
+  tree_node_c_sp_vec_sp get_branch() const;
+
   const unsigned int tree_depth() const;
 };
 

@@ -287,3 +287,21 @@ GeneralTreeInternal::operator SEXP() const
 
   return serialization;
 }
+
+std::shared_ptr<tree_node_sp_vec>
+GeneralTreeInternal::get_branch(const SEXP& node_id)
+{
+  tree_node_sp node_found = find_node(node_id);
+
+  return node_found->get_branch();
+}
+
+tree_node_c_sp_vec_sp
+GeneralTreeInternal::get_branch(const SEXP& node_id) const
+{
+  tree_node_c_sp node_found = find_node(node_id);
+
+  return node_found->get_branch();
+}
+
+

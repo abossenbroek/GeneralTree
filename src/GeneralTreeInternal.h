@@ -60,6 +60,10 @@ public:
   SEXP_vec_sp get_siblings_keys(const SEXP& node_id) const;
   SEXP_vec_sp get_siblings_data(const SEXP& node_id) const;
 
+  std::shared_ptr<tree_node_sp_vec> get_branch(const SEXP& node_id);
+  tree_node_c_sp_vec_sp get_branch(const SEXP& node_id) const;
+
+
   operator SEXP() const;
 
   tree_node_sp get_root() const {

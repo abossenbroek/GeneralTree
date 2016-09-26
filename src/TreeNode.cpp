@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <algorithm>
+#include <iterator>
 
 using namespace std;
 using namespace Rcpp;
@@ -208,3 +209,38 @@ TreeNode::tree_depth() const
 
   return result;
 }
+
+tree_node_sp_vec_sp
+TreeNode::get_branch()
+{
+  tree_node_sp_vec_sp branch(new tree_node_sp_vec());
+
+  branch->push_back(shared_from_this());
+
+  if (has_left_child()) {
+    tree_node_sp_vec_sp children(get_children(true));
+
+    branch->reserve(children->size() + 1);
+    branch->insert(end(*branch), begin(*children), end(*children));
+  }
+
+  return branch;
+}
+
+tree_node_c_sp_vec_sp
+TreeNode::get_branch() const
+{
+  tree_node_c_sp_vec_sp branch(new tree_node_c_sp_vec());
+
+  branch->push_back(const_pointer_cast<const TreeNode>(shared_from_this()));
+
+  if (has_left_child()) {
+    tree_node_c_sp_vec_sp children(get_children(true));
+
+    branch->reserve(children->size() + 1);
+    branch->insert(end(*branch), begin(*children), end(*children));
+  }
+
+  return branch;
+}
+
