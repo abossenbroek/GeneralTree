@@ -34,6 +34,9 @@ public:
   GeneralTreeInternal(const GeneralTreeInternal& to_clone);
 
   GeneralTreeInternal();
+
+  GeneralTreeInternal(SEXP gti);
+
   virtual ~GeneralTreeInternal()
   {}
 
@@ -98,121 +101,6 @@ public:
     return !(lhs == rhs);
   }
 };
-
-  //  /* Convert a R structure to a bimap tree mapping. */
-//  template <> uid_id_bimap as(SEXP t_m_exp) {
-//    List t_m = as<List>(t_m_exp);
-//    std::vector<int> left_vector = t_m["left"];
-//    std::vector<tree_key> right_vector = t_m["right"];
-//    std::vector<int>::iterator lit;
-//    std::vector<tree_key>::iterator rit;
-//
-//    uid_id_bimap result;
-//
-//    for (lit = left_vector.begin(),
-//         rit = right_vector.begin();
-//         lit != left_vector.end();
-//         ++lit, ++rit) {
-//      result.insert(uid_id_pair(*lit, *rit));
-//    }
-//
-//    return(result);
-//  }
-//
-//  template <> SEXP wrap(const uid_to_uid_map& mapping) {
-//    std::vector<int> left_vector;
-//    std::vector<int> right_vector;
-//
-//    for (uid_to_uid_map::const_iterator id_iter = mapping.begin();
-//         id_iter != mapping.end(); ++id_iter) {
-//      left_vector.push_back(id_iter->first);
-//      right_vector.push_back(id_iter->second);
-//    }
-//
-//    return List::create(Named("left") = wrap(left_vector), Named("right") = wrap(right_vector));
-//  }
-//
-//  /* Convert a R structure to a map. */
-//  template <> uid_to_uid_map as(SEXP u_u_exp) {
-//    List u_u_m = as<List>(u_u_exp);
-//    std::vector<int> left_vector = u_u_m["left"];
-//    std::vector<int> right_vector = u_u_m["right"];
-//    std::vector<int>::iterator lit;
-//    std::vector<int>::iterator rit;
-//
-//    uid_to_uid_map result;
-//
-//    for (lit = left_vector.begin();
-//         lit != left_vector.end();
-//         ++lit, ++rit) {
-//      result.insert(uid_uid_pair(*lit, *rit));
-//    }
-//
-//    return(result);
-//  }
-//
-//  template <> SEXP wrap(const uid_to_uids_map& mapping) {
-//    std::vector<int> left_vector;
-//    std::vector<std::vector<int> > right_vector;
-//
-//    List lst = List::create();
-//
-//    for (uid_to_uids_map::const_iterator id_iter = mapping.begin();
-//         id_iter != mapping.end(); ++id_iter) {
-//      left_vector.push_back(id_iter->first);
-//      right_vector.push_back(id_iter->second);
-//    }
-//
-//    return List::create(Named("left") = wrap(left_vector), Named("right") = wrap(right_vector));
-//  }
-//
-//  /* Convert a R structure to a map. */
-//  template <> uid_to_uids_map as(SEXP u_u_exp) {
-//    List u_u_m = as<List>(u_u_exp);
-//    std::vector<int> left_vector = u_u_m["left"];
-//    std::vector<uid_vec> right_vector = u_u_m["right"];
-//    std::vector<int>::iterator lit;
-//    std::vector<uid_vec>::iterator rit;
-//
-//    uid_to_uids_map result;
-//
-//    for (lit = left_vector.begin();
-//         lit != left_vector.end();
-//         ++lit, ++rit) {
-//      result.insert(uid_uids_pair(*lit, *rit));
-//    }
-//
-//    return(result);
-//  }
-//
-//
-//  template <> SEXP wrap(const GeneralTreeInternal& gti) {
-//    List lst = List::create();
-//    lst["uid_counter"] = wrap(gti.uid_counter);
-//    lst["uid_to_id"] = wrap(gti.uid_to_id);
-//    lst["uid_to_data"] = wrap(gti.uid_to_data);
-//    lst["uid_to_child"] = wrap(gti.uid_to_child);
-//    lst["uid_to_parent"] = wrap(gti.uid_to_parent);
-//    lst["uid_to_siblings"] = wrap(gti.uid_to_siblings);
-//
-//    return lst;
-//  }
-//
-//  template <> GeneralTreeInternal as(SEXP gti_exp) {
-//    List lst = as<List>(gti_exp);
-//
-//    GeneralTreeInternal gti;
-//    gti.uid_counter = lst["uid_counter"];
-//    gti.uid_to_id = as<uid_id_bimap>(lst["uid_to_id"]);
-//    gti.uid_to_data = as<uid_SEXP_bimap>(lst["uid_to_data"]);
-//    gti.uid_to_child = as<uid_to_uid_map>(lst["uid_to_child"]);
-//    gti.uid_to_parent = as<uid_to_uid_map>(lst["uid_to_parent"]);
-//    gti.uid_to_siblings = as<uid_to_uids_map>(lst["uid_to_siblings"]);
-//
-//    return gti;
-//  }
-//
-//}
 
 typedef Rcpp::XPtr<GeneralTreeInternal> gti_xptr;
 
