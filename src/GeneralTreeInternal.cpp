@@ -304,25 +304,48 @@ GeneralTreeInternal::get_siblings_data(const SEXP& node_id) const
   return access_tree_node_vec(node_id, AccessSiblingsFunctor(), GetDataFunctor());
 }
 
+GeneralTreeInternal::GeneralTreeInternal(SEXP gti_exp)
+{
+  try {
+    List gti_list = as<List>(gti_exp);
+    List parents = as<List>(gti_list["parents"]);
+    List keys = as<List>(gti_list["keys"]);
+    List data = as<List>(gti_list["data"]);
+    SEXP root_spec = gti_list["root"];
+
+    /* Add the root node. */
+    shared_ptr<TreeNode> root_node = make_shared<TreeNode>(root_spec);
+
+    insert_node(root_node);
+    root = root_node;
+
+    /* Handle rest of serialization. Start at one so that we skip root. */
+    for (int i = 1; i < parents.size(); ++i)
+      add_node(as<NumericVector>(parents[i])[0], keys[i], data[i]);
+
+  } catch (std::exception &ex) {
+    forward_exception_to_r(ex);
+  } catch (...) {
+    ::Rf_error("c++ exception (unknown reason)");
+  }
+}
+
 GeneralTreeInternal::operator SEXP() const
 {
   List serialization;
 
   serialization["root"] = wrap(*root);
 
-  List node_uids(no_init(nodes.size()));
   List node_keys(no_init(nodes.size()));
   List node_data(no_init(nodes.size()));
   List node_parents(no_init(nodes.size()));
 
   for (int i = 0; i < nodes.size(); ++i) {
-    node_uids[i] = nodes.at(i)->get_uid();
     node_keys[i] = nodes.at(i)->get_key();
     node_data[i] = nodes.at(i)->get_data();
     node_parents[i] = nodes.at(i)->get_parent_uid();
   }
 
-  serialization["uids"] = node_uids;
   serialization["keys"] = node_keys;
   serialization["data"] = node_data;
   serialization["parents"] = node_parents;

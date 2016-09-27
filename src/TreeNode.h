@@ -56,6 +56,8 @@ public:
     my_uid(INVALID_UID)
   {}
 
+  TreeNode(SEXP tn);
+
   virtual ~TreeNode()
   {
   }

@@ -86,6 +86,9 @@ public:
   GeneralTreeInternal(const GeneralTreeInternal& to_clone);
 
   GeneralTreeInternal();
+
+  GeneralTreeInternal(SEXP gti);
+
   virtual ~GeneralTreeInternal()
   {}
 
