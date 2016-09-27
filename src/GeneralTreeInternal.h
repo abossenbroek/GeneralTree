@@ -41,6 +41,7 @@ private:
   tree_node_sp_vec nodes;
   tree_node_sp root;
   uid insert_node(tree_node_sp& new_node);
+  tree_node_sp last_added_node;
 
   struct AccessFunctor {
     virtual tree_node_c_sp_vec_sp tree_accessor(const TreeNode& tn) const = 0;
@@ -90,6 +91,8 @@ public:
 
   uid add_node(const SEXP& parent, const SEXP& child_key, const SEXP& child_data);
   uid add_node(const uid& parent_uid, const SEXP& child_key, const SEXP& child_data);
+  uid add_child(const SEXP& child_key, const SEXP& child_data);
+  uid add_sibling(const SEXP& sibling_key, const SEXP& sibling_data);
 
   uid find_uid(const SEXP& id) const;
   tree_node_sp find_node(const SEXP& id) const;
@@ -123,6 +126,7 @@ public:
   SEXP_vec_sp get_leafs_keys(const SEXP& node_id) const;
   SEXP_vec_sp get_leafs_data(const SEXP& node_id) const;
 
+  uid travel_up();
 
   operator SEXP() const;
 

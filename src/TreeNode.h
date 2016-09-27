@@ -143,6 +143,7 @@ public:
   }
 
   void add_sibling(const std::shared_ptr<TreeNode>& new_sibling) {
+    new_sibling->set_parent(parent);
     siblings.push_back(new_sibling);
   }
 

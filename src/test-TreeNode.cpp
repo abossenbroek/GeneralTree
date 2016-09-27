@@ -8,6 +8,7 @@
 #include <Rcpp.h>
 
 #include <memory>
+#include <iostream>
 
 #include "tree_types.h"
 #include "GeneralTreeInternal.h"
@@ -918,6 +919,7 @@ context("GeneralTreeInternal get_branch_keys and get_branch_data work") {
       expect_true(*gti.get_branch_data(values[5]) == branch);
     }
 }
+
 context("GeneralTreeInternal copy works correctly") {
     SEXP values[] = {
       NumericVector::create(0),
@@ -973,8 +975,6 @@ context("GeneralTreeInternal copy works correctly") {
           *gti.get_children_data(values[0], true));
     }
 }
-
-
 
 context("Comparison works") {
   SEXP values[] = {
@@ -1058,6 +1058,64 @@ context("Comparison works") {
     test_that("Comparison returns false on unequal root") {
       expect_false(gti == gti_diff_root);
     }
+}
+
+context("add_child, add_sibling and travel_up work") {
+  SEXP values[] = {
+    NumericVector::create(0),
+    NumericVector::create(1),
+    NumericVector::create(2),
+    NumericVector::create(3),
+    NumericVector::create(4),
+    NumericVector::create(5),
+    NumericVector::create(6),
+    NumericVector::create(7),
+    NumericVector::create(8),
+    NumericVector::create(9),
+    NumericVector::create(10)
+  };
+
+  // 0
+  // \ 1
+  //   \ 2
+  //     - 3
+  //     - 5
+  //     | - 6
+  //     | | - 8
+  //     | | - 9
+  //     | \ 7
+  //     |
+  //     \ 4
+  //  Create the tree above.
+  GeneralTreeInternal gti(values[0], values[0]);
+  // Add child node.
+  gti.add_node(values[0], values[1], values[1]);
+  gti.add_node(values[1], values[2], values[2]);
+  gti.add_node(values[2], values[3], values[3]);
+  gti.add_node(values[2], values[5], values[5]);
+  gti.add_node(values[5], values[6], values[6]);
+  gti.add_node(values[5], values[7], values[7]);
+  gti.add_node(values[6], values[8], values[8]);
+  gti.add_node(values[6], values[9], values[9]);
+  gti.add_node(values[2], values[4], values[4]);
+
+  test_that("Both trees should be equal") {
+    GeneralTreeInternal gti_copy(values[0], values[0]);
+
+    gti_copy.add_child(values[1], values[1]);
+    gti_copy.add_child(values[2], values[2]);
+    gti_copy.add_child(values[3], values[3]);
+    gti_copy.add_sibling(values[5], values[5]);
+    gti_copy.add_child(values[6], values[6]);
+    gti_copy.add_child(values[8], values[8]);
+    gti_copy.add_sibling(values[9], values[9]);
+    gti_copy.travel_up();
+    gti_copy.add_sibling(values[7], values[7]);
+    gti_copy.travel_up();
+    gti_copy.add_sibling(values[4], values[4]);
+
+    expect_true(gti == gti_copy);
+  }
 }
 
 context("Tree depth is correctly reported") {

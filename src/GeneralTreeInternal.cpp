@@ -12,8 +12,8 @@
 using namespace Rcpp;
 using namespace std;
 
-GeneralTreeInternal::GeneralTreeInternal(const SEXP& root_id, const SEXP&
-    root_data)
+GeneralTreeInternal::GeneralTreeInternal(const SEXP& root_id,
+    const SEXP& root_data)
 {
   /* Create a root node without a child or parent. */
   shared_ptr<TreeNode> root_node = make_shared<TreeNode>(root_id, root_data);
@@ -28,14 +28,20 @@ GeneralTreeInternal::GeneralTreeInternal(const GeneralTreeInternal& to_clone)
   shared_ptr<TreeNode> root_node = make_shared<TreeNode>(to_clone.get_root()->get_key(),
       to_clone.get_root()->get_data());
 
-  insert_node(root_node);
   root = root_node;
 
   /* Get complete list of children. */
   tree_node_c_sp_vec_sp tree = const_pointer_cast<const TreeNode>(to_clone.get_root())->get_children(true);
 
-  for (auto it = tree->begin(); it != tree->end(); ++it)
+  insert_node(root_node);
+
+  for (auto it = tree->begin(); it != tree->end(); ++it) {
+    if (*it == root)
+      continue;
+
     add_node((*it)->get_parent()->get_uid(), (*it)->get_key(), (*it)->get_data());
+  }
+
 }
 
 GeneralTreeInternal::GeneralTreeInternal()
@@ -69,6 +75,9 @@ uid
 GeneralTreeInternal::add_node(const uid& parent_uid, const SEXP& child_key,
     const SEXP& child_data)
 {
+  if (parent_uid >= nodes.size())
+    throw std::runtime_error("add_node: trying to add a node with a non existent parent_node.");
+
   /* resolve the uid of the parent so that we can set pointers. */
   tree_node_sp parent;
   try {
@@ -88,6 +97,36 @@ GeneralTreeInternal::add_node(const uid& parent_uid, const SEXP& child_key,
   return insert_node(child);
 }
 
+
+uid
+GeneralTreeInternal::add_child(const SEXP& child_key, const SEXP& child_data)
+{
+  tree_node_sp child = make_shared<TreeNode>(child_key, child_data);
+
+  if (last_added_node.get() == nullptr)
+    throw std::runtime_error("add_child: Do not have a last_add_node defined");
+
+  /* Add child to last added node. */
+  last_added_node->add_child(child);
+
+  /* Add child to internal storage. */
+  return insert_node(child);
+}
+
+uid
+GeneralTreeInternal::add_sibling(const SEXP& sibling_key, const SEXP& sibling_data)
+{
+  tree_node_sp sibling = make_shared<TreeNode>(sibling_key, sibling_data);
+
+  if (last_added_node.get() == nullptr)
+    std::runtime_error("add_sibling: Do not have a last_add_node defined");
+
+  /* Add sibling to last added node. */
+  last_added_node->get_parent()->get_left_child()->add_sibling(sibling);
+
+  /* Add sibling to internal storage. */
+  return insert_node(sibling);
+}
 
 uid
 GeneralTreeInternal::find_uid(const SEXP& id) const
@@ -130,7 +169,21 @@ GeneralTreeInternal::insert_node(tree_node_sp& new_node)
   /* Store in a bimap to allow big-oh log(n) search. */
   uid_to_key.insert(uid_id_pair(new_uid, *search_key));
 
+  last_added_node = new_node;
+
   return new_uid;
+}
+
+uid
+GeneralTreeInternal::travel_up()
+{
+  if (!(last_added_node->has_parent()))
+    throw std::out_of_range("travel_up: last added node does not have a"
+        " parent so cannot travel up");
+
+  last_added_node = last_added_node->get_parent();
+
+  return last_added_node->get_uid();
 }
 
 SEXP
