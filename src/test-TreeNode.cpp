@@ -737,6 +737,187 @@ context("GeneralTreeInternal get_siblings_data works correctly") {
     }
 }
 
+context("GeneralTreeInternal get_leafs works correctly") {
+    SEXP values[] = {
+      NumericVector::create(0),
+      NumericVector::create(1),
+      NumericVector::create(2),
+      NumericVector::create(3),
+      NumericVector::create(4),
+      NumericVector::create(5),
+      NumericVector::create(6),
+      NumericVector::create(7),
+      NumericVector::create(8),
+      NumericVector::create(9)
+    };
+
+
+    // 0
+    // \ 1
+    //   \ 2
+    //     - 3
+    //     - 5
+    //     | - 6
+    //     | | - 8
+    //     | | - 9
+    //     | \ 7
+    //     |
+    //     \ 4
+    //  Create the tree above.
+    GeneralTreeInternal gti(values[0], values[0]);
+    // Add child node.
+    gti.add_node(values[0], values[1], values[1]);
+    gti.add_node(values[1], values[2], values[2]);
+    gti.add_node(values[2], values[3], values[3]);
+    gti.add_node(values[2], values[5], values[5]);
+    gti.add_node(values[5], values[6], values[6]);
+    gti.add_node(values[5], values[7], values[7]);
+    gti.add_node(values[6], values[8], values[8]);
+    gti.add_node(values[6], values[9], values[9]);
+    gti.add_node(values[2], values[4], values[4]);
+
+    tree_node_sp_vec added_nodes;
+    added_nodes.reserve(10);
+
+    for (auto val : values) {
+      added_nodes.push_back(gti.find_node(val));
+    }
+
+    tree_node_sp_vec leafs = {
+      added_nodes[3],
+      added_nodes[8],
+      added_nodes[9],
+      added_nodes[7],
+      added_nodes[4]
+    };
+
+    tree_node_c_sp_vec leafs_c = {
+      std::const_pointer_cast<const TreeNode>(added_nodes[3]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[8]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[9]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[7]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[4])
+    };
+
+
+    test_that("get_leafs work") {
+      expect_true(*gti.get_leafs(values[0]) == leafs);
+    }
+
+    test_that("const get_leafs works") {
+      const GeneralTreeInternal* gti_const = const_cast<const GeneralTreeInternal*>(&gti);
+      tree_node_c_sp_vec_sp results = gti_const->get_leafs(values[0]);
+      expect_true(*results == leafs_c);
+    }
+}
+
+context("GeneralTreeInternal get_leafs_keys and get_leafs_data work") {
+    SEXP values[] = {
+      NumericVector::create(0),
+      NumericVector::create(1),
+      NumericVector::create(2),
+      NumericVector::create(3),
+      NumericVector::create(4),
+      NumericVector::create(5),
+      NumericVector::create(6),
+      NumericVector::create(7),
+      NumericVector::create(8),
+      NumericVector::create(9)
+    };
+
+    // 0
+    // \ 1
+    //   \ 2
+    //     - 3
+    //     - 5
+    //     | - 6
+    //     | | - 8
+    //     | | - 9
+    //     | \ 7
+    //     |
+    //     \ 4
+    //  Create the tree above.
+    GeneralTreeInternal gti(values[0], values[0]);
+    // Add child node.
+    gti.add_node(values[0], values[1], values[1]);
+    gti.add_node(values[1], values[2], values[2]);
+    gti.add_node(values[2], values[3], values[3]);
+    gti.add_node(values[2], values[5], values[5]);
+    gti.add_node(values[5], values[6], values[6]);
+    gti.add_node(values[5], values[7], values[7]);
+    gti.add_node(values[6], values[8], values[8]);
+    gti.add_node(values[6], values[9], values[9]);
+    gti.add_node(values[2], values[4], values[4]);
+
+    SEXP_vec leafs = {
+      values[8],
+      values[9],
+      values[7]
+    };
+
+    test_that("get_leafs_keys works") {
+      expect_true(*gti.get_leafs_keys(values[5]) == leafs);
+    }
+
+    test_that("get_leafs_data works") {
+      expect_true(*gti.get_leafs_data(values[5]) == leafs);
+    }
+}
+
+context("GeneralTreeInternal get_branch_keys and get_branch_data work") {
+    SEXP values[] = {
+      NumericVector::create(0),
+      NumericVector::create(1),
+      NumericVector::create(2),
+      NumericVector::create(3),
+      NumericVector::create(4),
+      NumericVector::create(5),
+      NumericVector::create(6),
+      NumericVector::create(7),
+      NumericVector::create(8),
+      NumericVector::create(9)
+    };
+
+    // 0
+    // \ 1
+    //   \ 2
+    //     - 3
+    //     - 5
+    //     | - 6
+    //     | | - 8
+    //     | | - 9
+    //     | \ 7
+    //     |
+    //     \ 4
+    //  Create the tree above.
+    GeneralTreeInternal gti(values[0], values[0]);
+    // Add child node.
+    gti.add_node(values[0], values[1], values[1]);
+    gti.add_node(values[1], values[2], values[2]);
+    gti.add_node(values[2], values[3], values[3]);
+    gti.add_node(values[2], values[5], values[5]);
+    gti.add_node(values[5], values[6], values[6]);
+    gti.add_node(values[5], values[7], values[7]);
+    gti.add_node(values[6], values[8], values[8]);
+    gti.add_node(values[6], values[9], values[9]);
+    gti.add_node(values[2], values[4], values[4]);
+
+    SEXP_vec branch = {
+      values[5],
+      values[6],
+      values[8],
+      values[9],
+      values[7]
+    };
+
+    test_that("get_branch_keys works") {
+      expect_true(*gti.get_branch_keys(values[5]) == branch);
+    }
+
+    test_that("get_branch_data works") {
+      expect_true(*gti.get_branch_data(values[5]) == branch);
+    }
+}
 context("GeneralTreeInternal copy works correctly") {
     SEXP values[] = {
       NumericVector::create(0),

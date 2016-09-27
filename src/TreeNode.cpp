@@ -244,3 +244,35 @@ TreeNode::get_branch() const
   return branch;
 }
 
+
+tree_node_sp_vec_sp
+TreeNode::get_leafs()
+{
+  tree_node_sp_vec_sp branch = get_branch();
+  tree_node_sp_vec_sp result(new tree_node_sp_vec());
+
+  result->reserve(branch->size());
+
+  for (auto it = begin(*branch); it != end(*branch); ++it)
+    if (!((*it)->has_left_child()))
+      result->push_back(*it);
+
+  return result;
+}
+
+tree_node_c_sp_vec_sp
+TreeNode::get_leafs() const
+{
+  tree_node_c_sp_vec_sp branch = get_branch();
+  tree_node_c_sp_vec_sp result(new tree_node_c_sp_vec());
+
+  result->reserve(branch->size());
+
+  for (auto it = begin(*branch); it != end(*branch); ++it)
+    if (!((*it)->has_left_child()))
+      result->push_back(*it);
+
+  return result;
+}
+
+

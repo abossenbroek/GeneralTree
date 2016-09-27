@@ -70,6 +70,13 @@ private:
     }
   };
 
+  struct AccessLeafsFunctor : public AccessFunctor {
+    tree_node_c_sp_vec_sp tree_accessor(const TreeNode& tn) const {
+      return tn.get_leafs();
+    }
+  };
+
+
   SEXP_vec_sp access_tree_node_vec(const SEXP& node_id, const AccessFunctor& af,
       const ListFunctor& lf) const;
 
@@ -109,6 +116,13 @@ public:
 
   SEXP_vec_sp get_branch_keys(const SEXP& node_id) const;
   SEXP_vec_sp get_branch_data(const SEXP& node_id) const;
+
+  std::shared_ptr<tree_node_sp_vec> get_leafs(const SEXP& node_id);
+  tree_node_c_sp_vec_sp get_leafs(const SEXP& node_id) const;
+
+  SEXP_vec_sp get_leafs_keys(const SEXP& node_id) const;
+  SEXP_vec_sp get_leafs_data(const SEXP& node_id) const;
+
 
   operator SEXP() const;
 

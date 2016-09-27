@@ -305,3 +305,31 @@ GeneralTreeInternal::get_branch_data(const SEXP& node_id) const
   return access_tree_node_vec(node_id, AccessBranchFunctor(), GetDataFunctor());
 }
 
+tree_node_sp_vec_sp
+GeneralTreeInternal::get_leafs(const SEXP& node_id)
+{
+  tree_node_sp node_found = find_node(node_id);
+
+  return node_found->get_leafs();
+}
+
+tree_node_c_sp_vec_sp
+GeneralTreeInternal::get_leafs(const SEXP& node_id) const
+{
+  tree_node_c_sp node_found = find_node(node_id);
+
+  return node_found->get_leafs();
+}
+
+SEXP_vec_sp
+GeneralTreeInternal::get_leafs_keys(const SEXP& node_id) const
+{
+  return access_tree_node_vec(node_id, AccessLeafsFunctor(), GetKeyFunctor());
+}
+
+SEXP_vec_sp
+GeneralTreeInternal::get_leafs_data(const SEXP& node_id) const
+{
+  return access_tree_node_vec(node_id, AccessLeafsFunctor(), GetDataFunctor());
+}
+

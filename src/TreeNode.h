@@ -167,6 +167,9 @@ public:
   tree_node_sp_vec_sp get_branch();
   tree_node_c_sp_vec_sp get_branch() const;
 
+  tree_node_sp_vec_sp get_leafs();
+  tree_node_c_sp_vec_sp get_leafs() const;
+
   const unsigned int tree_depth() const;
 };
 
