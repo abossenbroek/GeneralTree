@@ -117,3 +117,44 @@ serialize(SEXP gti_sexp)
 
   return wrap(*gti);
 }
+
+// [[Rcpp::export]]
+std::vector<SEXP>
+get_branch_data(SEXP gti_sexp, SEXP node_id)
+{
+  gti_xptr gti(gti_sexp);
+  SEXP_vec_sp c_keys = gti->get_branch_data(node_id);
+
+  return(*c_keys);
+}
+
+// [[Rcpp::export]]
+std::vector<SEXP>
+get_branch_keys(SEXP gti_sexp, SEXP node_id)
+{
+  gti_xptr gti(gti_sexp);
+  SEXP_vec_sp c_keys = gti->get_branch_keys(node_id);
+
+  return(*c_keys);
+}
+
+// [[Rcpp::export]]
+std::vector<SEXP>
+get_leafs_data(SEXP gti_sexp, SEXP node_id)
+{
+  gti_xptr gti(gti_sexp);
+  SEXP_vec_sp c_keys = gti->get_leafs_data(node_id);
+
+  return(*c_keys);
+}
+
+// [[Rcpp::export]]
+std::vector<SEXP>
+get_leafs_keys(SEXP gti_sexp, SEXP node_id)
+{
+  gti_xptr gti(gti_sexp);
+  SEXP_vec_sp c_keys = gti->get_leafs_keys(node_id);
+
+  return(*c_keys);
+}
+

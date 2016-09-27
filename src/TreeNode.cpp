@@ -274,5 +274,3 @@ TreeNode::get_leafs() const
 
   return result;
 }
-
-

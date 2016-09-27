@@ -45,3 +45,19 @@ serialize <- function(gti_sexp) {
     .Call('GeneralTree_serialize', PACKAGE = 'GeneralTree', gti_sexp)
 }
 
+get_branch_data <- function(gti_sexp, node_id) {
+    .Call('GeneralTree_get_branch_data', PACKAGE = 'GeneralTree', gti_sexp, node_id)
+}
+
+get_branch_keys <- function(gti_sexp, node_id) {
+    .Call('GeneralTree_get_branch_keys', PACKAGE = 'GeneralTree', gti_sexp, node_id)
+}
+
+get_leafs_data <- function(gti_sexp, node_id) {
+    .Call('GeneralTree_get_leafs_data', PACKAGE = 'GeneralTree', gti_sexp, node_id)
+}
+
+get_leafs_keys <- function(gti_sexp, node_id) {
+    .Call('GeneralTree_get_leafs_keys', PACKAGE = 'GeneralTree', gti_sexp, node_id)
+}
+

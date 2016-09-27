@@ -71,6 +71,24 @@ test_that("Siblings data are correclty returned with mixed keys", {
     expect_equal(GeneralTree:::get_siblings_data(init, "b"), node_values[-c(1, 3)])
 })
 
+
+test_that("Leafs keys and data are correclty returned with mixed keys", {
+    node_values <- list(list("a"), new.env(), 0.1, "les cochons volant sont éblouissant", 
+                        "blizzard")
+    init <- GeneralTree:::initialize_tree("a", node_values[[1]])
+    init <- GeneralTree:::add_node(init, "a", 0, node_values[[2]])
+    init <- GeneralTree:::add_node(init, "a", "b", node_values[[3]])
+    init <- GeneralTree:::add_node(init, "a", 1.1, node_values[[4]])
+
+    expect_equal(GeneralTree:::get_leafs_data(init, "a"), node_values[-c(1, 5)])
+    expect_equal(GeneralTree:::get_leafs_keys(init, "a"), list(0, "b", 1.1))
+
+
+    init <- GeneralTree:::add_node(init, "b", 1.2, node_values[[5]])
+
+    expect_equal(GeneralTree:::get_leafs_data(init, "a"), node_values[c(2, 5, 4)])
+})
+
 test_that("Tree is correctly copied", {
     node_values <- list(list("a"), new.env(), 0.1, "les cochons volant sont éblouissant")
     init <- GeneralTree:::initialize_tree("a", node_values[[1]])
