@@ -286,3 +286,31 @@ TreeNode::get_leafs() const
 
   return result;
 }
+
+tree_node_sp
+TreeNode::delete_node()
+{
+  tree_node_sp replacement = nullptr;
+
+  if (has_left_child()) {
+    left_child->delete_node();
+    left_child = nullptr;
+  }
+
+  /* If we have siblings we need to promote the first sibling to the parent's
+   * left child and add the remaining siblings to that left child. */
+  if (has_siblings()) {
+    replacement = siblings[0];
+    if (has_parent())
+      parent->set_left_child(replacement);
+
+    /* Add all the remaining siblings to the new left child. */
+    for (auto it = (siblings.begin() + 1); it != siblings.end(); ++it)
+      replacement->add_sibling(*it);
+
+    /* Remove the siblings from the vector part of this child. */
+    siblings.clear();
+  }
+
+  return replacement;
+}

@@ -6,6 +6,19 @@
 #include <algorithm>
 #include <string>
 
+#if defined(__clang__)
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wredeclared-class-member"
+#endif
+
+#include <boost/bimap.hpp>
+#include <boost/bimap/multiset_of.hpp>
+#include <boost/bimap/support/lambda.hpp>
+
+#if defined(__clang__)
+# pragma clang diagnostic pop
+#endif
+
 #include "GeneralTreeInternal.h"
 #include "key_visitor.h"
 
@@ -18,7 +31,7 @@ GeneralTreeInternal::GeneralTreeInternal(const SEXP& root_id,
   /* Create a root node without a child or parent. */
   shared_ptr<TreeNode> root_node = make_shared<TreeNode>(root_id, root_data);
 
-  insert_node(root_node);
+  internal_storage_insert(root_node);
   root = root_node;
 }
 
@@ -33,7 +46,7 @@ GeneralTreeInternal::GeneralTreeInternal(const GeneralTreeInternal& to_clone)
   /* Get complete list of children. */
   tree_node_c_sp_vec_sp tree = const_pointer_cast<const TreeNode>(to_clone.get_root())->get_children(true);
 
-  insert_node(root_node);
+  internal_storage_insert(root_node);
 
   for (auto it = tree->begin(); it != tree->end(); ++it) {
     if (*it == root)
@@ -68,7 +81,7 @@ GeneralTreeInternal::add_node(const SEXP& parent_id, const SEXP& child_key,
   parent->add_child(child);
 
   /* Add child to internal storage. */
-  return insert_node(child);
+  return internal_storage_insert(child);
 }
 
 uid
@@ -94,7 +107,7 @@ GeneralTreeInternal::add_node(const uid& parent_uid, const SEXP& child_key,
   parent->add_child(child);
 
   /* Add child to internal storage. */
-  return insert_node(child);
+  return internal_storage_insert(child);
 }
 
 
@@ -103,14 +116,14 @@ GeneralTreeInternal::add_child(const SEXP& child_key, const SEXP& child_data)
 {
   tree_node_sp child = make_shared<TreeNode>(child_key, child_data);
 
-  if (last_added_node.get() == nullptr)
+  if (last_ref_node.get() == nullptr)
     throw std::runtime_error("add_child: Do not have a last_add_node defined");
 
   /* Add child to last added node. */
-  last_added_node->add_child(child);
+  last_ref_node->add_child(child);
 
   /* Add child to internal storage. */
-  return insert_node(child);
+  return internal_storage_insert(child);
 }
 
 uid
@@ -118,14 +131,14 @@ GeneralTreeInternal::add_sibling(const SEXP& sibling_key, const SEXP& sibling_da
 {
   tree_node_sp sibling = make_shared<TreeNode>(sibling_key, sibling_data);
 
-  if (last_added_node.get() == nullptr)
+  if (last_ref_node.get() == nullptr)
     std::runtime_error("add_sibling: Do not have a last_add_node defined");
 
   /* Add sibling to last added node. */
-  last_added_node->get_parent()->get_left_child()->add_sibling(sibling);
+  last_ref_node->get_parent()->get_left_child()->add_sibling(sibling);
 
   /* Add sibling to internal storage. */
-  return insert_node(sibling);
+  return internal_storage_insert(sibling);
 }
 
 uid
@@ -157,7 +170,7 @@ GeneralTreeInternal::get_uid() const
 }
 
 uid
-GeneralTreeInternal::insert_node(tree_node_sp& new_node)
+GeneralTreeInternal::internal_storage_insert(tree_node_sp& new_node)
 {
   SEXP new_node_key = new_node->get_key();
   shared_ptr<tree_key> search_key = tree_key_cast_SEXP(new_node_key);
@@ -169,21 +182,40 @@ GeneralTreeInternal::insert_node(tree_node_sp& new_node)
   /* Store in a bimap to allow big-oh log(n) search. */
   uid_to_key.insert(uid_id_pair(new_uid, *search_key));
 
-  last_added_node = new_node;
+  last_ref_node = new_node;
 
   return new_uid;
+}
+
+void
+GeneralTreeInternal::internal_storage_update(const uid& current_uid, const SEXP& new_key)
+{
+  auto it = uid_to_key.left.find(current_uid);
+
+  if (it == uid_to_key.left.end())
+    throw std::runtime_error("internal_storage_update: Could not find uid in storage.");
+
+  shared_ptr<tree_key> new_search_key = tree_key_cast_SEXP(new_key);
+
+  uid_to_key.left.modify_data(it, boost::bimaps::_data = *new_search_key);
+}
+
+void
+GeneralTreeInternal::internal_storage_delete(const uid& to_delete)
+{
+  uid_to_key.left.erase(to_delete);
 }
 
 uid
 GeneralTreeInternal::travel_up()
 {
-  if (!(last_added_node->has_parent()))
+  if (!(last_ref_node->has_parent()))
     throw std::out_of_range("travel_up: last added node does not have a"
         " parent so cannot travel up");
 
-  last_added_node = last_added_node->get_parent();
+  last_ref_node = last_ref_node->get_parent();
 
-  return last_added_node->get_uid();
+  return last_ref_node->get_uid();
 }
 
 SEXP
@@ -250,20 +282,21 @@ GeneralTreeInternal::access_tree_node_vec(const SEXP& node_id,
 }
 
 SEXP_vec_sp
-GeneralTreeInternal::get_children_keys(const SEXP& parent_id,
-    bool recursive) const
+GeneralTreeInternal::access_tree_node_vec(const AccessFunctor &af,
+    const ListFunctor& lf) const
 {
-  return access_tree_node_vec(parent_id, AccessChildrenFunctor(recursive),
-      GetKeyFunctor());
+  SEXP_vec_sp result(new SEXP_vec());
+  /* Get the nodes using the access functor. */
+  tree_node_c_sp_vec_sp tn_vec = af.tree_accessor(*last_ref_node);
+
+  result->reserve(tn_vec->size());
+
+  get_info(tn_vec, result, lf);
+
+  return result;
 }
 
-SEXP_vec_sp
-GeneralTreeInternal::get_children_data(const SEXP& parent_id,
-    bool recursive) const
-{
-  return access_tree_node_vec(parent_id, AccessChildrenFunctor(recursive),
-      GetDataFunctor());
-}
+
 
 tree_node_c_sp_vec_sp
 GeneralTreeInternal::get_children(const SEXP& parent_id, bool recursive) const
@@ -292,18 +325,6 @@ GeneralTreeInternal::get_siblings(const SEXP& node_id) const
   return node_found->get_tree_siblings();
 }
 
-SEXP_vec_sp
-GeneralTreeInternal::get_siblings_keys(const SEXP& node_id) const
-{
-  return access_tree_node_vec(node_id, AccessSiblingsFunctor(), GetKeyFunctor());
-}
-
-SEXP_vec_sp
-GeneralTreeInternal::get_siblings_data(const SEXP& node_id) const
-{
-  return access_tree_node_vec(node_id, AccessSiblingsFunctor(), GetDataFunctor());
-}
-
 GeneralTreeInternal::GeneralTreeInternal(SEXP gti_exp)
 {
   try {
@@ -316,7 +337,7 @@ GeneralTreeInternal::GeneralTreeInternal(SEXP gti_exp)
     /* Add the root node. */
     shared_ptr<TreeNode> root_node = make_shared<TreeNode>(root_spec);
 
-    insert_node(root_node);
+    internal_storage_insert(root_node);
     root = root_node;
 
     /* Handle rest of serialization. Start at one so that we skip root. */
@@ -369,18 +390,6 @@ GeneralTreeInternal::get_branch(const SEXP& node_id) const
   return node_found->get_branch();
 }
 
-SEXP_vec_sp
-GeneralTreeInternal::get_branch_keys(const SEXP& node_id) const
-{
-  return access_tree_node_vec(node_id, AccessBranchFunctor(), GetKeyFunctor());
-}
-
-SEXP_vec_sp
-GeneralTreeInternal::get_branch_data(const SEXP& node_id) const
-{
-  return access_tree_node_vec(node_id, AccessBranchFunctor(), GetDataFunctor());
-}
-
 tree_node_sp_vec_sp
 GeneralTreeInternal::get_leafs(const SEXP& node_id)
 {
@@ -397,15 +406,55 @@ GeneralTreeInternal::get_leafs(const SEXP& node_id) const
   return node_found->get_leafs();
 }
 
-SEXP_vec_sp
-GeneralTreeInternal::get_leafs_keys(const SEXP& node_id) const
+void
+GeneralTreeInternal::set_key(const SEXP& new_key)
 {
-  return access_tree_node_vec(node_id, AccessLeafsFunctor(), GetKeyFunctor());
+  last_ref_node->set_key(new_key);
+  internal_storage_update(last_ref_node->get_uid(), new_key);
 }
 
-SEXP_vec_sp
-GeneralTreeInternal::get_leafs_data(const SEXP& node_id) const
+void
+GeneralTreeInternal::set_data(const SEXP& new_data)
 {
-  return access_tree_node_vec(node_id, AccessLeafsFunctor(), GetDataFunctor());
+  last_ref_node->set_data(new_data);
 }
 
+void
+GeneralTreeInternal::delete_node(const SEXP& node_id)
+{
+  tree_node_sp node_found = find_node(node_id);
+
+  /* Get the entire vector of nodes that we need to delete. */
+  tree_node_sp_vec_sp to_delete = node_found->get_branch();
+
+  for (tree_node_sp_vec::reverse_iterator it = to_delete->rbegin();
+      it != to_delete->rend(); ++it)
+    internal_storage_delete((*it)->get_uid());
+
+  /* In case the root node is deleted we need the replacement node to be the
+   * root. */
+  if (node_found == root)
+    root = node_found->delete_node();
+  else
+    node_found->delete_node();
+}
+
+void
+GeneralTreeInternal::delete_node()
+{
+  /* Get the entire vector of nodes that we need to delete. */
+  tree_node_sp_vec_sp to_delete = last_ref_node->get_branch();
+
+  for (tree_node_sp_vec::reverse_iterator it = to_delete->rbegin();
+      it != to_delete->rend(); ++it)
+    internal_storage_delete((*it)->get_uid());
+
+  /* In case the root node is deleted we need the replacement node to be the
+   * root. */
+  if (last_ref_node == root) {
+    last_ref_node = last_ref_node->delete_node();
+    root = last_ref_node;
+  } else {
+    last_ref_node = last_ref_node->delete_node();
+  }
+}

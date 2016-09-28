@@ -4,7 +4,7 @@
 \alias{getChildId}
 \title{Get the ids of the child nodes below the current node.}
 \usage{
-getChildId(self, recursive = FALSE)
+getChildId(self, private, recursive = FALSE)
 }
 \arguments{
 \item{self}{The node where to start.}
@@ -17,4 +17,5 @@ the ids associated with child nodes.
 \description{
 Get the ids of the child nodes below the current node.
 }
+\keyword{internal}
 

@@ -17,6 +17,17 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// deserialize_tree
+SEXP deserialize_tree(SEXP tree);
+RcppExport SEXP GeneralTree_deserialize_tree(SEXP treeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type tree(treeSEXP);
+    __result = Rcpp::wrap(deserialize_tree(tree));
+    return __result;
+END_RCPP
+}
 // pass_gti_xptr
 SEXP pass_gti_xptr(SEXP gti);
 RcppExport SEXP GeneralTree_pass_gti_xptr(SEXP gtiSEXP) {
@@ -63,6 +74,28 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
     Rcpp::traits::input_parameter< SEXP >::type key(keySEXP);
     __result = Rcpp::wrap(get_data(gti_sexp, key));
+    return __result;
+END_RCPP
+}
+// copy
+SEXP copy(SEXP gti_sexp);
+RcppExport SEXP GeneralTree_copy(SEXP gti_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    __result = Rcpp::wrap(copy(gti_sexp));
+    return __result;
+END_RCPP
+}
+// serialize
+SEXP serialize(SEXP gti_sexp);
+RcppExport SEXP GeneralTree_serialize(SEXP gti_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    __result = Rcpp::wrap(serialize(gti_sexp));
     return __result;
 END_RCPP
 }
@@ -116,28 +149,6 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// copy
-SEXP copy(SEXP gti_sexp);
-RcppExport SEXP GeneralTree_copy(SEXP gti_sexpSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
-    __result = Rcpp::wrap(copy(gti_sexp));
-    return __result;
-END_RCPP
-}
-// serialize
-SEXP serialize(SEXP gti_sexp);
-RcppExport SEXP GeneralTree_serialize(SEXP gti_sexpSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
-    __result = Rcpp::wrap(serialize(gti_sexp));
-    return __result;
-END_RCPP
-}
 // get_branch_data
 std::vector<SEXP> get_branch_data(SEXP gti_sexp, SEXP node_id);
 RcppExport SEXP GeneralTree_get_branch_data(SEXP gti_sexpSEXP, SEXP node_idSEXP) {
@@ -183,6 +194,107 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
     Rcpp::traits::input_parameter< SEXP >::type node_id(node_idSEXP);
     __result = Rcpp::wrap(get_leafs_keys(gti_sexp, node_id));
+    return __result;
+END_RCPP
+}
+// get_children_keys_at_ref
+std::vector<SEXP> get_children_keys_at_ref(SEXP gti_sexp, bool recursive);
+RcppExport SEXP GeneralTree_get_children_keys_at_ref(SEXP gti_sexpSEXP, SEXP recursiveSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< bool >::type recursive(recursiveSEXP);
+    __result = Rcpp::wrap(get_children_keys_at_ref(gti_sexp, recursive));
+    return __result;
+END_RCPP
+}
+// get_children_data_at_ref
+std::vector<SEXP> get_children_data_at_ref(SEXP gti_sexp, bool recursive);
+RcppExport SEXP GeneralTree_get_children_data_at_ref(SEXP gti_sexpSEXP, SEXP recursiveSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< bool >::type recursive(recursiveSEXP);
+    __result = Rcpp::wrap(get_children_data_at_ref(gti_sexp, recursive));
+    return __result;
+END_RCPP
+}
+// get_siblings_keys_at_ref
+std::vector<SEXP> get_siblings_keys_at_ref(SEXP gti_sexp);
+RcppExport SEXP GeneralTree_get_siblings_keys_at_ref(SEXP gti_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    __result = Rcpp::wrap(get_siblings_keys_at_ref(gti_sexp));
+    return __result;
+END_RCPP
+}
+// get_siblings_data_at_ref
+std::vector<SEXP> get_siblings_data_at_ref(SEXP gti_sexp);
+RcppExport SEXP GeneralTree_get_siblings_data_at_ref(SEXP gti_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    __result = Rcpp::wrap(get_siblings_data_at_ref(gti_sexp));
+    return __result;
+END_RCPP
+}
+// get_branch_data_at_ref
+std::vector<SEXP> get_branch_data_at_ref(SEXP gti_sexp);
+RcppExport SEXP GeneralTree_get_branch_data_at_ref(SEXP gti_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    __result = Rcpp::wrap(get_branch_data_at_ref(gti_sexp));
+    return __result;
+END_RCPP
+}
+// get_branch_keys_at_ref
+std::vector<SEXP> get_branch_keys_at_ref(SEXP gti_sexp);
+RcppExport SEXP GeneralTree_get_branch_keys_at_ref(SEXP gti_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    __result = Rcpp::wrap(get_branch_keys_at_ref(gti_sexp));
+    return __result;
+END_RCPP
+}
+// get_leafs_data_at_ref
+std::vector<SEXP> get_leafs_data_at_ref(SEXP gti_sexp);
+RcppExport SEXP GeneralTree_get_leafs_data_at_ref(SEXP gti_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    __result = Rcpp::wrap(get_leafs_data_at_ref(gti_sexp));
+    return __result;
+END_RCPP
+}
+// get_leafs_keys_at_ref
+std::vector<SEXP> get_leafs_keys_at_ref(SEXP gti_sexp);
+RcppExport SEXP GeneralTree_get_leafs_keys_at_ref(SEXP gti_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    __result = Rcpp::wrap(get_leafs_keys_at_ref(gti_sexp));
+    return __result;
+END_RCPP
+}
+// get_tree_depth
+int get_tree_depth(SEXP gti_sexp);
+RcppExport SEXP GeneralTree_get_tree_depth(SEXP gti_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    __result = Rcpp::wrap(get_tree_depth(gti_sexp));
     return __result;
 END_RCPP
 }

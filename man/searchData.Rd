@@ -5,7 +5,7 @@
 \title{Search for an id in starting at a point in the tree and return the data
 matching the id.}
 \usage{
-searchData(self, id)
+searchData(self, private, key)
 }
 \arguments{
 \item{self}{the node where to start searching.}

@@ -16,7 +16,7 @@ addSibling(self, private, id, data)
 \item{data}{The data of the node that should be added.}
 }
 \value{
-invisible the new node that was created.
+invisible reference to ourself.
 }
 \description{
 Add a sibling to the current node.

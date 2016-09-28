@@ -74,6 +74,14 @@ public:
     return my_uid;
   }
 
+  void set_key(const SEXP& key_) {
+    key = key_;
+  }
+
+  void set_data(const SEXP& data_) {
+    data = data_;
+  }
+
   std::vector<std::shared_ptr<TreeNode> >* get_siblings() {
     return &siblings;
   }
@@ -156,6 +164,12 @@ public:
   void set_parent(const std::shared_ptr<TreeNode>& parent_) {
     parent = parent_;
   }
+
+  void set_left_child(const std::shared_ptr<TreeNode>& left_child_) {
+    left_child = left_child_;
+  }
+
+  tree_node_sp delete_node();
 
   operator SEXP() const;
 

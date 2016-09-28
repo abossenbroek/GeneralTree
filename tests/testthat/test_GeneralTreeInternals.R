@@ -47,10 +47,10 @@ test_that("Child keys are correclty returned with mixed keys", {
      init <- GeneralTree:::add_node(init, "a", 0, list(1))
      init <- GeneralTree:::add_node(init, "a", "b", list(2))
      init <- GeneralTree:::add_node(init, "a", 1.1, list(2))
- 
+
      expect_equal(GeneralTree:::get_siblings_keys(init, 0), list("b", 1.1));
  })
- 
+
 test_that("Child data are correclty returned with mixed keys", {
     node_values <- list(list("a"), new.env(), 0.1, "les cochons volant sont éblouissant")
     init <- GeneralTree:::initialize_tree("a", node_values[[1]])
@@ -73,7 +73,7 @@ test_that("Siblings data are correclty returned with mixed keys", {
 
 
 test_that("Leafs keys and data are correclty returned with mixed keys", {
-    node_values <- list(list("a"), new.env(), 0.1, "les cochons volant sont éblouissant", 
+    node_values <- list(list("a"), new.env(), 0.1, "les cochons volant sont éblouissant",
                         "blizzard")
     init <- GeneralTree:::initialize_tree("a", node_values[[1]])
     init <- GeneralTree:::add_node(init, "a", 0, node_values[[2]])
@@ -99,5 +99,30 @@ test_that("Tree is correctly copied", {
     init_copy <- GeneralTree:::copy(init);
 
     expect_true(GeneralTree:::cmp(init, init_copy))
+})
+
+test_that("Tree is correctly (de/se)rialized", {
+    node_values <- list(list("a"), new.env(), 0.1, "les cochons volant sont éblouissant")
+    init <- GeneralTree:::initialize_tree("a", node_values[[1]])
+    init <- GeneralTree:::add_node(init, "a", 0, node_values[[2]])
+    init <- GeneralTree:::add_node(init, "a", "b", node_values[[3]])
+    init <- GeneralTree:::add_node(init, "a", 1.1, node_values[[4]])
+
+    object <- GeneralTree:::serialize(init)
+    copy <- GeneralTree:::deserialize_tree(object)
+
+    expect_true(GeneralTree:::cmp(init, copy))
+})
+
+test_that("Relative insertion works as expected", {
+    init <- GeneralTree:::initialize_tree(letters[1], letters[1])
+    init <- GeneralTree:::add_child(init, letters[2], letters[2])
+    init <- GeneralTree:::add_sibling(init, letters[3], letters[3])
+    init <- GeneralTree:::add_child(init, letters[4], letters[4])
+    init <- GeneralTree:::add_sibling(init, letters[5], letters[5])
+    init <- GeneralTree:::travel_up(init)
+    init <- GeneralTree:::add_sibling(init, letters[6], letters[6])
+
+    expect_true(GeneralTree:::get_branch_keys(init) == letters[1 : 6])
 })
 

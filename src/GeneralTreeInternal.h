@@ -11,8 +11,17 @@
 #include <utility>
 #include <memory>
 
+#if defined(__clang__)
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wredeclared-class-member"
+#endif
+
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
+
+#if defined(__clang__)
+# pragma clang diagnostic pop
+#endif
 
 #include "tree_types.h"
 #include "key_visitor.h"
@@ -40,8 +49,11 @@ private:
   uid_id_bimap uid_to_key;
   tree_node_sp_vec nodes;
   tree_node_sp root;
-  uid insert_node(tree_node_sp& new_node);
-  tree_node_sp last_added_node;
+  uid internal_storage_insert(tree_node_sp& new_node);
+  void internal_storage_update(const uid& current_uid, const SEXP& new_key);
+  void internal_storage_delete(const uid& to_delete);
+
+  tree_node_sp last_ref_node;
 
   struct AccessFunctor {
     virtual tree_node_c_sp_vec_sp tree_accessor(const TreeNode& tn) const = 0;
@@ -77,9 +89,11 @@ private:
     }
   };
 
-
   SEXP_vec_sp access_tree_node_vec(const SEXP& node_id, const AccessFunctor& af,
       const ListFunctor& lf) const;
+
+  SEXP_vec_sp access_tree_node_vec(const AccessFunctor& af, const ListFunctor& lf) const;
+
 
 public:
   GeneralTreeInternal(const SEXP& root_id, const SEXP& root_data);
@@ -99,6 +113,7 @@ public:
 
   uid find_uid(const SEXP& id) const;
   tree_node_sp find_node(const SEXP& id) const;
+  //TODO: change name of method.
   uid get_uid() const;
   SEXP get_data(const SEXP& id) const;
   bool has_child(const SEXP& id) const;
@@ -108,30 +123,114 @@ public:
   std::shared_ptr<tree_node_sp_vec> get_children(const SEXP& parent_id, bool recursive = false);
   tree_node_c_sp_vec_sp get_children(const SEXP& parent_id, bool recursive = false) const;
 
-  SEXP_vec_sp get_children_keys(const SEXP& parent_id, bool recursive = false) const;
-  SEXP_vec_sp get_children_data(const SEXP& parent_id, bool recursive = false) const;
-
   std::shared_ptr<tree_node_sp_vec> get_siblings(const SEXP& node_id);
   tree_node_c_sp_vec_sp get_siblings(const SEXP& node_id) const;
-
-  SEXP_vec_sp get_siblings_keys(const SEXP& node_id) const;
-  SEXP_vec_sp get_siblings_data(const SEXP& node_id) const;
 
   std::shared_ptr<tree_node_sp_vec> get_branch(const SEXP& node_id);
   tree_node_c_sp_vec_sp get_branch(const SEXP& node_id) const;
 
-  SEXP_vec_sp get_branch_keys(const SEXP& node_id) const;
-  SEXP_vec_sp get_branch_data(const SEXP& node_id) const;
-
   std::shared_ptr<tree_node_sp_vec> get_leafs(const SEXP& node_id);
   tree_node_c_sp_vec_sp get_leafs(const SEXP& node_id) const;
 
-  SEXP_vec_sp get_leafs_keys(const SEXP& node_id) const;
-  SEXP_vec_sp get_leafs_data(const SEXP& node_id) const;
+  SEXP_vec_sp get_children_keys(const SEXP& parent_id, bool recursive = false) const
+  {
+    return access_tree_node_vec(parent_id, AccessChildrenFunctor(recursive),
+        GetKeyFunctor());
+  }
+
+  SEXP_vec_sp get_children_data(const SEXP& parent_id, bool recursive = false) const
+  {
+    return access_tree_node_vec(parent_id, AccessChildrenFunctor(recursive),
+        GetDataFunctor());
+  }
+
+  SEXP_vec_sp get_children_keys(bool recursive = false) const
+  {
+    return access_tree_node_vec(AccessChildrenFunctor(recursive),
+        GetKeyFunctor());
+  }
+
+  SEXP_vec_sp get_children_data(bool recursive = false) const
+  {
+    return access_tree_node_vec(AccessChildrenFunctor(recursive),
+        GetDataFunctor());
+  }
+
+  SEXP_vec_sp get_siblings_keys(const SEXP& node_id) const
+  {
+    return access_tree_node_vec(node_id, AccessSiblingsFunctor(),
+        GetKeyFunctor());
+  }
+
+  SEXP_vec_sp get_siblings_data(const SEXP& node_id) const
+  {
+    return access_tree_node_vec(node_id, AccessSiblingsFunctor(),
+        GetDataFunctor());
+  }
+
+  SEXP_vec_sp get_siblings_keys() const
+  {
+    return access_tree_node_vec(AccessSiblingsFunctor(), GetKeyFunctor());
+  }
+
+  SEXP_vec_sp get_siblings_data() const
+  {
+    return access_tree_node_vec(AccessSiblingsFunctor(), GetDataFunctor());
+  }
+
+  SEXP_vec_sp get_branch_keys(const SEXP& node_id) const
+  {
+    return access_tree_node_vec(node_id, AccessBranchFunctor(),
+        GetKeyFunctor());
+  }
+
+  SEXP_vec_sp get_branch_data(const SEXP& node_id) const
+  {
+    return access_tree_node_vec(node_id, AccessBranchFunctor(),
+        GetDataFunctor());
+  }
+
+  SEXP_vec_sp get_branch_keys() const
+  {
+    return access_tree_node_vec(AccessBranchFunctor(), GetKeyFunctor());
+  }
+
+  SEXP_vec_sp get_branch_data() const
+  {
+    return access_tree_node_vec(AccessBranchFunctor(), GetDataFunctor());
+  }
+
+  SEXP_vec_sp get_leafs_keys(const SEXP& node_id) const
+  {
+    return access_tree_node_vec(node_id, AccessLeafsFunctor(),
+        GetKeyFunctor());
+  }
+
+  SEXP_vec_sp get_leafs_data(const SEXP& node_id) const
+  {
+    return access_tree_node_vec(node_id, AccessLeafsFunctor(),
+        GetDataFunctor());
+  }
+
+  SEXP_vec_sp get_leafs_keys() const
+  {
+    return access_tree_node_vec(AccessLeafsFunctor(), GetKeyFunctor());
+  }
+
+  SEXP_vec_sp get_leafs_data() const
+  {
+    return access_tree_node_vec(AccessLeafsFunctor(), GetDataFunctor());
+  }
+
+  void set_key(const SEXP& new_key);
+  void set_data(const SEXP& new_data);
 
   uid travel_up();
 
   operator SEXP() const;
+
+  void delete_node(const SEXP& node_id);
+  void delete_node();
 
   tree_node_sp get_root() const {
     return root;
