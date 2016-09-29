@@ -58,6 +58,8 @@ public:
 
   TreeNode(SEXP tn);
 
+  TreeNode(const TreeNode& tn);
+
   virtual ~TreeNode()
   {
   }

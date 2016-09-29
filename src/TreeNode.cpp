@@ -41,6 +41,13 @@ TreeNode::TreeNode(SEXP tn)
   }
 }
 
+TreeNode::TreeNode(const TreeNode& tn)
+{
+  key = tn.get_key();
+  data = tn.get_data();
+  my_uid = INVALID_UID;
+}
+
 void
 TreeNode::add_child(const std::shared_ptr<TreeNode>& new_child) {
   new_child->set_parent(shared_from_this());
