@@ -2,7 +2,7 @@ language: r
 cache: packages
 
 matrix:
-  - include:
+  include:
     - os: linux
       dist: precise
       sudo: false
