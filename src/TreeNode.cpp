@@ -1,3 +1,4 @@
+// [[Rcpp::plugins(cpp11)]]
 #include "TreeNode.h"
 #include <Rcpp.h>
 
@@ -44,7 +45,7 @@ void
 TreeNode::add_child(const std::shared_ptr<TreeNode>& new_child) {
   new_child->set_parent(shared_from_this());
 
-  if (has_left_child()) {
+  if (have_left_child()) {
     left_child->add_sibling(new_child);
   } else {
     left_child = new_child;
@@ -59,11 +60,11 @@ TreeNode::get_children(bool recursive) const {
   tree_node_c_sp_vec_sp children(new tree_node_c_sp_vec());
 
   /* If the curent node has a child we add the const to the list. */
-  if (has_left_child()) {
+  if (have_left_child()) {
     children->push_back(const_pointer_cast<const TreeNode>(left_child));
 
     /* If the child has siblings we add those to the list too. */
-    if (left_child->has_siblings()) {
+    if (left_child->have_siblings()) {
       tree_node_sp_vec* siblings = left_child->get_siblings();
       num_children = 1 + siblings->size();
 
@@ -82,7 +83,7 @@ TreeNode::get_children(bool recursive) const {
 
       for (auto c : *current_children) {
         /* If c has children we call the function and add the results. */
-        if (c->has_left_child()) {
+        if (c->have_left_child()) {
           tree_node_c_sp_vec_sp sub_children = c->get_children(recursive);
           num_children += sub_children->size();
           children->reserve(num_children);
@@ -120,11 +121,11 @@ TreeNode::get_children(bool recursive) {
   tree_node_sp_vec_sp children(new tree_node_sp_vec());
 
   /* If the curent node has a child we add it to the list. */
-  if (has_left_child()) {
+  if (have_left_child()) {
     children->push_back(left_child);
 
     /* If the child has siblings we add those to the list too. */
-    if (left_child->has_siblings()) {
+    if (left_child->have_siblings()) {
       tree_node_sp_vec* siblings = left_child->get_siblings();
       num_children = 1 + siblings->size();
 
@@ -141,7 +142,7 @@ TreeNode::get_children(bool recursive) {
       for (auto c : *current_children) {
         int last_position = 0;
         /* If c has children we call the function and add the results. */
-        if (c->has_left_child()) {
+        if (c->have_left_child()) {
           tree_node_sp_vec_sp sub_children = c->get_children(recursive);
           num_children += sub_children->size();
           children->reserve(num_children);
@@ -211,12 +212,12 @@ TreeNode::tree_depth() const
 {
   unsigned int result = 0;
 
-  if (has_siblings()) {
+  if (have_siblings()) {
     for (auto it = begin(siblings); it != end(siblings); ++it)
       result = max(result, (*it)->tree_depth());
   }
 
-  if (has_left_child())
+  if (have_left_child())
     result = max(result, 1 + left_child->tree_depth());
 
   return result;
@@ -229,7 +230,7 @@ TreeNode::get_branch()
 
   branch->push_back(shared_from_this());
 
-  if (has_left_child()) {
+  if (have_left_child()) {
     tree_node_sp_vec_sp children(get_children(true));
 
     branch->reserve(children->size() + 1);
@@ -246,7 +247,7 @@ TreeNode::get_branch() const
 
   branch->push_back(const_pointer_cast<const TreeNode>(shared_from_this()));
 
-  if (has_left_child()) {
+  if (have_left_child()) {
     tree_node_c_sp_vec_sp children(get_children(true));
 
     branch->reserve(children->size() + 1);
@@ -266,7 +267,7 @@ TreeNode::get_leafs()
   result->reserve(branch->size());
 
   for (auto it = begin(*branch); it != end(*branch); ++it)
-    if (!((*it)->has_left_child()))
+    if (!((*it)->have_left_child()))
       result->push_back(*it);
 
   return result;
@@ -281,7 +282,7 @@ TreeNode::get_leafs() const
   result->reserve(branch->size());
 
   for (auto it = begin(*branch); it != end(*branch); ++it)
-    if (!((*it)->has_left_child()))
+    if (!((*it)->have_left_child()))
       result->push_back(*it);
 
   return result;
@@ -292,14 +293,14 @@ TreeNode::delete_node()
 {
   tree_node_sp replacement = nullptr;
 
-  if (has_left_child()) {
+  if (have_left_child()) {
     left_child->delete_node();
     left_child = nullptr;
   }
 
   /* If we have siblings we need to promote the first sibling to the parent's
    * left child and add the remaining siblings to that left child. */
-  if (has_siblings()) {
+  if (have_siblings()) {
     replacement = siblings[0];
     if (has_parent())
       parent->set_left_child(replacement);

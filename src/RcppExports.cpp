@@ -39,15 +39,15 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// cmp
-LogicalVector cmp(SEXP gti_lhs, SEXP gti_rhs);
-RcppExport SEXP GeneralTree_cmp(SEXP gti_lhsSEXP, SEXP gti_rhsSEXP) {
+// cmp_gti
+LogicalVector cmp_gti(SEXP gti_lhs, SEXP gti_rhs);
+RcppExport SEXP GeneralTree_cmp_gti(SEXP gti_lhsSEXP, SEXP gti_rhsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< SEXP >::type gti_lhs(gti_lhsSEXP);
     Rcpp::traits::input_parameter< SEXP >::type gti_rhs(gti_rhsSEXP);
-    __result = Rcpp::wrap(cmp(gti_lhs, gti_rhs));
+    __result = Rcpp::wrap(cmp_gti(gti_lhs, gti_rhs));
     return __result;
 END_RCPP
 }
@@ -65,6 +65,66 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// delete_node
+SEXP delete_node(SEXP gti_sexp, SEXP to_delete);
+RcppExport SEXP GeneralTree_delete_node(SEXP gti_sexpSEXP, SEXP to_deleteSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type to_delete(to_deleteSEXP);
+    __result = Rcpp::wrap(delete_node(gti_sexp, to_delete));
+    return __result;
+END_RCPP
+}
+// delete_node_at_ref
+SEXP delete_node_at_ref(SEXP gti_sexp);
+RcppExport SEXP GeneralTree_delete_node_at_ref(SEXP gti_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    __result = Rcpp::wrap(delete_node_at_ref(gti_sexp));
+    return __result;
+END_RCPP
+}
+// add_child
+SEXP add_child(SEXP gti_sexp, SEXP id, SEXP data);
+RcppExport SEXP GeneralTree_add_child(SEXP gti_sexpSEXP, SEXP idSEXP, SEXP dataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type id(idSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    __result = Rcpp::wrap(add_child(gti_sexp, id, data));
+    return __result;
+END_RCPP
+}
+// add_sibling
+SEXP add_sibling(SEXP gti_sexp, SEXP id, SEXP data);
+RcppExport SEXP GeneralTree_add_sibling(SEXP gti_sexpSEXP, SEXP idSEXP, SEXP dataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type id(idSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type data(dataSEXP);
+    __result = Rcpp::wrap(add_sibling(gti_sexp, id, data));
+    return __result;
+END_RCPP
+}
+// travel_up
+SEXP travel_up(SEXP gti_sexp);
+RcppExport SEXP GeneralTree_travel_up(SEXP gti_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    __result = Rcpp::wrap(travel_up(gti_sexp));
+    return __result;
+END_RCPP
+}
 // get_data
 SEXP get_data(SEXP gti_sexp, SEXP key);
 RcppExport SEXP GeneralTree_get_data(SEXP gti_sexpSEXP, SEXP keySEXP) {
@@ -74,6 +134,30 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
     Rcpp::traits::input_parameter< SEXP >::type key(keySEXP);
     __result = Rcpp::wrap(get_data(gti_sexp, key));
+    return __result;
+END_RCPP
+}
+// set_key
+SEXP set_key(SEXP gti_sexp, SEXP new_key);
+RcppExport SEXP GeneralTree_set_key(SEXP gti_sexpSEXP, SEXP new_keySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type new_key(new_keySEXP);
+    __result = Rcpp::wrap(set_key(gti_sexp, new_key));
+    return __result;
+END_RCPP
+}
+// set_data
+SEXP set_data(SEXP gti_sexp, SEXP new_data);
+RcppExport SEXP GeneralTree_set_data(SEXP gti_sexpSEXP, SEXP new_dataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type new_data(new_dataSEXP);
+    __result = Rcpp::wrap(set_data(gti_sexp, new_data));
     return __result;
 END_RCPP
 }
@@ -287,6 +371,17 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// get_tree_depth_at_ref
+int get_tree_depth_at_ref(SEXP gti_sexp);
+RcppExport SEXP GeneralTree_get_tree_depth_at_ref(SEXP gti_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    __result = Rcpp::wrap(get_tree_depth_at_ref(gti_sexp));
+    return __result;
+END_RCPP
+}
 // get_tree_depth
 int get_tree_depth(SEXP gti_sexp);
 RcppExport SEXP GeneralTree_get_tree_depth(SEXP gti_sexpSEXP) {
@@ -295,6 +390,86 @@ BEGIN_RCPP
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
     __result = Rcpp::wrap(get_tree_depth(gti_sexp));
+    return __result;
+END_RCPP
+}
+// have_siblings_at_ref
+bool have_siblings_at_ref(SEXP gti_sexp);
+RcppExport SEXP GeneralTree_have_siblings_at_ref(SEXP gti_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    __result = Rcpp::wrap(have_siblings_at_ref(gti_sexp));
+    return __result;
+END_RCPP
+}
+// change_ref
+SEXP change_ref(SEXP gti_sexp, int key);
+RcppExport SEXP GeneralTree_change_ref(SEXP gti_sexpSEXP, SEXP keySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< int >::type key(keySEXP);
+    __result = Rcpp::wrap(change_ref(gti_sexp, key));
+    return __result;
+END_RCPP
+}
+// find_uid
+int find_uid(SEXP gti_sexp, SEXP key);
+RcppExport SEXP GeneralTree_find_uid(SEXP gti_sexpSEXP, SEXP keySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type key(keySEXP);
+    __result = Rcpp::wrap(find_uid(gti_sexp, key));
+    return __result;
+END_RCPP
+}
+// is_last_sibling_at_ref
+bool is_last_sibling_at_ref(SEXP gti_sexp);
+RcppExport SEXP GeneralTree_is_last_sibling_at_ref(SEXP gti_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    __result = Rcpp::wrap(is_last_sibling_at_ref(gti_sexp));
+    return __result;
+END_RCPP
+}
+// is_last_sibling
+bool is_last_sibling(SEXP gti_sexp, SEXP key);
+RcppExport SEXP GeneralTree_is_last_sibling(SEXP gti_sexpSEXP, SEXP keySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type key(keySEXP);
+    __result = Rcpp::wrap(is_last_sibling(gti_sexp, key));
+    return __result;
+END_RCPP
+}
+// get_data_at_ref
+SEXP get_data_at_ref(SEXP gti_sexp);
+RcppExport SEXP GeneralTree_get_data_at_ref(SEXP gti_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    __result = Rcpp::wrap(get_data_at_ref(gti_sexp));
+    return __result;
+END_RCPP
+}
+// get_root
+SEXP get_root(SEXP gti_sexp);
+RcppExport SEXP GeneralTree_get_root(SEXP gti_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    __result = Rcpp::wrap(get_root(gti_sexp));
     return __result;
 END_RCPP
 }

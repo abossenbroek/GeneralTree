@@ -5,8 +5,6 @@
 \title{Get the data of the leafs nodes below the current node.}
 \usage{
 getLeafsData(self, private, key)
-
-getLeafsData(self, private, key)
 }
 \arguments{
 \item{self}{The node where to start.}
@@ -14,19 +12,11 @@ getLeafsData(self, private, key)
 \item{private}{the private members of the GeneralTree.}
 
 \item{key}{The key for which the leafs should be returned}
-
-\item{self}{The node where to start.}
-
-\item{private}{the private members of the GeneralTree.}
 }
 \value{
 the data associated with leafs nodes.
-
-the data associated with leafs nodes.
 }
 \description{
-Get the data of the leafs nodes below the current node.
-
 Get the data of the leafs nodes below the current node.
 }
 \keyword{internal}

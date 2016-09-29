@@ -69,6 +69,8 @@ GeneralTreeInternal::add_node(const SEXP& parent_id, const SEXP& child_key,
   tree_node_sp parent;
   try {
     parent = nodes[find_uid(parent_id)];
+  } catch (std::invalid_argument &ex) {
+    throw std::invalid_argument("add_node: Could not find parent in tree.");
   } catch (std::exception &ex) {
     forward_exception_to_r(ex);
   } catch (...) {
@@ -163,6 +165,18 @@ GeneralTreeInternal::find_node(const SEXP& id) const
   return nodes[node_uid];
 }
 
+tree_node_sp
+GeneralTreeInternal::find_node(const uid& uid_) const
+{
+  uid_id_bimap::left_const_iterator uid_iter =
+    this->uid_to_key.left.find(uid_);
+
+  if (uid_iter == this->uid_to_key.left.end())
+    throw std::invalid_argument("Could not find uid in tree.");
+
+  return nodes[uid_];
+}
+
 uid
 GeneralTreeInternal::get_uid() const
 {
@@ -225,18 +239,25 @@ GeneralTreeInternal::get_data(const SEXP& id) const
   return node_found->get_data();
 }
 
+
+const SEXP
+GeneralTreeInternal::get_data() const
+{
+  return last_ref_node->get_data();
+}
+
 bool
 GeneralTreeInternal::has_child(const SEXP& id) const
 {
   tree_node_sp node_found = find_node(id);
-  return node_found->has_left_child();
+  return node_found->have_left_child();
 }
 
 bool
-GeneralTreeInternal::has_siblings(const SEXP& id) const
+GeneralTreeInternal::have_siblings(const SEXP& id) const
 {
   tree_node_sp node_found = find_node(id);
-  return node_found->has_siblings();
+  return node_found->have_tree_siblings();
 }
 
 tree_node_sp
@@ -457,4 +478,55 @@ GeneralTreeInternal::delete_node()
   } else {
     last_ref_node = last_ref_node->delete_node();
   }
+}
+
+void
+GeneralTreeInternal::change_ref(const uid& new_uid)
+{
+  try {
+    last_ref_node = find_node(new_uid);
+  } catch (std::exception &ex) {
+    forward_exception_to_r(ex);
+  } catch (...) {
+    ::Rf_error("c++ exception (unknown reason)");
+  }
+}
+
+const bool
+GeneralTreeInternal::is_last_sibling(const SEXP& id) const
+{
+  tree_node_sp node = find_node(id);
+
+  return is_last_sibling(node);
+}
+
+const bool
+GeneralTreeInternal::is_last_sibling() const
+{
+  return is_last_sibling(last_ref_node);
+}
+
+
+const bool
+GeneralTreeInternal::is_last_sibling(const tree_node_sp& tn) const
+{
+  if (tn->has_parent()) {
+    /* Verify whether the first child of the parent of the node has siblings. */
+    if (tn->get_parent()->get_left_child()->have_siblings()) {
+      /* Verify whether the last sibling in the list is equal to the element
+       * that was passed. */
+      return *tn->get_parent()->get_left_child()->get_siblings()->back() == *tn;
+    } else {
+      /* It seems that this node is the left child of its parent and it has no
+       * siblings so we return true since we are the only node. */
+      return true;
+    }
+  }
+
+  /* We are currently looking at siblings of the root. If we have only have a
+   * single node we are the last sibling. */
+  if (!root->have_siblings())
+    return true;
+
+  return  *root->get_siblings()->back() == *tn;
 }

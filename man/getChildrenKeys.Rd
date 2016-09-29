@@ -5,26 +5,16 @@
 \title{Get the keys of the child nodes below the current node.}
 \usage{
 getChildrenKeys(self, private, key, recursive = FALSE)
-
-getChildrenKeys(self, private, key, recursive = FALSE)
 }
 \arguments{
-\item{self}{The node where to start.}
-
-\item{recursive}{Should the function be called on all child nodes too?}
-
 \item{self}{The node where to start.}
 
 \item{recursive}{Should the function be called on all child nodes too?}
 }
 \value{
 the keys associated with child nodes.
-
-the keys associated with child nodes.
 }
 \description{
-Get the keys of the child nodes below the current node.
-
 Get the keys of the child nodes below the current node.
 }
 \keyword{internal}

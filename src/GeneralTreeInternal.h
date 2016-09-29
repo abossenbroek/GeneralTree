@@ -113,12 +113,16 @@ public:
 
   uid find_uid(const SEXP& id) const;
   tree_node_sp find_node(const SEXP& id) const;
+  tree_node_sp find_node(const uid& uid_) const;
   //TODO: change name of method.
   uid get_uid() const;
   SEXP get_data(const SEXP& id) const;
+  const SEXP get_data() const;
   bool has_child(const SEXP& id) const;
-  bool has_siblings(const SEXP& id) const;
+  bool have_siblings(const SEXP& id) const;
   tree_node_sp get_parent(const SEXP& id) const;
+
+  void change_ref(const uid& new_uid);
 
   std::shared_ptr<tree_node_sp_vec> get_children(const SEXP& parent_id, bool recursive = false);
   tree_node_c_sp_vec_sp get_children(const SEXP& parent_id, bool recursive = false) const;
@@ -236,6 +240,10 @@ public:
     return root;
   }
 
+  const bool have_siblings() const {
+    return last_ref_node->have_tree_siblings();
+  }
+
   tree_node_sp_vec* get_nodes() const {
     return const_cast<tree_node_sp_vec*>(&nodes);
   }
@@ -243,6 +251,14 @@ public:
   const unsigned int tree_depth() const {
     return root->tree_depth();
   }
+
+  const unsigned int tree_depth_at_ref() const {
+    return last_ref_node->tree_depth();
+  }
+
+  const bool is_last_sibling(const SEXP& id) const;
+  const bool is_last_sibling() const;
+  const bool is_last_sibling(const tree_node_sp& tn) const;
 
   friend bool operator== (const GeneralTreeInternal& lhs,
       const GeneralTreeInternal& rhs)

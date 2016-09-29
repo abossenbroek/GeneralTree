@@ -5,28 +5,16 @@
 \title{Get the keys of the branch nodes below the current node.}
 \usage{
 getBranchKeys(self, private, key)
-
-getBranchKeys(self, private, key)
 }
 \arguments{
-\item{self}{The node where to start.}
-
-\item{private}{the private members of the GeneralTree.}
-
-\item{key}{The key for which the branch should be returned}
-
 \item{self}{The node where to start.}
 
 \item{private}{the private members of the GeneralTree.}
 }
 \value{
 the keys associated with branch nodes.
-
-the keys associated with branch nodes.
 }
 \description{
-Get the keys of the branch nodes below the current node.
-
 Get the keys of the branch nodes below the current node.
 }
 \keyword{internal}

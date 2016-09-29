@@ -5,8 +5,6 @@
 \title{Get the data of the branch nodes below the current node.}
 \usage{
 getBranchData(self, private, key)
-
-getBranchData(self, private, key)
 }
 \arguments{
 \item{self}{The node where to start.}
@@ -14,19 +12,11 @@ getBranchData(self, private, key)
 \item{private}{the private members of the GeneralTree.}
 
 \item{key}{The key for which the branch should be returned}
-
-\item{self}{The node where to start.}
-
-\item{private}{the private members of the GeneralTree.}
 }
 \value{
 the data associated with branch nodes.
-
-the data associated with branch nodes.
 }
 \description{
-Get the data of the branch nodes below the current node.
-
 Get the data of the branch nodes below the current node.
 }
 \keyword{internal}

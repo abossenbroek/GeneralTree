@@ -129,10 +129,10 @@
 #'
 GeneralTree <- R6Class("GeneralTree",
   lock_objects = FALSE,
-  cloneable = FALSE,
   private = list(
-    .xptr = NULL
-  ),
+    .xptr = NULL,
+    .ref_uid = NULL
+    ),
   public = list(
    initialize = function(id, data)
      initialize(self, private, id, data)
@@ -158,9 +158,9 @@ GeneralTree <- R6Class("GeneralTree",
    searchData = function(key)
      searchData(self, private, key)
    ,
-#   searchNode = function(id)
-#     searchNode(self, id)
-#   ,
+   searchNode = function(key)
+     searchNode(self, private, key)
+   ,
 #   searchBranch = function(id)
 #     searchBranch(self, id)
 #   ,
@@ -237,10 +237,25 @@ GeneralTree <- R6Class("GeneralTree",
      getLeafsData(self, private, key)
    ,
    deleteKeyByKey = function(key)
-     deleteKey(self, private, key)
+     deleteId(self, private, key)
    ,
    deleteId = function()
      deleteId(self, private)
+   ,
+   setRefUID = function(uid)
+     setRefUID(self, private, uid)
+   ,
+   changeRef = function()
+      changeRef(self, private)
+   ,
+   cmp = function(val)
+     cmp(self, private, val)
+   ,
+   getXptr = function()
+     return(private$.xptr)
+   ,
+   getRefUID = function()
+     return(private$.ref_uid)
 #   ,
    #nextElem = function()
        #self$nextElemWorker()
@@ -272,6 +287,21 @@ GeneralTree <- R6Class("GeneralTree",
   active = list(
     depth = function()
       depth(self, private)
+    ,
+    have_siblings = function()
+      have_siblings(self, private)
+    ,
+    have_ref_uid = function()
+      have_ref_uid(self, private)
+    ,
+    is_last_sibling = function()
+      isLastSibling(self, private)
+    ,
+    data = function()
+      getData(self, private)
+    ,
+    root = function()
+      getRoot(self, private)
   )
 )
 
@@ -285,16 +315,21 @@ GeneralTree <- R6Class("GeneralTree",
 #' @keywords internal
 initialize <- function(self, private, id, data) {
   private$.xptr <- initialize_tree(id, data)
+  private$.ref_uid <- find_uid(private$.xptr, id)
 
   invisible(self)
 }
 
 #'
 #' @keywords internal
-addNode <- function (self, private, parent_id, id, data) {
-  private$.xptr <- addNode(parent_id, id, data)
+addNode <- function (self, private, parent_id, key, data) {
+  private$.xptr <- add_node(private$.xptr, parent_id, key, data)
 
-  invisible(self)
+  new_uid <- find_uid(private$.xptr, key)
+  result <- self$clone()
+  result$setRefUID(new_uid)
+
+  invisible(result)
 }
 
 
@@ -307,6 +342,7 @@ addNode <- function (self, private, parent_id, id, data) {
 #' @return invisible the new node that was created.
 #' @keywords internal
 addChild <- function (self, private, id, data) {
+  self$changeRef()
   self$.xptr <- add_child(self$.xptr, id, data)
 
   invisible(self)
@@ -353,7 +389,7 @@ searchData <- function (self, private, key) {
 #' @keywords internal
 getSiblingData <- function (self, private) {
   warning("DEPRECATED: getSiblingData will be replaced with getSiblingsData in future releases.")
-  return(get_siblings_data(private$.xptr))
+  return(getSiblingsData(self, private))
 }
 
 #'
@@ -366,24 +402,28 @@ getSiblingId <- function (self, private) {
 #'
 #' @keywords internal
 getSiblingsKey <- function (self, private) {
+  self$changeRef()
   return(get_siblings_keys_at_ref(private$.xptr))
 }
 
 #'
 #' @keywords internal
 getSiblingsData <- function (self, private) {
+  self$changeRef()
   return(get_siblings_data_at_ref(private$.xptr))
 }
 
 #'
 #' @keywords internal
 getSiblingsKey <- function (self, private, key) {
+  self$changeRef()
   return(get_siblings_keys(private$.xptr, key))
 }
 
 #'
 #' @keywords internal
 getSiblingsData <- function (self, private, key) {
+  self$changeRef()
   return(get_siblings_data(private$.xptr, key))
 }
 #'
@@ -397,6 +437,7 @@ setKey <- function (self, private, new_key) {
 #'
 #' @keywords internal
 setData <- function (self, private, new_data) {
+  self$changeRef()
   private$.xptr <- set_data(private$.xptr, new_data)
 
   invisible(self)
@@ -419,17 +460,12 @@ getChildData <- function (self, private, recursive = FALSE) {
 #' @param recursive Should the function be called on all child nodes too?
 #' @return the data associated with child nodes.
 #' @keywords internal
-getChildrenData <- function (self, private, recursive = FALSE) {
-  return(get_children_data_at_ref(private$.xptr, recursive))
-}
-
-#' Get the data of the child nodes below the current node.
-#'
-#' @param self The node where to start.
-#' @param recursive Should the function be called on all child nodes too?
-#' @return the data associated with child nodes.
-#' @keywords internal
 getChildrenData <- function (self, private, key, recursive = FALSE) {
+  if (missing(key)) {
+    self$changeRef()
+    return(get_children_data_at_ref(private$.xptr, recursive))
+  }
+
   return(get_children_data(private$.xptr, key, recursive))
 }
 
@@ -450,17 +486,12 @@ getChildId <- function (self, private, recursive = FALSE) {
 #' @param recursive Should the function be called on all child nodes too?
 #' @return the keys associated with child nodes.
 #' @keywords internal
-getChildrenKeys <- function (self, private, recursive = FALSE) {
-  return(get_children_keys_at_ref(private$.xptr, recursive))
-}
-
-#' Get the keys of the child nodes below the current node.
-#'
-#' @param self The node where to start.
-#' @param recursive Should the function be called on all child nodes too?
-#' @return the keys associated with child nodes.
-#' @keywords internal
 getChildrenKeys <- function (self, private, key, recursive = FALSE) {
+  if (missing(key)) {
+    self$changeRef()
+    return(get_children_keys_at_ref(private$.xptr, recursive))
+  }
+
   return(get_children_keys(private$.xptr, key, recursive))
 }
 
@@ -470,29 +501,13 @@ getChildrenKeys <- function (self, private, key, recursive = FALSE) {
 #' @param private the private members of the GeneralTree.
 #' @return the keys associated with branch nodes.
 #' @keywords internal
-getBranchKeys <- function (self, private) {
-  return(get_branch_keys_at_ref(private$.xptr))
-}
-
-#' Get the keys of the branch nodes below the current node.
-#'
-#' @param self The node where to start.
-#' @param private the private members of the GeneralTree.
-#' @param key The key for which the branch should be returned
-#' @return the keys associated with branch nodes.
-#' @keywords internal
 getBranchKeys <- function (self, private, key) {
-  return(get_branch_keys(private$.xptr, key))
-}
+  if (missing(key)) {
+    self$changeRef()
+    return(get_branch_keys_at_ref(private$.xptr))
+  }
 
-#' Get the data of the branch nodes below the current node.
-#'
-#' @param self The node where to start.
-#' @param private the private members of the GeneralTree.
-#' @return the data associated with branch nodes.
-#' @keywords internal
-getBranchData <- function (self, private) {
-  return(get_branch_data_at_ref(private$.xptr))
+  return(get_branch_keys(private$.xptr, key))
 }
 
 #' Get the data of the branch nodes below the current node.
@@ -503,17 +518,11 @@ getBranchData <- function (self, private) {
 #' @return the data associated with branch nodes.
 #' @keywords internal
 getBranchData <- function (self, private, key) {
+  if (missing(key)) {
+    self$changeRef()
+    return(get_branch_data_at_ref(private$.xptr))
+  }
   return(get_branch_data(private$.xptr, key))
-}
-
-#' Get the keys of the leafs nodes below the current node.
-#'
-#' @param self The node where to start.
-#' @param private the private members of the GeneralTree.
-#' @return the keys associated with leafs nodes.
-#' @keywords internal
-getLeafsKeys <- function (self, private) {
-  return(get_leafs_keys_at_ref(private$.xptr))
 }
 
 #' Get the keys of the leafs nodes below the current node.
@@ -524,17 +533,11 @@ getLeafsKeys <- function (self, private) {
 #' @return the keys associated with leafs nodes.
 #' @keywords internal
 getLeafsKeys <- function (self, private, key) {
+  if (missing(key)) {
+    self$changeRef()
+    return(get_leafs_keys_at_ref(private$.xptr))
+  }
   return(get_leafs_keys(private$.xptr, key))
-}
-
-#' Get the data of the leafs nodes below the current node.
-#'
-#' @param self The node where to start.
-#' @param private the private members of the GeneralTree.
-#' @return the data associated with leafs nodes.
-#' @keywords internal
-getLeafsData <- function (self, private) {
-  return(get_leafs_data_at_ref(private$.xptr))
 }
 
 #' Get the data of the leafs nodes below the current node.
@@ -545,6 +548,11 @@ getLeafsData <- function (self, private) {
 #' @return the data associated with leafs nodes.
 #' @keywords internal
 getLeafsData <- function (self, private, key) {
+  if (missing(key)) {
+    self$changeRef()
+    return(get_leafs_data_at_ref(private$.xptr))
+  }
+
   return(get_leafs_data(private$.xptr, key))
 }
 
@@ -554,7 +562,7 @@ getLeafsData <- function (self, private, key) {
 #' @param id The id that should be deleted.
 #' @keywords internal
 deleteKey <- function (self, private, key) {
-  delete(private$.xptr, key)
+  delete_node(private$.xptr, key)
 
   invisible(self)
 }
@@ -566,7 +574,8 @@ deleteKey <- function (self, private, key) {
 #' @param id The id that should be deleted.
 #' @keywords internal
 deleteId <- function (self, private) {
-  delete(private$.xptr)
+  self$changeRef()
+  delete_node_at_ref(private$.xptr)
 
   invisible(self)
 }
@@ -577,5 +586,75 @@ deleteId <- function (self, private) {
 #' @param private the private members of the GeneralTree.
 #' @keywords internal
 depth <- function (self, private) {
-  return(get_tree_depth(private$.xptr))
+  self$changeRef()
+
+  return(get_tree_depth_at_ref(private$.xptr))
+}
+
+#' @keywords internal
+have_siblings <- function (self, private) {
+  self$changeRef()
+
+  return(have_siblings_at_ref(private$.xptr))
+}
+
+#' @keywords internal
+setRefUID <- function (self, private, uid) {
+  private$.ref_uid = uid
+
+  invisible(self)
+}
+
+#' @keywords internal
+searchNode <- function (self, private, key) {
+  if (missing(key))
+    stop("searchNode: Need a key to search for.")
+
+  new_uid <- find_uid(private$.xptr, key)
+  result <- self$clone()
+  result$setRefUID(new_uid)
+
+  invisible(result)
+}
+
+#' @keywords internal
+have_ref_uid <- function (self, private) {
+  return(!is.null(private$.ref_uid))
+}
+
+#' @keywords internal
+changeRef <- function (self, private) {
+  if (self$have_ref_uid)
+    change_ref(private$.xptr, private$.ref_uid)
+}
+
+#' @keywords internal
+isLastSibling <- function (self, private) {
+  self$changeRef()
+
+  return(is_last_sibling_at_ref(private$.xptr))
+}
+
+#' @keywords internal
+getData <- function (self, private) {
+  self$changeRef()
+
+  return(get_data_at_ref(private$.xptr))
+}
+
+getRoot <- function (self, private) {
+  root_uid <- find_uid(private$.xptr, get_root(private$.xptr)$key)
+
+  result <- self$clone()
+  result$setRefUID(root_uid)
+
+  invisible(result)
+}
+
+cmp <- function (self, private, val)
+{
+  result = cmp_gti(private$.xptr, val$getXptr())
+  result = result && private$.ref_uid == val$getRefUID()
+
+  return(result)
 }

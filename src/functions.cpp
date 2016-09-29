@@ -1,4 +1,4 @@
-// [[Rcpp::depends(BH)]]
+// [[Rcpp::plugins(cpp11)]]
 #include <Rcpp.h>
 
 #include <string>
@@ -41,7 +41,7 @@ pass_gti_xptr(SEXP gti)
 
 // [[Rcpp::export]]
 LogicalVector
-cmp(SEXP gti_lhs, SEXP gti_rhs)
+cmp_gti(SEXP gti_lhs, SEXP gti_rhs)
 {
   gti_xptr lhs(gti_lhs);
   gti_xptr rhs(gti_rhs);
@@ -59,7 +59,7 @@ add_node(SEXP gti_sexp, SEXP parent_id, SEXP id, SEXP data)
   return gti;
 }
 
-// [Rcpp::export]]
+// [[Rcpp::export]]
 SEXP
 delete_node(SEXP gti_sexp, SEXP to_delete)
 {
@@ -69,7 +69,7 @@ delete_node(SEXP gti_sexp, SEXP to_delete)
   return gti;
 }
 
-// [Rcpp::export]]
+// [[Rcpp::export]]
 SEXP
 delete_node_at_ref(SEXP gti_sexp)
 {
@@ -79,7 +79,7 @@ delete_node_at_ref(SEXP gti_sexp)
   return gti;
 }
 
-// [Rcpp::export]]
+// [[Rcpp::export]]
 SEXP
 add_child(SEXP gti_sexp, SEXP id, SEXP data)
 {
@@ -89,7 +89,7 @@ add_child(SEXP gti_sexp, SEXP id, SEXP data)
   return gti;
 }
 
-// [Rcpp::export]]
+// [[Rcpp::export]]
 SEXP
 add_sibling(SEXP gti_sexp, SEXP id, SEXP data)
 {
@@ -99,7 +99,7 @@ add_sibling(SEXP gti_sexp, SEXP id, SEXP data)
   return gti;
 }
 
-// [Rcpp::export]]
+// [[Rcpp::export]]
 SEXP
 travel_up(SEXP gti_sexp)
 {
@@ -118,7 +118,7 @@ get_data(SEXP gti_sexp, SEXP key)
   return gti->get_data(key);
 }
 
-// [Rcpp::export]]
+// [[Rcpp::export]]
 SEXP
 set_key(SEXP gti_sexp, SEXP new_key)
 {
@@ -128,7 +128,8 @@ set_key(SEXP gti_sexp, SEXP new_key)
   return gti;
 }
 
-// [Rcpp::export]]
+
+// [[Rcpp::export]]
 SEXP
 set_data(SEXP gti_sexp, SEXP new_data)
 {
@@ -322,9 +323,79 @@ get_leafs_keys_at_ref(SEXP gti_sexp)
 
 // [[Rcpp::export]]
 int
+get_tree_depth_at_ref(SEXP gti_sexp)
+{
+  gti_xptr gti(gti_sexp);
+
+  return gti->tree_depth_at_ref();
+}
+
+// [[Rcpp::export]]
+int
 get_tree_depth(SEXP gti_sexp)
 {
   gti_xptr gti(gti_sexp);
 
   return gti->tree_depth();
+}
+
+// [[Rcpp::export]]
+bool
+have_siblings_at_ref(SEXP gti_sexp)
+{
+  gti_xptr gti(gti_sexp);
+
+  return gti->have_siblings();
+}
+
+// [[Rcpp::export]]
+SEXP
+change_ref(SEXP gti_sexp, int key)
+{
+  gti_xptr gti(gti_sexp);
+  gti->change_ref((uid)key);
+
+  return gti;
+}
+
+// [[Rcpp::export]]
+int
+find_uid(SEXP gti_sexp, SEXP key)
+{
+  gti_xptr gti(gti_sexp);
+
+  return (int)gti->find_uid(key);
+}
+
+// [[Rcpp::export]]
+bool
+is_last_sibling_at_ref(SEXP gti_sexp)
+{
+  gti_xptr gti(gti_sexp);
+  return gti->is_last_sibling();
+}
+
+// [[Rcpp::export]]
+bool
+is_last_sibling(SEXP gti_sexp, SEXP key)
+{
+  gti_xptr gti(gti_sexp);
+  return gti->is_last_sibling(key);
+}
+
+// [[Rcpp::export]]
+SEXP
+get_data_at_ref(SEXP gti_sexp)
+{
+  gti_xptr gti(gti_sexp);
+  return gti->get_data();
+}
+
+// [[Rcpp::export]]
+SEXP
+get_root(SEXP gti_sexp)
+{
+  gti_xptr gti(gti_sexp);
+
+  return wrap(*gti->get_root());
 }

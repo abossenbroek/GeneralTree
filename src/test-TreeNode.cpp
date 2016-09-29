@@ -39,11 +39,11 @@ context("TreeNode attributes work as expected") {
   tree_node_sp root = gti.find_node(root_id);
   tree_node_c_sp root_c = gti.find_node(root_id);
 
-  test_that("has_siblings yields correct values") {
-    expect_false(root->has_siblings());
+  test_that("have_siblings yields correct values") {
+    expect_false(root->have_siblings());
   }
-  test_that("has_left_child yields correct values") {
-    expect_false(root->has_left_child());
+  test_that("have_left_child yields correct values") {
+    expect_false(root->have_left_child());
   }
   test_that("get_parent yields exception") {
     expect_error(root->get_parent());
@@ -63,11 +63,11 @@ context("TreeNode attributes work as expected") {
 
   gti.add_node(root_id, child_id, child_id);
 
-  test_that("has_siblings yields correct values") {
-    expect_false(root->has_siblings());
+  test_that("have_siblings yields correct values") {
+    expect_false(root->have_siblings());
   }
-  test_that("has_left_child yields correct values") {
-    expect_true(root->has_left_child());
+  test_that("have_left_child yields correct values") {
+    expect_true(root->have_left_child());
   }
 
 
@@ -75,14 +75,12 @@ context("TreeNode attributes work as expected") {
 
   tree_node_sp child1 = gti.find_node(child_id);
 
-  test_that("has_siblings yields correct values") {
-    expect_true(child1->has_siblings());
+  test_that("have_siblings yields correct values") {
+    expect_true(child1->have_siblings());
   }
-  test_that("has_left_child yields correct values") {
-    expect_false(child1->has_left_child());
+  test_that("have_left_child yields correct values") {
+    expect_false(child1->have_left_child());
   }
-
-
 }
 
 
@@ -113,10 +111,10 @@ context("GeneralTreeInternal can add children directly under each other") {
     uid root_uid = gti.find_uid(root_id);
     uid child_uid = gti.find_uid(child_id);
     // Verify whether all the getters return the proper result of the tree.
-    expect_false(gti.has_siblings(child_id));
+    expect_false(gti.have_siblings(child_id));
     expect_true(gti.has_child(root_id));
     expect_true(gti.get_parent(child_id)->get_data() == root_id);
-    expect_false(gti.has_siblings(child_id));
+    expect_false(gti.have_siblings(child_id));
   }
 
   test_that("we can add a child to the child uner the root") {
@@ -137,10 +135,10 @@ context("GeneralTreeInternal can add children directly under each other") {
     uid child2_uid = gti.find_uid(child2_id);
 
     // Verify whether all the getters return the proper result of the tree.
-    expect_false(gti.has_siblings(child_id));
+    expect_false(gti.have_siblings(child_id));
     expect_true(gti.has_child(root_id));
     expect_true(gti.has_child(child_id));
-    expect_false(gti.has_siblings(child2_id));
+    expect_false(gti.have_siblings(child2_id));
     expect_true(gti.get_parent(child2_id)->get_data() == child_id);
   }
 }

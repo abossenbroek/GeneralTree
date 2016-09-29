@@ -101,14 +101,14 @@ public:
   {
     bool result = true;
 
-    if (lhs.has_left_child() && rhs.has_left_child()) {
+    if (lhs.have_left_child() && rhs.have_left_child()) {
       result = result && *lhs.get_left_child() == *rhs.get_left_child();
-    } else if (!lhs.has_left_child() != !rhs.has_left_child()) {
+    } else if (!lhs.have_left_child() != !rhs.have_left_child()) {
       /* Either lhs or rhs does not have a child so result is false. */
       return false;
     }
 
-    if (lhs.has_siblings() && rhs.has_siblings()) {
+    if (lhs.have_siblings() && rhs.have_siblings()) {
       /* Verify whether the size of both are equal. */
       if (lhs.get_siblings()->size() != rhs.get_siblings()->size())
         return false;
@@ -117,7 +117,7 @@ public:
       for (int i = 0; i < lhs.get_siblings()->size(); ++i)
         result = result && *lhs.get_siblings()->at(i) ==
           *rhs.get_siblings()->at(i);
-    } else if (!lhs.has_siblings() != !rhs.has_siblings()) {
+    } else if (!lhs.have_siblings() != !rhs.have_siblings()) {
       /* Either lhs or rhs does not have siblings so result is false. */
       return false;
     }
@@ -144,12 +144,21 @@ public:
     my_uid = new_uid;
   }
 
-  bool has_left_child() const {
+  bool have_left_child() const {
     return left_child.get() != nullptr;
   }
 
-  bool has_siblings() const {
+  bool have_siblings() const {
     return siblings.size() != 0;
+  }
+
+  bool have_tree_siblings() const {
+    if (!has_parent())
+      return have_siblings();
+    else if (*parent->left_child != *this)
+      return true;
+    else
+      return have_siblings();
   }
 
   void add_sibling(const std::shared_ptr<TreeNode>& new_sibling) {

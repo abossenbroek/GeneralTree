@@ -5,26 +5,16 @@
 \title{Get the data of the child nodes below the current node.}
 \usage{
 getChildrenData(self, private, key, recursive = FALSE)
-
-getChildrenData(self, private, key, recursive = FALSE)
 }
 \arguments{
-\item{self}{The node where to start.}
-
-\item{recursive}{Should the function be called on all child nodes too?}
-
 \item{self}{The node where to start.}
 
 \item{recursive}{Should the function be called on all child nodes too?}
 }
 \value{
 the data associated with child nodes.
-
-the data associated with child nodes.
 }
 \description{
-Get the data of the child nodes below the current node.
-
 Get the data of the child nodes below the current node.
 }
 \keyword{internal}

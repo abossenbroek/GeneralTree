@@ -4,7 +4,7 @@ test_that("XPtr is correctly passed", {
     init <- GeneralTree:::initialize_tree("a", 0)
     passed <- GeneralTree:::pass_gti_xptr(init)
 
-    expect_true(cmp(init, passed));
+    expect_true(cmp_gti(init, passed));
 })
 
 test_that("Stored integer value is correcty found", {
@@ -98,7 +98,7 @@ test_that("Tree is correctly copied", {
 
     init_copy <- GeneralTree:::copy(init);
 
-    expect_true(GeneralTree:::cmp(init, init_copy))
+    expect_true(GeneralTree:::cmp_gti(init, init_copy))
 })
 
 test_that("Tree is correctly (de/se)rialized", {
@@ -111,7 +111,7 @@ test_that("Tree is correctly (de/se)rialized", {
     object <- GeneralTree:::serialize(init)
     copy <- GeneralTree:::deserialize_tree(object)
 
-    expect_true(GeneralTree:::cmp(init, copy))
+    expect_true(GeneralTree:::cmp_gti(init, copy))
 })
 
 test_that("Relative insertion works as expected", {
@@ -123,6 +123,6 @@ test_that("Relative insertion works as expected", {
     init <- GeneralTree:::travel_up(init)
     init <- GeneralTree:::add_sibling(init, letters[6], letters[6])
 
-    expect_true(GeneralTree:::get_branch_keys(init) == letters[1 : 6])
+    expect_equal(unlist(GeneralTree:::get_branch_keys(init, letters[1])), letters[1 : 6])
 })
 

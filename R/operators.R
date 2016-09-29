@@ -63,3 +63,14 @@ deep_clone.GeneralTree <- function(x) {
     return(x)
 }
 
+#' Compare two General Trees.
+#'
+#' @param x The target to where the tree should be copied.
+#' @param value The general tree that should be cloned into.
+#' @return the result of the comparison.
+#' @usage `==.GeneralTree`(x, value)
+#' @export
+"==.GeneralTree" <- function(x, value) {
+  x$cmp(value) && value$cmp(x)
+}
+

@@ -12,13 +12,12 @@ test_that("add child to empty tree works", {
  child1 <- tree$addNode(0, 1, "child1")
 
  expect_is(child1, "GeneralTree")
- expect_identical(tree$left_child, child1)
- expect_identical(child1$root, tree)
+ expect_true(child1$root == tree)
 })
 
 test_that("add child with non existing parent gives correct error", {
  root <- GeneralTree$new(0, "parent1")
- expect_error(root$addNode(1, 1, "child1"), "^.*id 1$")
+ expect_error(root$addNode(1, 1, "child1"), "^.*not find parent in tree.*$")
 })
 
 
@@ -66,13 +65,6 @@ test_that("add multiple childeren as part of child with char id", {
   tree$addNode("c", "f", "child.c.e")
 
   expect_identical(tree$searchNode("e")$data, "child.c.e")
-})
-
-test_that("multiple childeren will yield error", {
-  tree <- GeneralTree$new(0, "parent1")
-  tree$addNode(0, 1, "child.0.1")
-
-  expect_warning(tree$setLeftChild(GeneralTree$new(1, "child.0.1")))
 })
 
 test_that("child by using addChild on search result.", {

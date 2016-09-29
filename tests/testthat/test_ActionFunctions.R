@@ -52,7 +52,7 @@ test_that("is_last_sibling is working as expected", {
 
   tree$addNode(0, 1, "child.1")
 
-  expect_identical(tree$searchNode(1)$is_last_sibling, FALSE)
+  expect_identical(tree$searchNode(1)$is_last_sibling, TRUE)
 })
 
 test_that("branchToList is working as expected", {
@@ -71,10 +71,8 @@ test_that("branchToList is working as expected", {
   tree$addNode(8, 14, "child.8.14")
   tree$addNode(2, 6, "child.2.6")
 
-  res <- tree$branchToList()
+  expect_equal(unlist(tree$getBranchKeys()), 1 : 14)
 
-  expect_equal(sapply(res, function(x) x$id), 1 : 14)
-
-  res <- tree$searchNode(8)$branchToList()
-  expect_equal(sapply(res, function(x) x$id), 8 : 14)
+  res <- tree$searchNode(8)$getBranchKeys()
+  expect_equal(unlist(res), 8 : 14)
 })
