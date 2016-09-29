@@ -32,12 +32,6 @@ matrix:
       r: oldrel
     - os: osx
       osx_image: xcode8
-      latex: false
-      r_build_args: '--no-build-vignettes'
-      r_check_args: '--ignore-vignettes --no-examples'
-      r: release
-    - os: osx
-      osx_image: xcode8
       before_install:
         - brew install libxml2
         - brew link --force libxml2
@@ -51,6 +45,13 @@ matrix:
       r: release
       r_build_args: '--no-build-vignettes'
       r_check_args: '--ignore-vignettes --no-examples'
+    allow_failures:
+    - os: osx
+      osx_image: xcode8
+      latex: false
+      r_build_args: '--no-build-vignettes'
+      r_check_args: '--ignore-vignettes --no-examples'
+      r: release
 
 before_install:
 - if [[ "$TRAVIS_R_VERSION_STRING" = 'devel' ]]; then mkdir ~/.R && echo 'CXX1X=g++ -std=c++0x -g -O2 -fPIC' > ~/.R/Makevars; fi
