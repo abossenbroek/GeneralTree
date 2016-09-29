@@ -4,7 +4,7 @@
 \alias{deleteId}
 \title{Delete last referenced key.}
 \usage{
-deleteId(self, private)
+deleteId(self, private, key)
 }
 \arguments{
 \item{self}{The reference to the tree where the id should be searched.}

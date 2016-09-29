@@ -99,6 +99,7 @@ tree$addNode(0, 3, "child.0.3")
 tree$addNode(3, 4, "child.3.4")
 tree$searchData(4)
 
+\dontrun{
 #
 # Print the tree
 tree
@@ -119,7 +120,7 @@ numbers_in_tree <- foreach(i = itx, .combine = c) \%do\% c(i)
 
 itx <- iter(tree, by = "data")
 data_in_tree <- foreach(i = itx, .combine = c) \%do\% c(i)
-
+}
 }
 \keyword{datasets}
 

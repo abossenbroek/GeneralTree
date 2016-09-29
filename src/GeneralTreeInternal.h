@@ -235,8 +235,8 @@ public:
 
   operator SEXP() const;
 
-  void delete_node(const SEXP& node_id);
-  void delete_node();
+  const uid delete_node(const SEXP& node_id);
+  const uid delete_node();
 
   tree_node_sp get_root() const {
     return root;

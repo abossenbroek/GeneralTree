@@ -19,11 +19,12 @@ parent  The column name of the column that holds the parent
 Convert a data frame to a GeneralTree.
 }
 \examples{
+\dontrun{
   test_tree_df <- data.frame(
       ID = c("root", "child1", "child2", "child3"),
       DATA = c("parent1", "data3.1", "data1.2", "data1.3"),
      PARENT = c(NA, "child3", "root", "root"), stringsAsFactors = FALSE)
 as.GeneralTree(test_tree_df, id = "ID", data = "DATA", parent = "PARENT")
-
+}
 }
 

@@ -2,30 +2,19 @@
 % Please edit documentation in R/operators.R
 \name{=.GeneralTree}
 \alias{=.GeneralTree}
-\alias{==.GeneralTree}
 \title{Deep clone a General Tree.}
 \usage{
 `=.GeneralTree`(x, value)
-
-`==.GeneralTree`(x, value)
 }
 \arguments{
-\item{x}{The target to where the tree should be copied.}
-
-\item{value}{The general tree that should be cloned into.}
-
 \item{x}{The target to where the tree should be copied.}
 
 \item{value}{The general tree that should be cloned into.}
 }
 \value{
 a clone of the tree.
-
-the result of the comparison.
 }
 \description{
 Deep clone a General Tree.
-
-Compare two General Trees.
 }
 

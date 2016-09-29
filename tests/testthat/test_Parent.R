@@ -3,7 +3,7 @@ context("Test parent")
 test_that("Parent is correct in empty tree", {
   root <- GeneralTree$new(0, "parent1")
 
-  expect_identical(root$parent, NULL)
+  expect_error(root$parent, "^Node does not have a parent.$")
 })
 
 test_that("Parent is correct in single child case", {

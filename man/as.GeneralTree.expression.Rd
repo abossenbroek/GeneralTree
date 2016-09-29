@@ -16,6 +16,7 @@ what = "text" fill the tree with text as the data field.}
 Convert a R parsed expression to a GeneralTree.
 }
 \examples{
+\dontrun{
 p <- parse(text = "
                    tree <- GeneralTree$new(1, 'parent1')
                    tree$addNode(1, 2, 'child.1.2')
@@ -24,5 +25,6 @@ p <- parse(text = "
 as.GeneralTree(p, what = "token")
 as.GeneralTree(p, what = "text")
 as.GeneralTree(p, what = c("text", "token"))
+}
 }
 

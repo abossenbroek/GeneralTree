@@ -19,4 +19,5 @@ The data associated with an id.
 Search for an id in starting at a point in the tree and return the data
 matching the id.
 }
+\keyword{internal}
 

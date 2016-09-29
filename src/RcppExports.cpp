@@ -66,7 +66,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // delete_node
-SEXP delete_node(SEXP gti_sexp, SEXP to_delete);
+int delete_node(SEXP gti_sexp, SEXP to_delete);
 RcppExport SEXP GeneralTree_delete_node(SEXP gti_sexpSEXP, SEXP to_deleteSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
@@ -78,7 +78,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // delete_node_at_ref
-SEXP delete_node_at_ref(SEXP gti_sexp);
+int delete_node_at_ref(SEXP gti_sexp);
 RcppExport SEXP GeneralTree_delete_node_at_ref(SEXP gti_sexpSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;

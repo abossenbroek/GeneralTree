@@ -46,6 +46,7 @@ deep_clone.GeneralTree <- function(x) {
 #' @return a clone of the tree.
 #' @usage `<-.GeneralTree`(x, value)
 #' @export
+#' @rdname assign
 "<-.GeneralTree" <- function(x, value) {
     x <- deep_clone.GeneralTree(value)
     return(x)
@@ -58,6 +59,7 @@ deep_clone.GeneralTree <- function(x) {
 #' @return a clone of the tree.
 #' @usage `=.GeneralTree`(x, value)
 #' @export
+#' @rdname set
 "=.GeneralTree" <- function(x, value) {
     x <- deep_clone.GeneralTree(value)
     return(x)
@@ -70,6 +72,7 @@ deep_clone.GeneralTree <- function(x) {
 #' @return the result of the comparison.
 #' @usage `==.GeneralTree`(x, value)
 #' @export
+#' @rdname equals
 "==.GeneralTree" <- function(x, value) {
   x$cmp(value) && value$cmp(x)
 }

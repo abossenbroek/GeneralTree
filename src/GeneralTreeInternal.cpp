@@ -452,10 +452,15 @@ GeneralTreeInternal::set_data(const SEXP& new_data)
   last_ref_node->set_data(new_data);
 }
 
-void
+const uid
 GeneralTreeInternal::delete_node(const SEXP& node_id)
 {
   tree_node_sp node_found = find_node(node_id);
+
+  uid replacement_uid = node_found->get_parent_uid();
+
+  if (*node_found == *root && node_found->have_siblings())
+    replacement_uid = root->get_siblings()->at(0)->get_uid();
 
   /* Get the entire vector of nodes that we need to delete. */
   tree_node_sp_vec_sp to_delete = node_found->get_branch();
@@ -470,13 +475,20 @@ GeneralTreeInternal::delete_node(const SEXP& node_id)
     root = node_found->delete_node();
   else
     node_found->delete_node();
+
+  return replacement_uid;
 }
 
-void
+const uid
 GeneralTreeInternal::delete_node()
 {
   /* Get the entire vector of nodes that we need to delete. */
   tree_node_sp_vec_sp to_delete = last_ref_node->get_branch();
+
+  uid replacement_uid = last_ref_node->get_parent_uid();
+
+  if (*last_ref_node == *root && last_ref_node->have_siblings())
+    replacement_uid = root->get_siblings()->at(0)->get_uid();
 
   for (tree_node_sp_vec::reverse_iterator it = to_delete->rbegin();
       it != to_delete->rend(); ++it)
@@ -490,6 +502,8 @@ GeneralTreeInternal::delete_node()
   } else {
     last_ref_node = last_ref_node->delete_node();
   }
+
+  return replacement_uid;
 }
 
 void

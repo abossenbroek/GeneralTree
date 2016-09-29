@@ -106,6 +106,7 @@
 #' tree$addNode(3, 4, "child.3.4")
 #' tree$searchData(4)
 #'
+#' \dontrun{
 #' #
 #' # Print the tree
 #' tree
@@ -126,7 +127,7 @@
 #'
 #' itx <- iter(tree, by = "data")
 #' data_in_tree <- foreach(i = itx, .combine = c) %do% c(i)
-#'
+#' }
 GeneralTree <- R6Class("GeneralTree",
   lock_objects = FALSE,
   private = list(
@@ -236,10 +237,10 @@ GeneralTree <- R6Class("GeneralTree",
    getLeafsDataByKey = function(key)
      getLeafsData(self, private, key)
    ,
-   deleteKeyByKey = function(key)
+   deleteId = function(key)
      deleteId(self, private, key)
    ,
-   deleteId = function()
+   delete = function()
      deleteId(self, private)
    ,
    setRefUID = function(uid)
@@ -406,7 +407,7 @@ travelUp <- function (self, private) {
 #' @param self the node where to start searching.
 #' @param id the id to look for.
 #' @return The data associated with an id.
-#' @export
+#' @keywords internal
 searchData <- function (self, private, key) {
   self$changeRef()
   return(get_data(private$.xptr, key))
@@ -583,28 +584,26 @@ getLeafsData <- function (self, private, key) {
   return(get_leafs_data(private$.xptr, key))
 }
 
-#' Delete a node with a given id.
-#'
-#' @param self The reference to the tree where the id should be searched.
-#' @param id The id that should be deleted.
-#' @keywords internal
-deleteKey <- function (self, private, key) {
-  delete_node(private$.xptr, key)
-
-  invisible(self)
-}
-
 #' Delete last referenced key.
 #'
 #' @param self The reference to the tree where the id should be searched.
 #' @param private the private members of the GeneralTree.
 #' @param id The id that should be deleted.
 #' @keywords internal
-deleteId <- function (self, private) {
+deleteId <- function (self, private, key) {
+  replacement_uid <- NULL
   self$changeRef()
-  delete_node_at_ref(private$.xptr)
 
-  invisible(self)
+  if (!missing(key)) {
+    replacement_uid <- delete_node(private$.xptr, key)
+  } else {
+    replacement_uid <- delete_node_at_ref(private$.xptr)
+  }
+
+  result <- self$clone()
+  result$setRefUID(replacement_uid)
+
+  invisible(result)
 }
 
 #' Returns the depth of the tree.

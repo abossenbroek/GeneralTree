@@ -60,23 +60,19 @@ add_node(SEXP gti_sexp, SEXP parent_id, SEXP id, SEXP data)
 }
 
 // [[Rcpp::export]]
-SEXP
+int
 delete_node(SEXP gti_sexp, SEXP to_delete)
 {
   gti_xptr gti(gti_sexp);
-  gti->delete_node(to_delete);
-
-  return gti;
+  return (int)gti->delete_node(to_delete);
 }
 
 // [[Rcpp::export]]
-SEXP
+int
 delete_node_at_ref(SEXP gti_sexp)
 {
   gti_xptr gti(gti_sexp);
-  gti->delete_node();
-
-  return gti;
+  return (int)gti->delete_node();
 }
 
 // [[Rcpp::export]]

@@ -59,12 +59,13 @@ as.GeneralTree <- function(x, ...) UseMethod("as.GeneralTree")
 #'                parent  The column name of the column that holds the parent
 #'                        of each node, NA indicates a node is the root.
 #' @examples
+#' \dontrun{
 #'   test_tree_df <- data.frame(
 #'       ID = c("root", "child1", "child2", "child3"),
 #'       DATA = c("parent1", "data3.1", "data1.2", "data1.3"),
 #'      PARENT = c(NA, "child3", "root", "root"), stringsAsFactors = FALSE)
 #' as.GeneralTree(test_tree_df, id = "ID", data = "DATA", parent = "PARENT")
-#'
+#' }
 #' @export
 as.GeneralTree.data.frame <- function(x, ...) {
   dots <- list(...)
@@ -181,6 +182,7 @@ as.GeneralTree.data.frame <- function(x, ...) {
 #' @param ...  what = "token" fill the tree with tokens as the data field.
 #'             what = "text" fill the tree with text as the data field.
 #' @examples
+#' \dontrun{
 #' p <- parse(text = "
 #'                    tree <- GeneralTree$new(1, 'parent1')
 #'                    tree$addNode(1, 2, 'child.1.2')
@@ -189,6 +191,7 @@ as.GeneralTree.data.frame <- function(x, ...) {
 #' as.GeneralTree(p, what = "token")
 #' as.GeneralTree(p, what = "text")
 #' as.GeneralTree(p, what = c("text", "token"))
+#' }
 #' @export
 as.GeneralTree.expression <- function(x, ...) {
 

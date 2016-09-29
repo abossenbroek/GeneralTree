@@ -80,7 +80,7 @@ test_that("child by using addChild on search result.", {
   expect_identical(tree$searchNode("e")$data, "child.c.e")
 })
 
-test_that("child by using addChild on search result.", {
+test_that("test relative insertion", {
 
   tree <- GeneralTree$new(0, "parent1")
   expect_identical(unlist(tree$getBranchKeys()), 0)
@@ -98,6 +98,8 @@ test_that("child by using addChild on search result.", {
   expect_identical(unlist(tree$getBranchKeys()), c(0, "a", "b", "c", "e",
                                                    "f", "d"))
   tree$searchNode("b")$addSibling("g", "child.g")
+  expect_identical(unlist(tree$getBranchKeys()), c(0, "a", "b", "c", "e",
+                                                   "f", "d", "g"))
 
   expect_identical(tree$searchNode("g")$parent$key, 0)
 })
