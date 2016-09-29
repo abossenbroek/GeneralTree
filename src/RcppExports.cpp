@@ -473,3 +473,25 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// get_parent_at_ref
+SEXP get_parent_at_ref(SEXP gti_sexp);
+RcppExport SEXP GeneralTree_get_parent_at_ref(SEXP gti_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    __result = Rcpp::wrap(get_parent_at_ref(gti_sexp));
+    return __result;
+END_RCPP
+}
+// get_ref
+SEXP get_ref(SEXP gti_sexp);
+RcppExport SEXP GeneralTree_get_ref(SEXP gti_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    __result = Rcpp::wrap(get_ref(gti_sexp));
+    return __result;
+END_RCPP
+}

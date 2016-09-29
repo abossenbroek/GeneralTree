@@ -297,11 +297,24 @@ GeneralTree <- R6Class("GeneralTree",
     is_last_sibling = function()
       isLastSibling(self, private)
     ,
-    data = function()
-      getData(self, private)
-    ,
     root = function()
       getRoot(self, private)
+    ,
+    parent = function() {
+      parent_uid <- find_uid(private$.xptr,
+                             get_parent_at_ref(private$.xptr)$key)
+
+      result <- self$clone()
+      result$setRefUID(root_uid)
+
+      invisible(result)
+    },
+    key = function() {
+      return(get_ref(private$.xptr)$key)
+    },
+    data = function() {
+      return(get_ref(private$.xptr)$data)
+    }
   )
 )
 
@@ -343,9 +356,12 @@ addNode <- function (self, private, parent_id, key, data) {
 #' @keywords internal
 addChild <- function (self, private, id, data) {
   self$changeRef()
-  self$.xptr <- add_child(self$.xptr, id, data)
+  add_child(private$.xptr, id, data)
 
-  invisible(self)
+  result <- self$clone()
+  result$setRefUID(id)
+
+  invisible(result)
 }
 
 #' Add a sibling to the current node.
@@ -357,9 +373,12 @@ addChild <- function (self, private, id, data) {
 #' @return invisible reference to ourself.
 #' @keywords internal
 addSibling <- function (self, private, id, data) {
-  self$.xptr <- add_sibling(self$.xptr, id, data)
+  self$.xptr <- add_sibling(private$.xptr, id, data)
 
-  invisible(self)
+  result <- self$clone()
+  result$setRefUID(id)
+
+  invisible(result)
 }
 
 #' Travel one level up in the tree.
@@ -633,13 +652,6 @@ isLastSibling <- function (self, private) {
   self$changeRef()
 
   return(is_last_sibling_at_ref(private$.xptr))
-}
-
-#' @keywords internal
-getData <- function (self, private) {
-  self$changeRef()
-
-  return(get_data_at_ref(private$.xptr))
 }
 
 getRoot <- function (self, private) {

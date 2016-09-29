@@ -399,3 +399,21 @@ get_root(SEXP gti_sexp)
 
   return wrap(*gti->get_root());
 }
+
+// [[Rcpp::export]]
+SEXP
+get_parent_at_ref(SEXP gti_sexp)
+{
+  gti_xptr gti(gti_sexp);
+
+  return wrap(*gti->get_parent());
+}
+
+// [[Rcpp::export]]
+SEXP
+get_ref(SEXP gti_sexp)
+{
+  gti_xptr gti(gti_sexp);
+
+  return wrap(*gti->get_ref());
+}

@@ -161,3 +161,11 @@ get_root <- function(gti_sexp) {
     .Call('GeneralTree_get_root', PACKAGE = 'GeneralTree', gti_sexp)
 }
 
+get_parent_at_ref <- function(gti_sexp) {
+    .Call('GeneralTree_get_parent_at_ref', PACKAGE = 'GeneralTree', gti_sexp)
+}
+
+get_ref <- function(gti_sexp) {
+    .Call('GeneralTree_get_ref', PACKAGE = 'GeneralTree', gti_sexp)
+}
+

@@ -120,8 +120,10 @@ public:
   const SEXP get_data() const;
   bool has_child(const SEXP& id) const;
   bool have_siblings(const SEXP& id) const;
-  tree_node_sp get_parent(const SEXP& id) const;
+  const tree_node_sp get_parent(const SEXP& id) const;
+  const tree_node_sp get_parent() const;
 
+  const tree_node_sp get_ref() const;
   void change_ref(const uid& new_uid);
 
   std::shared_ptr<tree_node_sp_vec> get_children(const SEXP& parent_id, bool recursive = false);

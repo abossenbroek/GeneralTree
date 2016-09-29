@@ -260,11 +260,23 @@ GeneralTreeInternal::have_siblings(const SEXP& id) const
   return node_found->have_tree_siblings();
 }
 
-tree_node_sp
+const tree_node_sp
 GeneralTreeInternal::get_parent(const SEXP& id) const
 {
   tree_node_sp node_found = find_node(id);
   return node_found->get_parent();
+}
+
+const tree_node_sp
+GeneralTreeInternal::get_parent() const
+{
+  return last_ref_node->get_parent();
+}
+
+const tree_node_sp
+GeneralTreeInternal::get_ref() const
+{
+  return last_ref_node;
 }
 
 shared_ptr<tree_node_sp_vec>

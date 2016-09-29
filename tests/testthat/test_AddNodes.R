@@ -68,12 +68,12 @@ test_that("add multiple childeren as part of child with char id", {
 })
 
 test_that("child by using addChild on search result.", {
-
   tree <- GeneralTree$new(0, "parent1")
-  tree$searchNode(0)$addChild("a", "child.a")
-  tree$searchNode(0)$addChild("b", "child.b")
-  tree$searchNode("b")$addChild("c", "child.b.c")
+  tree$addChild("a", "child.a")
+  tree$addChild("b", "child.b")
+  tree$searchNode("a")$addChild("c", "child.b.c")
   tree$searchNode("b")$addChild("d", "child.b.d")
+
   tree$addNode("c", "e", "child.c.e")
   tree$addNode("c", "f", "child.c.f")
 
