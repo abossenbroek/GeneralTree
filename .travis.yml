@@ -2,7 +2,7 @@ language: r
 cache: packages
 
 matrix:
-  include:
+  - include:
     - os: linux
       dist: precise
       sudo: false
@@ -45,7 +45,7 @@ matrix:
       r: release
       r_build_args: '--no-build-vignettes'
       r_check_args: '--ignore-vignettes --no-examples'
-    allow_failures:
+  - allow_failures:
     - os: osx
       osx_image: xcode8
       latex: false
