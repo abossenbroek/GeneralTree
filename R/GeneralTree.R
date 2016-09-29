@@ -301,11 +301,12 @@ GeneralTree <- R6Class("GeneralTree",
       getRoot(self, private)
     ,
     parent = function() {
+      self$changeRef()
       parent_uid <- find_uid(private$.xptr,
                              get_parent_at_ref(private$.xptr)$key)
 
       result <- self$clone()
-      result$setRefUID(root_uid)
+      result$setRefUID(parent_uid)
 
       invisible(result)
     },
@@ -361,7 +362,8 @@ addChild <- function (self, private, id, data) {
   add_child(private$.xptr, id, data)
 
   result <- self$clone()
-  result$setRefUID(id)
+  new_uid <- find_uid(private$.xptr, id)
+  result$setRefUID(new_uid)
 
   invisible(result)
 }
@@ -375,10 +377,12 @@ addChild <- function (self, private, id, data) {
 #' @return invisible reference to ourself.
 #' @keywords internal
 addSibling <- function (self, private, id, data) {
+  self$changeRef()
   self$.xptr <- add_sibling(private$.xptr, id, data)
 
   result <- self$clone()
-  result$setRefUID(id)
+  new_uid <- find_uid(private$.xptr, id)
+  result$setRefUID(new_uid)
 
   invisible(result)
 }
@@ -390,6 +394,7 @@ addSibling <- function (self, private, id, data) {
 #' @return invisible the new node that was created.
 #' @keywords internal
 travelUp <- function (self, private) {
+  self$changeRef()
   self$.xptr <- travel_up(self$.xptr)
 
   invisible(self)
@@ -403,6 +408,7 @@ travelUp <- function (self, private) {
 #' @return The data associated with an id.
 #' @export
 searchData <- function (self, private, key) {
+  self$changeRef()
   return(get_data(private$.xptr, key))
 }
 
