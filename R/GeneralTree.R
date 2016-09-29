@@ -310,9 +310,11 @@ GeneralTree <- R6Class("GeneralTree",
       invisible(result)
     },
     key = function() {
+      self$changeRef()
       return(get_ref(private$.xptr)$key)
     },
     data = function() {
+      self$changeRef()
       return(get_ref(private$.xptr)$data)
     }
   )
