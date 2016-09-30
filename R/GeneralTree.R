@@ -227,6 +227,9 @@ GeneralTree <- R6Class("GeneralTree",
    getBranchKeys = function()
      getBranchKeys(self, private)
    ,
+   getBranchData = function()
+     getBranchData(self, private)
+   ,
    getBranchKeysByKey = function(key)
      getBranchKeys(self, private, key)
    ,
