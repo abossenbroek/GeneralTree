@@ -201,16 +201,16 @@ GeneralTree <- R6Class("GeneralTree",
      getChildId(self, private, recursive)
    ,
    getChildrenKeys = function(recursive = FALSE)
-     getChildrenKeys(self, private)
+     getChildrenKeys(self, private, recursive = recursive)
    ,
    getChildrenData = function(recursive = FALSE)
-     getChildrenData(self, private)
+     getChildrenData(self, private, recursive = recursive)
    ,
    getChildrenKeysByKey = function(key, recursive = FALSE)
-     getChildrenKeys(self, private, key, recursive)
+     getChildrenKeys(self, private, key = key, recursive = recursive)
    ,
    getChildrenDataByKey = function(key, recursive = FALSE)
-     getChildrenData(self, private, key, recursive)
+     getChildrenData(self, private, key = key, recursive = recursive)
    ,
    getSiblingsKeys = function()
      getSiblingsKeys(self, private)
@@ -438,7 +438,7 @@ getSiblingData <- function (self, private) {
 #' @keywords internal
 getSiblingId <- function (self, private) {
   warning("DEPRECATED: getSiblingId will be replaced with getSiblingsKey in future releases.")
-  return(getSiblingsKey(self, private))
+  return(getSiblingsKeys(self, private))
 }
 
 #'
@@ -487,7 +487,7 @@ setData <- function (self, private, new_data) {
 #' @keywords internal
 getChildData <- function (self, private, recursive = FALSE) {
   warning("DEPRECATED: getChildData will be replaced with getChildrenData in future releases")
-  return(getChildrenData(self, private, recursive))
+  return(getChildrenData(self, private, recursive = recursive))
 }
 
 #' Get the data of the child nodes below the current node.
@@ -513,7 +513,7 @@ getChildrenData <- function (self, private, key, recursive = FALSE) {
 #' @keywords internal
 getChildId <- function (self, private, recursive = FALSE) {
   warning("DEPRECATED: getChildId will be replaced with getChildrenKeys in future releases")
-  return(getChildrenKeys(self, private, recursive))
+  return(getChildrenKeys(self, private, recursive = recursive))
 }
 
 #' Get the keys of the child nodes below the current node.

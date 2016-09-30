@@ -11,7 +11,7 @@ test_that("delete node that is sibling", {
   expect_identical(tree$searchNode(3)$data, "child.3")
   tree$deleteId(3)
 
-  expect_error(tree$searchNode(3), "^Could not find id in tree.$")
+  expect_error(tree$searchNode(3), "^Could not find key in tree.$")
 })
 
 test_that("delete node that is left child", {
@@ -25,7 +25,7 @@ test_that("delete node that is left child", {
   expect_identical(tree$searchNode(1)$data, "child.1")
   tree$deleteId(1)
 
-  expect_error(tree$searchNode(1), "^Could not find id in tree.$")
+  expect_error(tree$searchNode(1), "^Could not find key in tree.$")
   expect_identical(tree$searchNode(3)$data, "child.3")
 })
 
@@ -38,7 +38,7 @@ test_that("Delete a child without siblings", {
   tree$addNode(1, 4, "child.1.4")
   tree$deleteId(4)
 
-  expect_error(tree$searchNode(4), "^Could not find id in tree.$")
+  expect_error(tree$searchNode(4), "^Could not find key in tree.$")
 })
 
 test_that("delete node that is three levels deep and sibling", {
@@ -58,7 +58,7 @@ test_that("delete node that is three levels deep and sibling", {
 
   expect_identical(tree$searchNode(9)$data, "child.7.9")
   tree$deleteId(9)
-  expect_error(tree$searchNode(9), "^Could not find id in tree.$")
+  expect_error(tree$searchNode(9), "^Could not find key in tree.$")
 })
 
 test_that("delete node that is three levels deep and left child", {
@@ -79,7 +79,7 @@ test_that("delete node that is three levels deep and left child", {
 
   expect_identical(tree$searchNode(8)$data, "child.7.8")
   tree$deleteId(8)
-  expect_error(tree$searchNode(8), "^Could not find id in tree.$")
+  expect_error(tree$searchNode(8), "^Could not find key in tree.$")
   expect_identical(tree$searchNode(9)$data, "child.7.9")
   expect_identical(tree$searchNode(10)$data, "child.7.10")
 })
@@ -99,10 +99,10 @@ tree$addNode(7, 10, "child.7.10")
 result <- tree$searchNode(7)$delete()
 
 test_that("Verify that all children were deleted", {
-  expect_error(tree$searchNode(7), "^Could not find id in tree.$")
-  expect_error(tree$searchNode(8), "^Could not find id in tree.$")
-  expect_error(tree$searchNode(9), "^Could not find id in tree.$")
-  expect_error(tree$searchNode(10), "^Could not find id in tree.$")
+  expect_error(tree$searchNode(7), "^Could not find key in tree.$")
+  expect_error(tree$searchNode(8), "^Could not find key in tree.$")
+  expect_error(tree$searchNode(9), "^Could not find key in tree.$")
+  expect_error(tree$searchNode(10), "^Could not find key in tree.$")
 })
 
 test_that("The result of the delete points to the parent", {

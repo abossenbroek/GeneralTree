@@ -212,7 +212,7 @@ GeneralTreeInternal::find_uid(const SEXP& id) const
     this->uid_to_key.right.find(*search_key);
 
   if (id_iter == this->uid_to_key.right.end())
-    throw std::invalid_argument("Could not find id in tree.");
+    throw std::invalid_argument("Could not find key in tree.");
 
   return id_iter->second;
 }
