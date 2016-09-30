@@ -28,23 +28,23 @@
 
 #include "TreeNode.h"
 
-struct ListFunctor {
+struct SEXPListFunctor {
   virtual SEXP Process(const TreeNode& tn) const = 0;
 };
 
-struct GetDataFunctor : public ListFunctor {
+struct GetDataFunctor : public SEXPListFunctor {
   SEXP Process(const TreeNode& tn) const {
     return tn.get_data();
   }
 };
 
-struct GetKeyFunctor : public ListFunctor {
+struct GetKeyFunctor : public SEXPListFunctor {
   SEXP Process(const TreeNode& tn) const {
     return tn.get_key();
   }
 };
 
-struct GetUIDFunctor : public ListFunctor {
+struct GetUIDFunctor : public SEXPListFunctor {
   SEXP Process(const TreeNode& tn) const {
     return wrap(tn.get_uid());
   }
@@ -95,10 +95,11 @@ private:
     }
   };
 
-  SEXP_vec_sp access_tree_node_vec(const SEXP& node_id, const AccessFunctor& af,
-      const ListFunctor& lf) const;
+  SEXP_vec_sp access_tree_node_vec(const SEXP& node_id,
+      const AccessFunctor& af, const SEXPListFunctor& lf) const;
 
-  SEXP_vec_sp access_tree_node_vec(const AccessFunctor& af, const ListFunctor& lf) const;
+  SEXP_vec_sp access_tree_node_vec(const AccessFunctor& af, const
+      SEXPListFunctor& lf) const;
 
 
 public:
@@ -128,6 +129,13 @@ public:
   bool have_siblings(const SEXP& id) const;
   const tree_node_sp get_parent(const SEXP& id) const;
   const tree_node_sp get_parent() const;
+  SEXP update_key(const SEXP& old_key, const SEXP& new_key);
+  SEXP update_key(const uid& uid_, const SEXP& new_key);
+  SEXP update_key(const SEXP& new_key);
+
+  SEXP update_data(const SEXP& key, const SEXP& new_data);
+  SEXP update_data(const uid& uid_, const SEXP& new_data);
+  SEXP update_data(const SEXP& new_data);
 
   const tree_node_sp get_ref() const;
   void change_ref(const uid& new_uid);
@@ -263,9 +271,7 @@ public:
     return const_cast<tree_node_sp_vec*>(&nodes);
   }
 
-  const unsigned int tree_depth() const {
-    return root->tree_depth();
-  }
+  const unsigned int tree_depth() const;
 
   const unsigned int tree_depth_at_ref() const {
     return last_ref_node->tree_depth();

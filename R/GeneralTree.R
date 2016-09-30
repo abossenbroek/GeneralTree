@@ -267,10 +267,23 @@ GeneralTree <- R6Class("GeneralTree",
      cmpMemory(self, private, val)
    ,
    getXptr = function()
-     return(private$.xptr)
+     private$.xptr
    ,
    getRefUID = function()
-     return(private$.ref_uid)
+     private$.ref_uid
+   ,
+   updateKey = function(new_key)
+     updateKey(self, private, new_key = new_key)
+   ,
+   updateKeyByKey = function(key, new_key)
+     updateKey(self, private, key = key, new_key = new_key)
+   ,
+   updateData = function(new_data)
+     updateData(self, private, new_data = new_data)
+   ,
+   updateDataByKey = function(key, new_data)
+     updateData(self, private, key = key, new_data = new_data)
+
 #   ,
    #nextElem = function()
        #self$nextElemWorker()
@@ -672,6 +685,7 @@ isLastSibling <- function (self, private) {
   return(is_last_sibling_at_ref(private$.xptr))
 }
 
+#' @keywords internal
 getRoot <- function (self, private) {
   root_uid <- find_uid(private$.xptr, get_root(private$.xptr)$key)
 
@@ -681,6 +695,7 @@ getRoot <- function (self, private) {
   invisible(result)
 }
 
+#' @keywords internal
 cmp <- function (self, private, val)
 {
   result <- cmp_gti(private$.xptr, val$getXptr())
@@ -689,6 +704,7 @@ cmp <- function (self, private, val)
   return(result)
 }
 
+#' @keywords internal
 cmpMemory <- function (self, private, val)
 {
   result <- cmp(self, private, val)
@@ -696,3 +712,27 @@ cmpMemory <- function (self, private, val)
 
   return(result)
 }
+
+#' @keywords internal
+updateKey <- function (self, private, key, new_key)
+{
+  if (missing(key)) {
+    self$changeRef()
+    return(update_key_at_ref(private$.xptr, new_key))
+  }
+
+  return(update_key(private$.xptr, key, new_key))
+}
+
+#' @keywords internal
+updateData <- function (self, private, key, new_data)
+{
+  if (missing(key)) {
+    self$changeRef()
+    return(update_data_at_ref(private$.xptr, new_data))
+  }
+
+  return(update_data(private$.xptr, key, new_data))
+}
+
+

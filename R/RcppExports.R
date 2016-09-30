@@ -173,3 +173,19 @@ get_ref <- function(gti_sexp) {
     .Call('GeneralTree_get_ref', PACKAGE = 'GeneralTree', gti_sexp)
 }
 
+update_key_at_ref <- function(gti_sexp, new_key) {
+    .Call('GeneralTree_update_key_at_ref', PACKAGE = 'GeneralTree', gti_sexp, new_key)
+}
+
+update_key <- function(gti_sexp, old_key, new_key) {
+    .Call('GeneralTree_update_key', PACKAGE = 'GeneralTree', gti_sexp, old_key, new_key)
+}
+
+update_data_at_ref <- function(gti_sexp, new_data) {
+    .Call('GeneralTree_update_data_at_ref', PACKAGE = 'GeneralTree', gti_sexp, new_data)
+}
+
+update_data <- function(gti_sexp, key, new_data) {
+    .Call('GeneralTree_update_data', PACKAGE = 'GeneralTree', gti_sexp, key, new_data)
+}
+

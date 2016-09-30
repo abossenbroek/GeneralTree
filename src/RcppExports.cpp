@@ -508,3 +508,53 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// update_key_at_ref
+SEXP update_key_at_ref(SEXP gti_sexp, SEXP new_key);
+RcppExport SEXP GeneralTree_update_key_at_ref(SEXP gti_sexpSEXP, SEXP new_keySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type new_key(new_keySEXP);
+    __result = Rcpp::wrap(update_key_at_ref(gti_sexp, new_key));
+    return __result;
+END_RCPP
+}
+// update_key
+SEXP update_key(SEXP gti_sexp, SEXP old_key, SEXP new_key);
+RcppExport SEXP GeneralTree_update_key(SEXP gti_sexpSEXP, SEXP old_keySEXP, SEXP new_keySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type old_key(old_keySEXP);
+    Rcpp::traits::input_parameter< SEXP >::type new_key(new_keySEXP);
+    __result = Rcpp::wrap(update_key(gti_sexp, old_key, new_key));
+    return __result;
+END_RCPP
+}
+// update_data_at_ref
+SEXP update_data_at_ref(SEXP gti_sexp, SEXP new_data);
+RcppExport SEXP GeneralTree_update_data_at_ref(SEXP gti_sexpSEXP, SEXP new_dataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type new_data(new_dataSEXP);
+    __result = Rcpp::wrap(update_data_at_ref(gti_sexp, new_data));
+    return __result;
+END_RCPP
+}
+// update_data
+SEXP update_data(SEXP gti_sexp, SEXP key, SEXP new_data);
+RcppExport SEXP GeneralTree_update_data(SEXP gti_sexpSEXP, SEXP keySEXP, SEXP new_dataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type key(keySEXP);
+    Rcpp::traits::input_parameter< SEXP >::type new_data(new_dataSEXP);
+    __result = Rcpp::wrap(update_data(gti_sexp, key, new_data));
+    return __result;
+END_RCPP
+}

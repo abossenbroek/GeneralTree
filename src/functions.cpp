@@ -423,3 +423,41 @@ get_ref(SEXP gti_sexp)
 
   return wrap(*gti->get_ref());
 }
+
+// [[Rcpp::export]]
+SEXP
+update_key_at_ref(SEXP gti_sexp, SEXP new_key)
+{
+  gti_xptr gti(gti_sexp);
+
+  return wrap(gti->update_key(new_key));
+}
+
+// [[Rcpp::export]]
+SEXP
+update_key(SEXP gti_sexp, SEXP old_key, SEXP new_key)
+{
+  gti_xptr gti(gti_sexp);
+
+  return wrap(gti->update_key(old_key, new_key));
+}
+
+// [[Rcpp::export]]
+SEXP
+update_data_at_ref(SEXP gti_sexp, SEXP new_data)
+{
+  gti_xptr gti(gti_sexp);
+
+  return wrap(gti->update_data(new_data));
+}
+
+// [[Rcpp::export]]
+SEXP
+update_data(SEXP gti_sexp, SEXP key, SEXP new_data)
+{
+  gti_xptr gti(gti_sexp);
+
+  return wrap(gti->update_data(key, new_data));
+}
+
+

@@ -269,7 +269,9 @@ GeneralTreeInternal::internal_storage_update(const uid& current_uid, const SEXP&
 
   shared_ptr<tree_key> new_search_key = tree_key_cast_SEXP(new_key);
 
-  uid_to_key.left.modify_data(it, boost::bimaps::_data = *new_search_key);
+  bool result = uid_to_key.left.modify_data(it, boost::bimaps::_data = *new_search_key);
+  if (!result)
+    throw runtime_error("internal_storage_update: could not update the key.");
 }
 
 void
@@ -364,7 +366,7 @@ GeneralTreeInternal::get_children(const SEXP& parent_id, bool recursive)
 
 template<typename Container_source, typename Container_dest>
 void
-get_info(const Container_source& src, Container_dest& dst, const ListFunctor& lf)
+get_info(const Container_source& src, Container_dest& dst, const SEXPListFunctor& lf)
 {
     transform(begin(*src), end(*src), back_inserter(*dst),
         [&](shared_ptr<const TreeNode> x){ return lf.Process(*x); });
@@ -373,7 +375,7 @@ get_info(const Container_source& src, Container_dest& dst, const ListFunctor& lf
 SEXP_vec_sp
 GeneralTreeInternal::access_tree_node_vec(const SEXP& node_id,
     const AccessFunctor &af,
-    const ListFunctor& lf) const
+    const SEXPListFunctor& lf) const
 {
   tree_node_c_sp node_found = find_node(node_id);
 
@@ -390,7 +392,7 @@ GeneralTreeInternal::access_tree_node_vec(const SEXP& node_id,
 
 SEXP_vec_sp
 GeneralTreeInternal::access_tree_node_vec(const AccessFunctor &af,
-    const ListFunctor& lf) const
+    const SEXPListFunctor& lf) const
 {
   SEXP_vec_sp result(new SEXP_vec());
   /* Get the nodes using the access functor. */
@@ -530,6 +532,8 @@ const uid
 GeneralTreeInternal::delete_node(const SEXP& node_id)
 {
   tree_node_sp node_found = find_node(node_id);
+  if (*node_found == *root)
+    throw invalid_argument("delete_node: Cannot delete root node.");
 
   uid replacement_uid = node_found->get_parent_uid();
 
@@ -556,6 +560,9 @@ GeneralTreeInternal::delete_node(const SEXP& node_id)
 const uid
 GeneralTreeInternal::delete_node()
 {
+  if (*last_ref_node == *root)
+    throw invalid_argument("delete_node: Cannot delete root node.");
+
   /* Get the entire vector of nodes that we need to delete. */
   tree_node_sp_vec_sp to_delete = last_ref_node->get_branch();
 
@@ -629,5 +636,74 @@ GeneralTreeInternal::is_last_sibling(const tree_node_sp& tn) const
     return true;
 
   return  *root->get_siblings()->back() == *tn;
+}
+
+
+SEXP
+GeneralTreeInternal::update_key(const SEXP& old_key, const SEXP& new_key)
+{
+  return update_key(find_uid(old_key), new_key);
+}
+
+SEXP
+GeneralTreeInternal::update_key(const uid& uid_, const SEXP& new_key)
+{
+  tree_node_sp to_change;
+  try {
+    to_change = nodes[uid_];
+  } catch (std::exception &ex) {
+    forward_exception_to_r(ex);
+  } catch (...) {
+    ::Rf_error("c++ exception (unknown reason)");
+  }
+
+  SEXP key_found = to_change->get_key();
+  to_change->set_key(new_key);
+
+  internal_storage_update(uid_, new_key);
+
+  return key_found;
+}
+
+SEXP
+GeneralTreeInternal::update_key(const SEXP& new_key)
+{
+  return update_key(last_ref_node->get_uid(), new_key);
+}
+
+SEXP
+GeneralTreeInternal::update_data(const uid& uid_, const SEXP& new_data)
+{
+  tree_node_sp to_change;
+  try {
+    to_change = nodes[uid_];
+  } catch (std::exception &ex) {
+    forward_exception_to_r(ex);
+  } catch (...) {
+    ::Rf_error("c++ exception (unknown reason)");
+  }
+
+  SEXP old_data = to_change->get_data();
+  to_change->set_data(new_data);
+
+  return old_data;
+}
+
+SEXP
+GeneralTreeInternal::update_data(const SEXP& key, const SEXP& new_data)
+{
+  return update_data(find_uid(key), new_data);
+}
+
+SEXP
+GeneralTreeInternal::update_data(const SEXP& new_key)
+{
+  return update_data(last_ref_node->get_uid(), new_key);
+}
+
+const unsigned int
+GeneralTreeInternal::tree_depth() const
+{
+  return root->tree_depth();
 }
 
