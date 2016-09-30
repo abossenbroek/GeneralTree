@@ -95,7 +95,7 @@ private:
     }
   };
 
-  SEXP_vec_sp access_tree_node_vec(const SEXP& node_id,
+  SEXP_vec_sp access_tree_node_vec(const SEXP& node_key,
       const AccessFunctor& af, const SEXPListFunctor& lf) const;
 
   SEXP_vec_sp access_tree_node_vec(const AccessFunctor& af, const
@@ -103,7 +103,7 @@ private:
 
 
 public:
-  GeneralTreeInternal(const SEXP& root_id, const SEXP& root_data);
+  GeneralTreeInternal(const SEXP& root_key, const SEXP& root_data);
   GeneralTreeInternal(GeneralTreeInternal& to_clone, const uid& new_root_uid);
 
   GeneralTreeInternal();
@@ -118,16 +118,16 @@ public:
   uid add_child(const SEXP& child_key, const SEXP& child_data);
   uid add_sibling(const SEXP& sibling_key, const SEXP& sibling_data);
 
-  uid find_uid(const SEXP& id) const;
-  tree_node_sp find_node(const SEXP& id) const;
+  uid find_uid(const SEXP& key) const;
+  tree_node_sp find_node(const SEXP& key) const;
   tree_node_sp find_node(const uid& uid_) const;
   //TODO: change name of method.
   uid get_uid() const;
-  SEXP get_data(const SEXP& id) const;
+  SEXP get_data(const SEXP& key) const;
   const SEXP get_data() const;
-  bool has_child(const SEXP& id) const;
-  bool have_siblings(const SEXP& id) const;
-  const tree_node_sp get_parent(const SEXP& id) const;
+  bool has_child(const SEXP& key) const;
+  bool have_siblings(const SEXP& key) const;
+  const tree_node_sp get_parent(const SEXP& key) const;
   const tree_node_sp get_parent() const;
   SEXP update_key(const SEXP& old_key, const SEXP& new_key);
   SEXP update_key(const uid& uid_, const SEXP& new_key);
@@ -140,37 +140,37 @@ public:
   const tree_node_sp get_ref() const;
   void change_ref(const uid& new_uid);
 
-  std::shared_ptr<tree_node_sp_vec> get_children(const SEXP& parent_id, bool recursive = false);
-  tree_node_c_sp_vec_sp get_children(const SEXP& parent_id, bool recursive = false) const;
+  std::shared_ptr<tree_node_sp_vec> get_children(const SEXP& parent_key, bool recursive = false);
+  tree_node_c_sp_vec_sp get_children(const SEXP& parent_key, bool recursive = false) const;
 
-  std::shared_ptr<tree_node_sp_vec> get_siblings(const SEXP& node_id);
-  tree_node_c_sp_vec_sp get_siblings(const SEXP& node_id) const;
+  std::shared_ptr<tree_node_sp_vec> get_siblings(const SEXP& node_key);
+  tree_node_c_sp_vec_sp get_siblings(const SEXP& node_key) const;
 
-  std::shared_ptr<tree_node_sp_vec> get_branch(const SEXP& node_id);
-  tree_node_c_sp_vec_sp get_branch(const SEXP& node_id) const;
+  std::shared_ptr<tree_node_sp_vec> get_branch(const SEXP& node_key);
+  tree_node_c_sp_vec_sp get_branch(const SEXP& node_key) const;
 
-  std::shared_ptr<tree_node_sp_vec> get_leafs(const SEXP& node_id);
-  tree_node_c_sp_vec_sp get_leafs(const SEXP& node_id) const;
+  std::shared_ptr<tree_node_sp_vec> get_leafs(const SEXP& node_key);
+  tree_node_c_sp_vec_sp get_leafs(const SEXP& node_key) const;
 
   void clean_internal_storage();
 
-  SEXP_vec_sp get_children_keys(const SEXP& parent_id, bool recursive = false)
+  SEXP_vec_sp get_children_keys(const SEXP& parent_key, bool recursive = false)
     const;
-  SEXP_vec_sp get_children_data(const SEXP& parent_id, bool recursive = false)
+  SEXP_vec_sp get_children_data(const SEXP& parent_key, bool recursive = false)
     const;
   SEXP_vec_sp get_children_keys(bool recursive = false) const;
   SEXP_vec_sp get_children_data(bool recursive = false) const;
-  SEXP_vec_sp get_siblings_keys(const SEXP& node_id) const;
-  SEXP_vec_sp get_siblings_data(const SEXP& node_id) const;
+  SEXP_vec_sp get_siblings_keys(const SEXP& node_key) const;
+  SEXP_vec_sp get_siblings_data(const SEXP& node_key) const;
   SEXP_vec_sp get_siblings_keys() const;
   SEXP_vec_sp get_siblings_data() const;
-  SEXP_vec_sp get_branch_keys(const SEXP& node_id) const;
-  SEXP_vec_sp get_branch_data(const SEXP& node_id) const;
+  SEXP_vec_sp get_branch_keys(const SEXP& node_key) const;
+  SEXP_vec_sp get_branch_data(const SEXP& node_key) const;
   SEXP_vec_sp get_branch_uids() const;
   SEXP_vec_sp get_branch_keys() const;
   SEXP_vec_sp get_branch_data() const;
-  SEXP_vec_sp get_leafs_keys(const SEXP& node_id) const;
-  SEXP_vec_sp get_leafs_data(const SEXP& node_id) const;
+  SEXP_vec_sp get_leafs_keys(const SEXP& node_key) const;
+  SEXP_vec_sp get_leafs_data(const SEXP& node_key) const;
   SEXP_vec_sp get_leafs_keys() const;
   SEXP_vec_sp get_leafs_data() const;
 
@@ -181,7 +181,7 @@ public:
 
   operator SEXP() const;
 
-  const uid delete_node(const SEXP& node_id);
+  const uid delete_node(const SEXP& node_key);
   const uid delete_node();
 
   tree_node_sp get_root() const {
@@ -202,7 +202,7 @@ public:
     return last_ref_node->tree_depth();
   }
 
-  const bool is_last_sibling(const SEXP& id) const;
+  const bool is_last_sibling(const SEXP& key) const;
   const bool is_last_sibling() const;
   const bool is_last_sibling(const tree_node_sp& tn) const;
 
