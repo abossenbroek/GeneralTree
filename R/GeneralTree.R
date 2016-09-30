@@ -443,31 +443,25 @@ getSiblingId <- function (self, private) {
 
 #'
 #' @keywords internal
-getSiblingsKey <- function (self, private) {
-  self$changeRef()
-  return(get_siblings_keys_at_ref(private$.xptr))
-}
+getSiblingsKeys <- function (self, private, key) {
+  if (missing(key)) {
+    self$changeRef()
+    return(get_siblings_keys_at_ref(private$.xptr))
+  }
 
-#'
-#' @keywords internal
-getSiblingsData <- function (self, private) {
-  self$changeRef()
-  return(get_siblings_data_at_ref(private$.xptr))
-}
-
-#'
-#' @keywords internal
-getSiblingsKey <- function (self, private, key) {
-  self$changeRef()
   return(get_siblings_keys(private$.xptr, key))
 }
 
 #'
 #' @keywords internal
 getSiblingsData <- function (self, private, key) {
-  self$changeRef()
+  if (missing(key)) {
+    self$changeRef()
+    return(get_siblings_data_at_ref(private$.xptr))
+  }
   return(get_siblings_data(private$.xptr, key))
 }
+
 #'
 #' @keywords internal
 setKey <- function (self, private, new_key) {
