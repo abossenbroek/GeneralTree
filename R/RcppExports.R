@@ -17,6 +17,10 @@ cmp_gti <- function(gti_lhs, gti_rhs) {
     .Call('GeneralTree_cmp_gti', PACKAGE = 'GeneralTree', gti_lhs, gti_rhs)
 }
 
+cmp_gti_mem <- function(gti_lhs, gti_rhs) {
+    .Call('GeneralTree_cmp_gti_mem', PACKAGE = 'GeneralTree', gti_lhs, gti_rhs)
+}
+
 add_node <- function(gti_sexp, parent_id, id, data) {
     .Call('GeneralTree_add_node', PACKAGE = 'GeneralTree', gti_sexp, parent_id, id, data)
 }
@@ -53,8 +57,8 @@ set_data <- function(gti_sexp, new_data) {
     .Call('GeneralTree_set_data', PACKAGE = 'GeneralTree', gti_sexp, new_data)
 }
 
-copy <- function(gti_sexp) {
-    .Call('GeneralTree_copy', PACKAGE = 'GeneralTree', gti_sexp)
+copy <- function(gti_sexp, new_uid) {
+    .Call('GeneralTree_copy', PACKAGE = 'GeneralTree', gti_sexp, new_uid)
 }
 
 serialize <- function(gti_sexp) {

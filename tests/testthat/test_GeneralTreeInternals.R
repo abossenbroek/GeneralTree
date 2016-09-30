@@ -96,7 +96,7 @@ test_that("Tree is correctly copied", {
     init <- GeneralTree:::add_node(init, "a", "b", node_values[[3]])
     init <- GeneralTree:::add_node(init, "a", 1.1, node_values[[4]])
 
-    init_copy <- GeneralTree:::copy(init);
+    init_copy <- GeneralTree:::copy(init, GeneralTree:::find_uid(init, "a"))
 
     expect_true(GeneralTree:::cmp_gti(init, init_copy))
 })

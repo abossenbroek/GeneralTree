@@ -1013,7 +1013,7 @@ context("Comparison works") {
     gti.add_node(values[6], values[9], values[9]);
     gti.add_node(values[2], values[4], values[4]);
 
-    GeneralTreeInternal gti_copy(gti);
+    GeneralTreeInternal gti_copy(gti, gti.find_uid(values[0]));
 
     test_that("Comparison returns true on copies") {
       expect_true(gti == gti_copy);

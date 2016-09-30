@@ -40,13 +40,23 @@ pass_gti_xptr(SEXP gti)
 }
 
 // [[Rcpp::export]]
-LogicalVector
+bool
 cmp_gti(SEXP gti_lhs, SEXP gti_rhs)
 {
   gti_xptr lhs(gti_lhs);
   gti_xptr rhs(gti_rhs);
 
   return *lhs == *rhs;
+}
+
+// [[Rcpp::export]]
+bool
+cmp_gti_mem(SEXP gti_lhs, SEXP gti_rhs)
+{
+  gti_xptr lhs(gti_lhs);
+  gti_xptr rhs(gti_rhs);
+
+  return &(*lhs) == &(*rhs);
 }
 
 // [[Rcpp::export]]
@@ -137,10 +147,10 @@ set_data(SEXP gti_sexp, SEXP new_data)
 
 // [[Rcpp::export]]
 SEXP
-copy(SEXP gti_sexp)
+copy(SEXP gti_sexp, int new_uid)
 {
   gti_xptr gti(gti_sexp);
-  GeneralTreeInternal* new_tree = new GeneralTreeInternal(*(gti.get()));
+  GeneralTreeInternal* new_tree = new GeneralTreeInternal(*(gti.get()), (uid)new_uid);
   gti_xptr p(new_tree, true);
 
   return p;

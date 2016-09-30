@@ -5,11 +5,15 @@
 #include <memory>
 #include <algorithm>
 #include <string>
+#include <limits>
+#include <map>
 
 #if defined(__clang__)
 # pragma clang diagnostic push
 # pragma clang diagnostic ignored "-Wredeclared-class-member"
 #endif
+
+#include <boost/variant.hpp>
 
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
@@ -24,6 +28,7 @@
 
 using namespace Rcpp;
 using namespace std;
+using namespace boost::bimaps;
 
 GeneralTreeInternal::GeneralTreeInternal(const SEXP& root_id,
     const SEXP& root_data)
@@ -33,28 +38,80 @@ GeneralTreeInternal::GeneralTreeInternal(const SEXP& root_id,
 
   internal_storage_insert(root_node);
   root = root_node;
+  last_ref_node = root_node;
 }
 
-GeneralTreeInternal::GeneralTreeInternal(const GeneralTreeInternal& to_clone)
+GeneralTreeInternal::GeneralTreeInternal(GeneralTreeInternal& to_clone, const uid& new_root_uid)
 {
-  /* First copy the root. */
-  shared_ptr<TreeNode> root_node = make_shared<TreeNode>(to_clone.get_root()->get_key(),
-      to_clone.get_root()->get_data());
+  tree_node_sp new_root;
 
+  try {
+    new_root = to_clone.get_nodes()->at(new_root_uid);
+  } catch (std::invalid_argument &ex) {
+    throw std::invalid_argument("GeneralTreeInternal: Could not find new_root_uid in tree.");
+  } catch (std::exception &ex) {
+    forward_exception_to_r(ex);
+  } catch (...) {
+    ::Rf_error("c++ exception (unknown reason)");
+  }
+
+  /* First copy the root. */
+  shared_ptr<TreeNode> root_node = make_shared<TreeNode>(*new_root);
+
+  /*  Assign the root of this object to newly created root. */
   root = root_node;
 
-  /* Get complete list of children. */
-  tree_node_c_sp_vec_sp tree = const_pointer_cast<const TreeNode>(to_clone.get_root())->get_children(true);
-
+  /* Add the root to the internal storage. */
   internal_storage_insert(root_node);
 
+  /* We may need to copy only a subset of the tree. The complexity that arises
+   * when doing this is that the original object will contain parent uids that
+   * will not exist in the copy. */
+
+  /*  Store the current ref of the object. */
+  uid old_ref = to_clone.get_ref()->get_uid();
+
+  /*  Change the ref to the uid of the new root. */
+  to_clone.change_ref(new_root_uid);
+
+  /* Get complete list of children. */
+  tree_node_c_sp_vec_sp tree = const_pointer_cast<const TreeNode>(new_root)->get_children(true);
+
+  /* Retrieve the nodes that are in the branch. */
+  SEXP_vec_sp branch_uids = to_clone.get_branch_uids();
+
+  /* Convert it to uid vector. */
+  map<uid, uid> uid_mapping;
+  uid uid_offset = numeric_limits<uid>::max();
+
+  /* Convert the SEXP to an uid and determine the value of the lowest uid since
+   * that will be the offset of the new root and finally add the uid to the
+   * mapping table. */
+  for (int i = 0; i < branch_uids->size(); ++i) {
+    SEXP old_uid = branch_uids->at(i);
+    uid retrieved_uid = Rcpp::as<int >(old_uid);
+    uid_offset = min(retrieved_uid, uid_offset);
+    uid_mapping.insert(pair<uid, uid>(retrieved_uid, retrieved_uid));
+  }
+
+  /* Adjust the mapping table with the offset.  */
+  for (auto &it : uid_mapping)
+    it.second -= uid_offset;
+
+  /* Add each node with new new uid. */
   for (auto it = tree->begin(); it != tree->end(); ++it) {
     if (*it == root)
       continue;
 
-    add_node((*it)->get_parent()->get_uid(), (*it)->get_key(), (*it)->get_data());
+    /* Experimental, use a mapping table to determine the parent of each node
+     * in the new tree.
+     * TODO: test whether this works in all scenarios! */
+    add_node(uid_mapping[(*it)->get_parent()->get_uid()],
+        (*it)->get_key(), (*it)->get_data());
   }
 
+  /* Set the reference back to its original value. */
+  to_clone.change_ref(old_ref);
 }
 
 GeneralTreeInternal::GeneralTreeInternal()
@@ -124,6 +181,8 @@ GeneralTreeInternal::add_child(const SEXP& child_key, const SEXP& child_data)
   /* Add child to last added node. */
   last_ref_node->add_child(child);
 
+  last_ref_node = child;
+
   /* Add child to internal storage. */
   return internal_storage_insert(child);
 }
@@ -139,6 +198,7 @@ GeneralTreeInternal::add_sibling(const SEXP& sibling_key, const SEXP& sibling_da
   /* Add sibling to last added node. */
   last_ref_node->get_parent()->get_left_child()->add_sibling(sibling);
 
+  last_ref_node = sibling;
   /* Add sibling to internal storage. */
   return internal_storage_insert(sibling);
 }
@@ -196,8 +256,6 @@ GeneralTreeInternal::internal_storage_insert(tree_node_sp& new_node)
   /* Store in a bimap to allow big-oh log(n) search. */
   uid_to_key.insert(uid_id_pair(new_uid, *search_key));
 
-  last_ref_node = new_node;
-
   return new_uid;
 }
 
@@ -217,7 +275,17 @@ GeneralTreeInternal::internal_storage_update(const uid& current_uid, const SEXP&
 void
 GeneralTreeInternal::internal_storage_delete(const uid& to_delete)
 {
-  uid_to_key.left.erase(to_delete);
+  nodes.erase(nodes.begin() + to_delete);
+  uid_to_key.clear();
+
+  /* Since the nodes are stored in a vector we need to iterate through the
+   * vector to update the uids of each individual node. Additionally we need to
+   * update the bimap. */
+  for (int i = (nodes.size() - 1); i >= 0; --i) {
+    uid old_uid = nodes[i]->get_uid();
+    nodes[i]->set_uid(i);
+    uid_to_key.insert(uid_id_pair(i, *tree_key_cast_SEXP(nodes[i]->get_key())));
+  }
 }
 
 uid
@@ -276,6 +344,9 @@ GeneralTreeInternal::get_parent() const
 const tree_node_sp
 GeneralTreeInternal::get_ref() const
 {
+  if (last_ref_node.get() == nullptr)
+    throw std::runtime_error("get_ref: last_ref_node points to nullptr.");
+
   return last_ref_node;
 }
 
@@ -556,3 +627,4 @@ GeneralTreeInternal::is_last_sibling(const tree_node_sp& tn) const
 
   return  *root->get_siblings()->back() == *tn;
 }
+

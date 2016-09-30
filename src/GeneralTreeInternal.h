@@ -44,6 +44,12 @@ struct GetKeyFunctor : public ListFunctor {
   }
 };
 
+struct GetUIDFunctor : public ListFunctor {
+  SEXP Process(const TreeNode& tn) const {
+    return wrap(tn.get_uid());
+  }
+};
+
 class GeneralTreeInternal {
 private:
   uid_id_bimap uid_to_key;
@@ -97,7 +103,7 @@ private:
 
 public:
   GeneralTreeInternal(const SEXP& root_id, const SEXP& root_data);
-  GeneralTreeInternal(const GeneralTreeInternal& to_clone);
+  GeneralTreeInternal(GeneralTreeInternal& to_clone, const uid& new_root_uid);
 
   GeneralTreeInternal();
 
@@ -137,6 +143,8 @@ public:
 
   std::shared_ptr<tree_node_sp_vec> get_leafs(const SEXP& node_id);
   tree_node_c_sp_vec_sp get_leafs(const SEXP& node_id) const;
+
+  void clean_internal_storage();
 
   SEXP_vec_sp get_children_keys(const SEXP& parent_id, bool recursive = false) const
   {
@@ -194,6 +202,11 @@ public:
   {
     return access_tree_node_vec(node_id, AccessBranchFunctor(),
         GetDataFunctor());
+  }
+
+  SEXP_vec_sp get_branch_uids() const
+  {
+    return access_tree_node_vec(AccessBranchFunctor(), GetUIDFunctor());
   }
 
   SEXP_vec_sp get_branch_keys() const

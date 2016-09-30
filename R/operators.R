@@ -14,31 +14,6 @@
 # limitations under the License.
 #
 
-#' Deep clone a General tree
-#' @param x The object that should be converted.
-#' @param ... passed to underlying functions.
-#' @export
-deep_clone <- function(x) UseMethod("deep_clone")
-
-
-#' Deep clone a General Tree.
-#'
-#' @param x     The general tree that should be deep cloned.
-#' @return a clone of the tree.
-#' @export
-deep_clone.GeneralTree <- function(x) {
-    # Create a list of all the childeren.
-    childeren <- x$getChildNodes(recursive = TRUE)
-
-    new_tree <- GeneralTree$new(id = x$id, data = x$data)
-
-    sapply(childeren, function(x) {
-               new_tree$addNode(parent = x$parent$id, id = x$id, data = x$data)
-                })
-
-    return(new_tree)
-}
-
 #' Deep clone a General Tree.
 #'
 #' @param x The target to where the tree should be copied.
@@ -48,7 +23,7 @@ deep_clone.GeneralTree <- function(x) {
 #' @export
 #' @rdname assign
 "<-.GeneralTree" <- function(x, value) {
-    x <- deep_clone.GeneralTree(value)
+    x <- value$clone(deep = TRUE)
     return(x)
 }
 
@@ -61,7 +36,7 @@ deep_clone.GeneralTree <- function(x) {
 #' @export
 #' @rdname set
 "=.GeneralTree" <- function(x, value) {
-    x <- deep_clone.GeneralTree(value)
+    x <- value$clone(deep = TRUE)
     return(x)
 }
 

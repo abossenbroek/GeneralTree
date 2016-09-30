@@ -132,8 +132,16 @@ GeneralTree <- R6Class("GeneralTree",
   lock_objects = FALSE,
   private = list(
     .xptr = NULL,
-    .ref_uid = NULL
-    ),
+    .ref_uid = NULL,
+    deep_clone = function(name, value) {
+      if (name == ".xptr")
+        return(copy(value, private$.ref_uid))
+      if (name == ".ref_uid")
+        return(0)
+       else
+        return(value)
+    }
+  ),
   public = list(
    initialize = function(id, data)
      initialize(self, private, id, data)
@@ -252,6 +260,9 @@ GeneralTree <- R6Class("GeneralTree",
    cmp = function(val)
      cmp(self, private, val)
    ,
+   cmpMemory = function(val)
+     cmpMemory(self, private, val)
+   ,
    getXptr = function()
      return(private$.xptr)
    ,
@@ -318,6 +329,9 @@ GeneralTree <- R6Class("GeneralTree",
     data = function() {
       self$changeRef()
       return(get_ref(private$.xptr)$data)
+    },
+    xptr = function() {
+      return(private$.xptr)
     }
   )
 )
@@ -332,7 +346,7 @@ GeneralTree <- R6Class("GeneralTree",
 #' @keywords internal
 initialize <- function(self, private, id, data) {
   private$.xptr <- initialize_tree(id, data)
-  private$.ref_uid <- find_uid(private$.xptr, id)
+  self$setRefUID(find_uid(private$.xptr, id))
 
   invisible(self)
 }
@@ -672,8 +686,16 @@ getRoot <- function (self, private) {
 
 cmp <- function (self, private, val)
 {
-  result = cmp_gti(private$.xptr, val$getXptr())
-  result = result && private$.ref_uid == val$getRefUID()
+  result <- cmp_gti(private$.xptr, val$getXptr())
+  result <- result && private$.ref_uid == val$getRefUID()
+
+  return(result)
+}
+
+cmpMemory <- function (self, private, val)
+{
+  result <- cmp(self, private, val)
+  result <- result && cmp_gti_mem(private$.xptr, val$xptr)
 
   return(result)
 }

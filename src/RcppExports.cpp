@@ -40,7 +40,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // cmp_gti
-LogicalVector cmp_gti(SEXP gti_lhs, SEXP gti_rhs);
+bool cmp_gti(SEXP gti_lhs, SEXP gti_rhs);
 RcppExport SEXP GeneralTree_cmp_gti(SEXP gti_lhsSEXP, SEXP gti_rhsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
@@ -48,6 +48,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type gti_lhs(gti_lhsSEXP);
     Rcpp::traits::input_parameter< SEXP >::type gti_rhs(gti_rhsSEXP);
     __result = Rcpp::wrap(cmp_gti(gti_lhs, gti_rhs));
+    return __result;
+END_RCPP
+}
+// cmp_gti_mem
+bool cmp_gti_mem(SEXP gti_lhs, SEXP gti_rhs);
+RcppExport SEXP GeneralTree_cmp_gti_mem(SEXP gti_lhsSEXP, SEXP gti_rhsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_lhs(gti_lhsSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type gti_rhs(gti_rhsSEXP);
+    __result = Rcpp::wrap(cmp_gti_mem(gti_lhs, gti_rhs));
     return __result;
 END_RCPP
 }
@@ -162,13 +174,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // copy
-SEXP copy(SEXP gti_sexp);
-RcppExport SEXP GeneralTree_copy(SEXP gti_sexpSEXP) {
+SEXP copy(SEXP gti_sexp, int new_uid);
+RcppExport SEXP GeneralTree_copy(SEXP gti_sexpSEXP, SEXP new_uidSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
-    __result = Rcpp::wrap(copy(gti_sexp));
+    Rcpp::traits::input_parameter< int >::type new_uid(new_uidSEXP);
+    __result = Rcpp::wrap(copy(gti_sexp, new_uid));
     return __result;
 END_RCPP
 }
