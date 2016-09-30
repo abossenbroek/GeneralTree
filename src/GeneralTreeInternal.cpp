@@ -276,12 +276,15 @@ void
 GeneralTreeInternal::internal_storage_delete(const uid& to_delete)
 {
   nodes.erase(nodes.begin() + to_delete);
-  uid_to_key.clear();
+  /* At this time we are required to remove the entries from the bimap because
+   * the bimap modify methods do not guarantee an update. */
+  uid_id_bimap::left_iterator it = uid_to_key.left.find(to_delete);
+  uid_to_key.left.erase(it, uid_to_key.left.end());
 
   /* Since the nodes are stored in a vector we need to iterate through the
    * vector to update the uids of each individual node. Additionally we need to
    * update the bimap. */
-  for (int i = (nodes.size() - 1); i >= 0; --i) {
+  for (int i = (nodes.size() - 1); i >= to_delete; --i) {
     uid old_uid = nodes[i]->get_uid();
     nodes[i]->set_uid(i);
     uid_to_key.insert(uid_id_pair(i, *tree_key_cast_SEXP(nodes[i]->get_key())));
