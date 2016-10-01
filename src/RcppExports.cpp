@@ -558,3 +558,15 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// apply_on_branch
+std::vector<SEXP> apply_on_branch(SEXP gti_sexp, Function& f);
+RcppExport SEXP GeneralTree_apply_on_branch(SEXP gti_sexpSEXP, SEXP fSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< Function& >::type f(fSEXP);
+    __result = Rcpp::wrap(apply_on_branch(gti_sexp, f));
+    return __result;
+END_RCPP
+}

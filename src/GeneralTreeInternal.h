@@ -50,6 +50,18 @@ struct GetUIDFunctor : public SEXPListFunctor {
   }
 };
 
+class ApplyFunctor : public SEXPListFunctor {
+private:
+  Function f;
+
+public:
+  ApplyFunctor(const Function& f_) : f(f_) {}
+
+  SEXP Process(const TreeNode& tn) const {
+    return wrap(f(as<TreeNode>(tn)));
+  }
+};
+
 class GeneralTreeInternal {
 private:
   uid_id_bimap uid_to_key;
@@ -173,6 +185,8 @@ public:
   SEXP_vec_sp get_leafs_data(const SEXP& node_key) const;
   SEXP_vec_sp get_leafs_keys() const;
   SEXP_vec_sp get_leafs_data() const;
+
+  SEXP_vec_sp apply_branch(const Function& f) const;
 
   void set_key(const SEXP& new_key);
   void set_data(const SEXP& new_data);

@@ -460,4 +460,12 @@ update_data(SEXP gti_sexp, SEXP key, SEXP new_data)
   return wrap(gti->update_data(key, new_data));
 }
 
+// [[Rcpp::export]]
+std::vector<SEXP>
+apply_on_branch(SEXP gti_sexp, Function& f)
+{
+  gti_xptr gti(gti_sexp);
+  SEXP_vec_sp c_res = gti->apply_branch(f);
 
+  return *c_res;
+}

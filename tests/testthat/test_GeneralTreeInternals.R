@@ -126,3 +126,18 @@ test_that("Relative insertion works as expected", {
     expect_equal(unlist(GeneralTree:::get_branch_keys(init, letters[1])), letters[1 : 6])
 })
 
+test_that("Branch apply works", {
+    init <- GeneralTree:::initialize_tree(letters[1], letters[1])
+    init <- GeneralTree:::add_child(init, letters[2], letters[2])
+    init <- GeneralTree:::add_sibling(init, letters[3], letters[3])
+    init <- GeneralTree:::add_child(init, letters[4], letters[4])
+    init <- GeneralTree:::add_sibling(init, letters[5], letters[5])
+    init <- GeneralTree:::travel_up(init)
+    init <- GeneralTree:::add_sibling(init, letters[6], letters[6])
+    init <- GeneralTree:::travel_up(init)
+
+    res <- GeneralTree:::apply_on_branch(init, function(a){ a$key })
+
+    expect_equal(unlist(res), letters[1 : 6])
+})
+

@@ -189,3 +189,7 @@ update_data <- function(gti_sexp, key, new_data) {
     .Call('GeneralTree_update_data', PACKAGE = 'GeneralTree', gti_sexp, key, new_data)
 }
 
+apply_on_branch <- function(gti_sexp, f) {
+    .Call('GeneralTree_apply_on_branch', PACKAGE = 'GeneralTree', gti_sexp, f)
+}
+
