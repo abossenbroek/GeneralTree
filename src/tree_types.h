@@ -1,8 +1,13 @@
 // [[Rcpp::depends(BH)]]
 // [[Rcpp::plugins(cpp11)]]
 
-#ifndef _TREE_TYPES_H
-#define _TREE_TYPES_H
+#ifndef _TREE_TYPES_H_
+#define _TREE_TYPES_H_
+#pragma once
+
+#include <memory>
+#include <string>
+#include <vector>
 
 #include <RcppCommon.h>
 #include <boost/variant.hpp>
@@ -28,8 +33,6 @@
 
 namespace bb = boost::bimaps;
 
-#include <memory>
-
 //typedef std::string tree_key;
 typedef int uid;
 typedef boost::variant<double, int, std::string> tree_key;
@@ -45,4 +48,6 @@ typedef std::vector<uid> uid_vec;
 typedef std::shared_ptr<SEXP_vec> SEXP_vec_sp;
 typedef std::shared_ptr<tree_key> tree_key_sp;
 
-#endif // _TREE_TYPES_H
+typedef std::shared_ptr<std::vector<const std::string> > string_c_vec_sp;
+
+#endif /* _TREE_TYPES_H_ */

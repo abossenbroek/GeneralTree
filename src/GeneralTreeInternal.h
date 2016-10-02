@@ -30,27 +30,27 @@
 
 #include "TreeNode.h"
 
-template<typename Container_source, typename Container_dest>
+template<typename T, typename Container_source, typename Container_dest>
 void
-get_info(const Container_source& src, Container_dest& dst, const SEXPListFunctor& lf)
+get_info(const Container_source& src, Container_dest& dst, const ListFunctor<T>& lf)
 {
   transform(begin(*src), end(*src), back_inserter(*dst),
       [&](std::shared_ptr<const TreeNode> x){ return lf.Process(*x); });
 }
 
 
-template<typename Container>
-std::shared_ptr<std::vector<Container> >
+template<typename T>
+std::shared_ptr<std::vector<T> >
 access_tree_node_vec(const tree_node_c_sp& start_node,
-    const AccessFunctor& af, const SEXPListFunctor& lf)
+    const AccessFunctor& af, const ListFunctor<T>& lf)
 {
-  std::shared_ptr<std::vector<Container> > result(new std::vector<Container>());
+  std::shared_ptr<std::vector<T> > result(new std::vector<T>());
   /* Get the nodes using the access functor. */
   tree_node_c_sp_vec_sp tn_vec = af.tree_accessor(*start_node);
 
   result->reserve(tn_vec->size());
 
-  get_info(tn_vec, result, lf);
+  get_info<SEXP>(tn_vec, result, lf);
 
   return result;
 }

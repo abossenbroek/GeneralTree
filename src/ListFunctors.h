@@ -2,36 +2,39 @@
 #define _LISTFUNCTORS_H_
 #pragma once
 
+#include <string>
+
 #include <RcppCommon.h>
 
 using namespace Rcpp;
 
 #include "TreeNode.h"
-struct SEXPListFunctor {
-  virtual SEXP Process(const TreeNode& tn) const = 0;
+
+template<typename T>
+struct ListFunctor {
+  virtual T Process(const TreeNode& tn) const = 0;
 };
 
-struct GetDataFunctor : public SEXPListFunctor {
+struct SEXPGetDataFunctor : public ListFunctor<SEXP> {
   SEXP Process(const TreeNode& tn) const;
 };
 
-struct GetKeyFunctor : public SEXPListFunctor {
+struct SEXPGetKeyFunctor : public ListFunctor<SEXP> {
   SEXP Process(const TreeNode& tn) const;
 };
 
-struct GetUIDFunctor : public SEXPListFunctor {
+struct SEXPGetUIDFunctor : public ListFunctor<SEXP> {
   SEXP Process(const TreeNode& tn) const;
 };
 
-class ApplyFunctor : public SEXPListFunctor {
+class SEXPApplyFunctor : public ListFunctor<SEXP> {
 private:
   Function f;
 
 public:
-  ApplyFunctor(const Function& f_) : f(f_) {}
+  SEXPApplyFunctor(const Function& f_) : f(f_) {}
 
   SEXP Process(const TreeNode& tn) const;
 };
-
 
 #endif /* _LISTFUNCTOR_H_ */
