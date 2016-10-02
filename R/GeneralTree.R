@@ -152,15 +152,9 @@ GeneralTree <- R6Class("GeneralTree",
    addChild = function(id, data)
        addChild(self, private, id, data)
    ,
-#   addChildNode = function(node)
-#     addChildNode(self, private, node)
-#   ,
    addSibling = function(id, data)
      addSibling(self, private, id, data)
    ,
-#   addSiblingNode = function(node)
-#     addSiblingNode(self, private, node)
-#   ,
    travelUp = function(id, data)
      travelUp(self, private)
    ,
@@ -170,24 +164,12 @@ GeneralTree <- R6Class("GeneralTree",
    searchNode = function(key)
      searchNode(self, private, key)
    ,
-#   searchBranch = function(id)
-#     searchBranch(self, id)
-#   ,
-#   setRoot = function(node)
-#    setRoot(self, private, node)
-#  ,
    setKey = function(key)
      setKey(self, private, key)
    ,
    setData = function(data)
      setData(self, private, data)
    ,
-#   setParent = function(node)
-#     setParent(self, private, node)
-#   ,
-#   setSiblings = function(siblings)
-#     setSiblings(self, private, siblings)
-#   ,
    getSiblingData = function()
      getSiblingData(self, private)
    ,
@@ -283,34 +265,12 @@ GeneralTree <- R6Class("GeneralTree",
    ,
    updateDataByKey = function(key, new_data)
      updateData(self, private, key = key, new_data = new_data)
-
-#   ,
-   #nextElem = function()
-       #self$nextElemWorker()
-   #,
-   #nextElemWorker = function(set_discover = TRUE, include_root = TRUE)
-     #nextElemWorkerImpl(self, private, set_discover, include_root)
-   #,
-   #iterator = function()
-     #iteratorImpl(self, private)
-   #,
-   #resetDiscovered = function()
-     #resetDiscovered(self, private)
-   #,
-   #resetDiscoveredOnBranch = function()
-     #resetDiscoveredOnBranch(self, private)
-   #,
-   #setDiscovered = function(is_discovered)
-    #setDiscovered(self, private, is_discovered)
-   #,
-   #setRootDiscovered = function(is_root_discovered)
-    #setRootDiscovered(self, private, is_root_discovered)
-   #,
-   #nodeInfoToString = function(what = c("id", "data"))
-     #nodeInfoToString(self, what)
-   #,
-   #toString = function(what = c("id", "data"), string_prepend = "")
-#     toString(self, what, string_prepend)
+   ,
+   applyOnBranch = function(f)
+     applyOnBranch(self, private, f = f)
+   ,
+   applyOnBranchByKey = function(key, f)
+     applyOnBranch(self, private, key = key, f = f)
   ),
   active = list(
     depth = function()
@@ -735,4 +695,13 @@ updateData <- function (self, private, key, new_data)
   return(update_data(private$.xptr, key, new_data))
 }
 
+#' @keywords internal
+applyOnBranch <- function (self, private, key, f)
+{
+  if (missing(key)) {
+    self$changeRef()
+    return(apply_on_branch(private$.xptr, f))
+  }
 
+  return(apply_on_branch_at_ref(private$.xptr, key, f))
+}
