@@ -1113,6 +1113,10 @@ context("add_child, add_sibling and travel_up work") {
     gti_copy.add_sibling(values[4], values[4]);
 
     expect_true(gti == gti_copy);
+    gti_copy.add_sibling(values[10], values[10]);
+
+    expect_true(gti != gti_copy);
+
   }
 }
 
