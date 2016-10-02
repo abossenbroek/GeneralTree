@@ -193,3 +193,7 @@ apply_on_branch <- function(gti_sexp, f) {
     .Call('GeneralTree_apply_on_branch', PACKAGE = 'GeneralTree', gti_sexp, f)
 }
 
+apply_on_branch_at_ref <- function(gti_sexp, key, f) {
+    .Call('GeneralTree_apply_on_branch_at_ref', PACKAGE = 'GeneralTree', gti_sexp, key, f)
+}
+

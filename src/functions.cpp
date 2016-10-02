@@ -469,3 +469,13 @@ apply_on_branch(SEXP gti_sexp, Function& f)
 
   return *c_res;
 }
+
+// [[Rcpp::export]]
+std::vector<SEXP>
+apply_on_branch_at_ref(SEXP& gti_sexp, SEXP& key, Function& f)
+{
+  gti_xptr gti(gti_sexp);
+  SEXP_vec_sp c_res = gti->apply_branch(key, f);
+
+  return *c_res;
+}

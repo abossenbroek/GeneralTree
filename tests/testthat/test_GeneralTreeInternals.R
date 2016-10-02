@@ -137,7 +137,12 @@ test_that("Branch apply works", {
     init <- GeneralTree:::travel_up(init)
 
     res <- GeneralTree:::apply_on_branch(init, function(a){ a$key })
+    res2 <- GeneralTree:::apply_on_branch_at_ref(init, letters[1],
+                                                 function(a) {
+                                                   a$key
+                                                 })
 
     expect_equal(unlist(res), letters[1 : 6])
+    expect_equal(res, res2)
 })
 

@@ -570,3 +570,16 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// apply_on_branch_at_ref
+std::vector<SEXP> apply_on_branch_at_ref(SEXP& gti_sexp, SEXP& key, Function& f);
+RcppExport SEXP GeneralTree_apply_on_branch_at_ref(SEXP gti_sexpSEXP, SEXP keySEXP, SEXP fSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP& >::type gti_sexp(gti_sexpSEXP);
+    Rcpp::traits::input_parameter< SEXP& >::type key(keySEXP);
+    Rcpp::traits::input_parameter< Function& >::type f(fSEXP);
+    __result = Rcpp::wrap(apply_on_branch_at_ref(gti_sexp, key, f));
+    return __result;
+END_RCPP
+}
