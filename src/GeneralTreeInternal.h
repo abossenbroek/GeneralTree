@@ -26,8 +26,35 @@
 #include "tree_types.h"
 #include "key_visitor.h"
 #include "SEXPListFunctor.h"
+#include "AccessFunctors.h"
 
 #include "TreeNode.h"
+
+template<typename Container_source, typename Container_dest>
+void
+get_info(const Container_source& src, Container_dest& dst, const SEXPListFunctor& lf)
+{
+  transform(begin(*src), end(*src), back_inserter(*dst),
+      [&](std::shared_ptr<const TreeNode> x){ return lf.Process(*x); });
+}
+
+
+template<typename Container>
+std::shared_ptr<std::vector<Container> >
+access_tree_node_vec(const tree_node_c_sp& start_node,
+    const AccessFunctor& af, const SEXPListFunctor& lf)
+{
+  std::shared_ptr<std::vector<Container> > result(new std::vector<Container>());
+  /* Get the nodes using the access functor. */
+  tree_node_c_sp_vec_sp tn_vec = af.tree_accessor(*start_node);
+
+  result->reserve(tn_vec->size());
+
+  get_info(tn_vec, result, lf);
+
+  return result;
+}
+
 
 class GeneralTreeInternal {
 private:
@@ -39,46 +66,6 @@ private:
   void internal_storage_delete(const uid& to_delete);
 
   tree_node_sp last_ref_node;
-
-  struct AccessFunctor {
-    virtual tree_node_c_sp_vec_sp tree_accessor(const TreeNode& tn) const = 0;
-  };
-
-  struct AccessChildrenFunctor : public AccessFunctor {
-  private:
-    bool recursive;
-
-  public:
-    AccessChildrenFunctor(bool recursive_) : recursive(recursive_) {}
-
-    tree_node_c_sp_vec_sp tree_accessor(const TreeNode& tn) const {
-      return tn.get_children(recursive);
-    }
-  };
-
-  struct AccessSiblingsFunctor : public AccessFunctor {
-    tree_node_c_sp_vec_sp tree_accessor(const TreeNode& tn) const {
-      return tn.get_tree_siblings();
-    }
-  };
-
-  struct AccessBranchFunctor : public AccessFunctor {
-    tree_node_c_sp_vec_sp tree_accessor(const TreeNode& tn) const {
-      return tn.get_branch();
-    }
-  };
-
-  struct AccessLeafsFunctor : public AccessFunctor {
-    tree_node_c_sp_vec_sp tree_accessor(const TreeNode& tn) const {
-      return tn.get_leafs();
-    }
-  };
-
-  SEXP_vec_sp access_tree_node_vec(const SEXP& node_key,
-      const AccessFunctor& af, const SEXPListFunctor& lf) const;
-
-  SEXP_vec_sp access_tree_node_vec(const AccessFunctor& af, const
-      SEXPListFunctor& lf) const;
 
 
 public:
@@ -98,7 +85,8 @@ public:
   uid add_sibling(const SEXP& sibling_key, const SEXP& sibling_data);
 
   uid find_uid(const SEXP& key) const;
-  tree_node_sp find_node(const SEXP& key) const;
+  tree_node_c_sp find_node(const SEXP& key) const;
+  tree_node_sp find_node(const SEXP& key);
   tree_node_sp find_node(const uid& uid_) const;
   //TODO: change name of method.
   uid get_uid() const;
@@ -184,9 +172,12 @@ public:
     return last_ref_node->tree_depth();
   }
 
-  const bool is_last_sibling(const SEXP& key) const;
+  const bool is_last_sibling(SEXP& key) const;
+  const bool is_last_sibling(SEXP& key);
   const bool is_last_sibling() const;
-  const bool is_last_sibling(const tree_node_sp& tn) const;
+  const bool is_last_sibling();
+  const bool is_last_sibling(const tree_node_c_sp& tn) const;
+  const bool is_last_sibling(const tree_node_sp& tn);
 
   friend bool operator== (const GeneralTreeInternal& lhs,
       const GeneralTreeInternal& rhs);

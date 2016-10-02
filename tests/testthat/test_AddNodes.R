@@ -20,7 +20,6 @@ test_that("add child with non existing parent gives correct error", {
  expect_error(root$addNode(1, 1, "child1"), "^.*not find parent in tree.*$")
 })
 
-
 test_that("adding a child with an non existing parent results in failure", {
   root <- GeneralTree$new(0, "parent1")
   expect_error(root$addNode(2, 1, "child1"))
