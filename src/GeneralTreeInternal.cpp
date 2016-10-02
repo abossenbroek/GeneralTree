@@ -827,6 +827,12 @@ GeneralTreeInternal::apply_branch(const Function& f) const
   return access_tree_node_vec(AccessBranchFunctor(), ApplyFunctor(f));
 }
 
+SEXP_vec_sp
+GeneralTreeInternal::apply_branch(const SEXP& node_key, const Function& f) const
+{
+  return access_tree_node_vec(node_key, AccessBranchFunctor(), ApplyFunctor(f));
+}
+
 bool
 operator== (const GeneralTreeInternal& lhs,
     const GeneralTreeInternal& rhs)

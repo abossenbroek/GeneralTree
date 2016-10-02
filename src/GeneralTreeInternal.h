@@ -154,6 +154,7 @@ public:
   SEXP_vec_sp get_leafs_data() const;
 
   SEXP_vec_sp apply_branch(const Function& f) const;
+  SEXP_vec_sp apply_branch(const SEXP& node_key, const Function& f) const;
 
   void set_key(const SEXP& new_key);
   void set_data(const SEXP& new_data);
