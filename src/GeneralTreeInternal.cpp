@@ -100,7 +100,7 @@ GeneralTreeInternal::GeneralTreeInternal(GeneralTreeInternal& to_clone, const ui
 
   /* Add each node with new new uid. */
   for (auto it = tree->begin(); it != tree->end(); ++it) {
-    if (*it == root)
+    if (**it == *root)
       continue;
 
     /* Experimental, use a mapping table to determine the parent of each node
