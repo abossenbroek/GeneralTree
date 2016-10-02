@@ -25,42 +25,9 @@
 
 #include "tree_types.h"
 #include "key_visitor.h"
+#include "SEXPListFunctor.h"
 
 #include "TreeNode.h"
-
-struct SEXPListFunctor {
-  virtual SEXP Process(const TreeNode& tn) const = 0;
-};
-
-struct GetDataFunctor : public SEXPListFunctor {
-  SEXP Process(const TreeNode& tn) const {
-    return tn.get_data();
-  }
-};
-
-struct GetKeyFunctor : public SEXPListFunctor {
-  SEXP Process(const TreeNode& tn) const {
-    return tn.get_key();
-  }
-};
-
-struct GetUIDFunctor : public SEXPListFunctor {
-  SEXP Process(const TreeNode& tn) const {
-    return wrap(tn.get_uid());
-  }
-};
-
-class ApplyFunctor : public SEXPListFunctor {
-private:
-  Function f;
-
-public:
-  ApplyFunctor(const Function& f_) : f(f_) {}
-
-  SEXP Process(const TreeNode& tn) const {
-    return wrap(f(as<TreeNode>(tn)));
-  }
-};
 
 class GeneralTreeInternal {
 private:
@@ -221,32 +188,9 @@ public:
   const bool is_last_sibling(const tree_node_sp& tn) const;
 
   friend bool operator== (const GeneralTreeInternal& lhs,
-      const GeneralTreeInternal& rhs)
-  {
-    bool result = true;
-
-    if (*lhs.get_root() != *rhs.get_root())
-      return false;
-
-
-    tree_node_c_sp_vec_sp lhs_tree =
-      std::const_pointer_cast<const TreeNode>(lhs.get_root())->get_children(true);
-    tree_node_c_sp_vec_sp rhs_tree =
-      std::const_pointer_cast<const TreeNode>(rhs.get_root())->get_children(true);
-
-    if (lhs_tree->size() != rhs_tree->size())
-      return false;
-
-    for (int i = 0; i < lhs_tree->size(); ++i)
-      result = result && *lhs_tree->at(i) == *rhs_tree->at(i);
-
-    return result;
-  }
-
+      const GeneralTreeInternal& rhs);
   friend bool operator!= (const GeneralTreeInternal& lhs, const
-      GeneralTreeInternal& rhs) {
-    return !(lhs == rhs);
-  }
+      GeneralTreeInternal& rhs);
 };
 
 typedef Rcpp::XPtr<GeneralTreeInternal> gti_xptr;

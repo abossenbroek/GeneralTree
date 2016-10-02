@@ -826,3 +826,33 @@ GeneralTreeInternal::apply_branch(const Function& f) const
 {
   return access_tree_node_vec(AccessBranchFunctor(), ApplyFunctor(f));
 }
+
+bool
+operator== (const GeneralTreeInternal& lhs,
+    const GeneralTreeInternal& rhs)
+{
+  bool result = true;
+
+  if (*lhs.get_root() != *rhs.get_root())
+    return false;
+
+
+  tree_node_c_sp_vec_sp lhs_tree =
+    std::const_pointer_cast<const TreeNode>(lhs.get_root())->get_children(true);
+  tree_node_c_sp_vec_sp rhs_tree =
+    std::const_pointer_cast<const TreeNode>(rhs.get_root())->get_children(true);
+
+  if (lhs_tree->size() != rhs_tree->size())
+    return false;
+
+  for (int i = 0; i < lhs_tree->size(); ++i)
+    result = result && *lhs_tree->at(i) == *rhs_tree->at(i);
+
+  return result;
+}
+
+bool operator!= (const GeneralTreeInternal& lhs, const
+    GeneralTreeInternal& rhs)
+{
+  return !(lhs == rhs);
+}
