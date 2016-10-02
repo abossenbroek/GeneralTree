@@ -1,6 +1,6 @@
 #include <Rcpp.h>
 
-#include "SEXPListFunctor.h"
+#include "ListFunctors.h"
 #include "TreeNode.h"
 
 using namespace Rcpp;

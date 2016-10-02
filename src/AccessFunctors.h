@@ -2,6 +2,8 @@
 #define _ACCESS_FUNCTORS_H_
 #pragma once
 
+#include <string>
+
 #include "tree_types.h"
 #include "TreeNode.h"
 

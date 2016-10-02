@@ -1,5 +1,5 @@
-#ifndef _SEXPLISTFUNCTOR_H_
-#define _SEXPLISTFUNCTOR_H_
+#ifndef _LISTFUNCTORS_H_
+#define _LISTFUNCTORS_H_
 #pragma once
 
 #include <RcppCommon.h>
@@ -34,4 +34,4 @@ public:
 };
 
 
-#endif
+#endif /* _LISTFUNCTOR_H_ */
