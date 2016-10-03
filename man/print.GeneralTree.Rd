@@ -4,7 +4,9 @@
 \alias{print.GeneralTree}
 \title{Print a GeneralTree object.}
 \arguments{
-\item{...}{arguments passed to underlying functions.}
+\item{x}{General tree object.}
+
+\item{...}{limits will set the maximum number of nodes to print.}
 }
 \description{
 Print a GeneralTree object.

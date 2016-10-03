@@ -18,6 +18,7 @@
 #
 
 #' Print a GeneralTree object.
-#' @param ... arguments passed to underlying functions.
+#' @param x General tree object.
+#' @param ... limits will set the maximum number of nodes to print.
 #' @name print.GeneralTree
 NULL

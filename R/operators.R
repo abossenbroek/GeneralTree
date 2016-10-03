@@ -33,6 +33,7 @@
 #' @param value The general tree that should be cloned into.
 #' @return a clone of the tree.
 #' @usage `=.GeneralTree`(x, value)
+#' @method = GeneralTree
 #' @export
 #' @rdname set
 "=.GeneralTree" <- function(x, value) {
@@ -47,7 +48,7 @@
 #' @return the result of the comparison.
 #' @aliases ==
 #' @usage `==.GeneralTree`(x, value)
-#' @export
+#' @S3method == GeneralTree
 #' @rdname equals
 "==.GeneralTree" <- function(x, value) {
   x$cmp(value) && value$cmp(x)
