@@ -142,7 +142,20 @@ test_that("Branch apply works", {
                                                    a$key
                                                  })
 
+    depth <- GeneralTree:::apply_on_branch_at_ref(init, letters[1],
+                                                 function(a) {
+                                                   a$depth
+                                                 })
+    last_sibling <- GeneralTree:::apply_on_branch_at_ref(init, letters[1],
+                                                 function(a) {
+                                                   a$is_last_sibling
+                                                 })
+
+
+
     expect_equal(unlist(res), letters[1 : 6])
     expect_equal(res, res2)
+    expect_equal(c(0, 1, 1, 2, 2, 1), depth)
+    expect_equal(c(F, F, F, F, T, T), last_sibling)
 })
 

@@ -50,7 +50,7 @@ access_tree_node_vec(const tree_node_c_sp& start_node,
 
   result->reserve(tn_vec->size());
 
-  get_info<SEXP>(tn_vec, result, lf);
+  get_info<T>(tn_vec, result, lf);
 
   return result;
 }

@@ -860,7 +860,8 @@ operator== (const GeneralTreeInternal& lhs,
   return result;
 }
 
-bool operator!= (const GeneralTreeInternal& lhs, const
+bool
+operator!= (const GeneralTreeInternal& lhs, const
     GeneralTreeInternal& rhs)
 {
   return !(lhs == rhs);

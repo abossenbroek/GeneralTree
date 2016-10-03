@@ -1,10 +1,12 @@
 // [[Rcpp::plugins(cpp11)]]
-#include "TreeNode.h"
 #include <Rcpp.h>
 
 #include <memory>
 #include <algorithm>
 #include <iterator>
+
+#include "TreeNode.h"
+#include "key_visitor.h"
 
 using namespace std;
 using namespace Rcpp;
@@ -31,9 +33,9 @@ TreeNode::TreeNode(SEXP tn)
 {
   try {
     List object = as<List>(tn);
-    key = object["key"];
+    key_ = object["key"];
     data = object["data"];
-    my_uid = INVALID_UID;
+    my_uid_ = INVALID_UID;
   } catch (std::exception &ex) {
     forward_exception_to_r(ex);
   } catch (...) {
@@ -43,9 +45,9 @@ TreeNode::TreeNode(SEXP tn)
 
 TreeNode::TreeNode(const TreeNode& tn)
 {
-  key = tn.get_key();
+  key_ = tn.get_key();
   data = tn.get_data();
-  my_uid = INVALID_UID;
+  my_uid_ = INVALID_UID;
 }
 
 void
@@ -208,8 +210,11 @@ TreeNode::operator SEXP() const
 {
   List serialization;
 
-  serialization["key"] = key;
+  serialization["uid"] = my_uid_;
+  serialization["key"] = key_;
   serialization["data"] = data;
+  serialization["is_last_sibling"] = is_last_sibling();
+  serialization["depth"] = parents_above();
 
   return serialization;
 }
@@ -321,4 +326,35 @@ TreeNode::delete_node()
   }
 
   return replacement;
+}
+
+const unsigned int
+TreeNode::parents_above() const
+{
+  tree_node_c_wp current_node_w(shared_from_this());
+  unsigned int depth = 0;
+
+  auto sp = current_node_w.lock();
+  while (sp->has_parent()) {
+    tree_node_c_wp parent_wp(sp->get_parent());
+    current_node_w.swap(parent_wp);
+    sp = current_node_w.lock();
+    ++depth;
+  }
+
+  return depth;
+}
+
+const bool
+TreeNode::is_last_sibling() const
+{
+  if (!has_parent())
+    return false;
+
+  tree_node_c_sp_vec_sp children = const_pointer_cast<const TreeNode>(parent)->get_children();
+
+  if (children->size() == 1)
+    return true;
+  else
+    return *(children->back()) == *this;
 }

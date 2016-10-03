@@ -8,8 +8,8 @@
 #include <RcppCommon.h>
 
 #include <map>
+#include <string>
 #include <vector>
-
 #include <memory>
 
 #define INVALID_UID -1
@@ -25,35 +25,36 @@ typedef std::vector<tree_node_sp> tree_node_sp_vec;
 typedef std::shared_ptr<tree_node_sp_vec> tree_node_sp_vec_sp;
 
 typedef std::shared_ptr<const TreeNode> tree_node_c_sp;
+typedef std::weak_ptr<const TreeNode> tree_node_c_wp;
 typedef std::vector<tree_node_c_sp> tree_node_c_sp_vec;
 typedef std::shared_ptr<tree_node_c_sp_vec> tree_node_c_sp_vec_sp;
 
 class TreeNode : public std::enable_shared_from_this< TreeNode > {
 private:
-  uid my_uid;
-  SEXP key;
+  uid my_uid_;
+  SEXP key_;
   SEXP data;
   std::shared_ptr<TreeNode> left_child;
   std::vector<std::shared_ptr<TreeNode> > siblings;
   std::shared_ptr<TreeNode> parent;
 
 public:
-  TreeNode(const uid& my_uid_, const SEXP& key_, const SEXP& data_,
+  TreeNode(const uid& my_uid, const SEXP& key, const SEXP& data_,
       std::shared_ptr<TreeNode> const& left_child_, std::shared_ptr<TreeNode> const& parent_) :
-    my_uid(my_uid_), key(key_), data(data_), left_child(left_child_),
+    my_uid_(my_uid), key_(key), data(data_), left_child(left_child_),
     parent(parent_)
   {}
 
-  TreeNode(SEXP const& key_, SEXP const& data_) :
-    my_uid(INVALID_UID), key(key_), data(data_)
+  TreeNode(SEXP const& key, SEXP const& data_) :
+    my_uid_(INVALID_UID), key_(key), data(data_)
   {}
 
-  TreeNode(uid const& my_uid_, SEXP const& key_, SEXP const& data_) :
-    my_uid(my_uid_), key(key_), data(data_)
+  TreeNode(uid const& my_uid, SEXP const& key, SEXP const& data_) :
+    my_uid_(my_uid), key_(key), data(data_)
   {}
 
   TreeNode() :
-    my_uid(INVALID_UID)
+    my_uid_(INVALID_UID)
   {}
 
   TreeNode(SEXP tn);
@@ -65,7 +66,7 @@ public:
   }
 
   SEXP get_key() const {
-    return key;
+    return key_;
   }
 
   SEXP get_data() const {
@@ -73,11 +74,11 @@ public:
   }
 
   uid get_uid() const {
-    return my_uid;
+    return my_uid_;
   }
 
-  void set_key(const SEXP& key_) {
-    key = key_;
+  void set_key(const SEXP& key) {
+    key_ = key;
   }
 
   void set_data(const SEXP& data_) {
@@ -143,7 +144,7 @@ public:
   }
 
   void set_uid(uid const& new_uid) {
-    my_uid = new_uid;
+    my_uid_ = new_uid;
   }
 
   bool have_left_child() const {
@@ -199,6 +200,9 @@ public:
   tree_node_c_sp_vec_sp get_leafs() const;
 
   const unsigned int tree_depth() const;
+  const unsigned int parents_above() const;
+
+  const bool is_last_sibling() const;
 };
 
 #endif /* _TREENODE_H_ */
