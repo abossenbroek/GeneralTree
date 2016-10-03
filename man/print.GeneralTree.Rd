@@ -3,12 +3,7 @@
 \name{print.GeneralTree}
 \alias{print.GeneralTree}
 \title{Print a GeneralTree object.}
-\usage{
-\method{print}{GeneralTree}(x, ...)
-}
 \arguments{
-\item{x}{tree to print.}
-
 \item{...}{arguments passed to underlying functions.}
 }
 \description{

@@ -45,6 +45,7 @@
 #' @param x The target to where the tree should be copied.
 #' @param value The general tree that should be cloned into.
 #' @return the result of the comparison.
+#' @aliases ==
 #' @usage `==.GeneralTree`(x, value)
 #' @export
 #' @rdname equals
