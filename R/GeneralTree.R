@@ -243,7 +243,7 @@ GeneralTree <- R6Class("GeneralTree",
       changeRef(self, private)
    ,
    print = function(limit = 50)
-     print(self, private, limit = limit)
+     printTree(self, private, limit = limit)
    ,
    cmp = function(val)
      cmp(self, private, val)
@@ -710,7 +710,7 @@ applyOnBranch <- function (self, private, key, f)
 }
 
 #' @keywords internal
-print <- function (self, private, key, limit = 50)
+printTree <- function (self, private, key, limit = 50)
 {
   tree_info <- NULL
 
