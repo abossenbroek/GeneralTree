@@ -2,6 +2,7 @@
 // [[Rcpp::plugins(cpp11)]]
 #ifndef _KEY_VISITOR_H_
 #define _KEY_VISITOR_H_
+#pragma once
 
 #include <algorithm>
 #include <stdexcept>
@@ -78,32 +79,6 @@ public:
   }
 };
 
-static tree_key_sp
-tree_key_cast_SEXP(const SEXP& key)
-{
-  switch (TYPEOF(key)) {
-    case REALSXP: {
-        std::shared_ptr<tree_key> result(new tree_key(as<NumericVector>(key)[0]));
-        return result;
-    }
-
-    case INTSXP: {
-       std::shared_ptr<tree_key> result(new tree_key(as<IntegerVector>(key)[0]));
-       return result;
-    }
-
-    case STRSXP: {
-       std::shared_ptr<tree_key> result(new tree_key(as<String>(key)));
-       return result;
-    }
-
-    default: {
-      stop("tree_key_cast_SEXP: incompatible SEXP encoutered. Currently only int,"
-          " numeric and string are supported.");
-    }
-  }
-
-  return nullptr;
-}
+tree_key_sp tree_key_cast_SEXP(const SEXP& key);
 
 #endif // _KEY_VISITOR_H_
