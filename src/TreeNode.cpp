@@ -214,7 +214,7 @@ TreeNode::operator SEXP() const
   serialization["key"] = key_;
   serialization["data"] = data;
   serialization["is_last_sibling"] = is_last_sibling();
-  serialization["depth"] = parents_above();
+  serialization["parents_above"] = parents_above();
 
   return serialization;
 }
