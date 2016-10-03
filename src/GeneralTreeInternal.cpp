@@ -824,8 +824,17 @@ GeneralTreeInternal::get_leafs_data() const
 SEXP_vec_sp
 GeneralTreeInternal::apply_branch(const Function& f) const
 {
-  return access_tree_node_vec<SEXP>(last_ref_node, AccessBranchFunctor(),
-      SEXPApplyFunctor(f));
+  SEXP_vec_sp res;
+  try {
+    res = access_tree_node_vec<SEXP>(last_ref_node, AccessBranchFunctor(),
+        SEXPApplyFunctor(f));
+  } catch(std::exception &ex) {
+    forward_exception_to_r(ex);
+  } catch (...) {
+    ::Rf_error("c++ exception (unknown reason)");
+  }
+
+  return res;
 }
 
 SEXP_vec_sp
