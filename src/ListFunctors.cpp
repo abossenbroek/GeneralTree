@@ -24,7 +24,16 @@ SEXPGetUIDFunctor::Process(const TreeNode& tn) const {
 
 SEXP
 SEXPApplyFunctor::Process(const TreeNode& tn) const {
-    return wrap(f(as<SEXP>(tn)));
+  SEXP res;
+  try {
+    res = wrap(f(as<SEXP>(tn)));
+  } catch(std::exception &ex) {
+    forward_exception_to_r(ex);
+  } catch (...) {
+    ::Rf_error("c++ exception (unknown reason)");
+  }
+
+  return res;
 }
 
 
