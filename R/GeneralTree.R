@@ -242,6 +242,9 @@ GeneralTree <- R6Class("GeneralTree",
    changeRef = function()
       changeRef(self, private)
    ,
+   print = function(limit = 50)
+     print(self, private, limit = limit)
+   ,
    cmp = function(val)
      cmp(self, private, val)
    ,
@@ -704,4 +707,61 @@ applyOnBranch <- function (self, private, key, f)
   }
 
   return(apply_on_branch_at_ref(private$.xptr, key, f))
+}
+
+#' @keywords internal
+print <- function (self, private, key, limit = 50)
+{
+  tree_info <- NULL
+
+  node_info <- function(tn) {
+    list(key = tn$key, data = tn$data,
+         is_last_sibling = tn$is_last_sibling,
+         parents_above = tn$parents_above)
+  }
+  generate_line <- function (left, right) {
+    padding <- paste0(rep(" ", getOption("width") - nchar(left) - nchar(right)),
+                      collapse = "")
+    paste0(left, padding, right, "\n")
+  }
+
+  if (missing(key)) {
+    self$changeRef()
+    tree_info <- apply_on_branch(private$.xptr, node_info)
+  } else {
+    tree_info <- apply_on_branch_at_ref(init, key, node_info)
+  }
+
+  capped <- FALSE
+  if (length(tree_info) > limit) {
+    tree_info <- tree_info[1 : limit]
+    capped <- TRUE
+  }
+
+  cat(generate_line("TREE", "DATA"))
+
+  is_root <- TRUE
+  pre_list <- list()
+  for (t in tree_info) {
+    pre <- paste0(Filter(Negate(is.null), pre_list[1 : t$parents_above]) , collapse = "")
+    sep <- ""
+    if (!t$is_last_sibling) {
+      if (is_root) {
+        is_root <- FALSE
+        pre_list[t$parents_above + 1] <- ""
+      } else {
+        pre_list[t$parents_above + 1] <- "|  "
+        sep <- "|- "
+      }
+    } else {
+      sep <- "\\- "
+      pre_list[t$parents_above + 1] <- "   "
+    }
+    tree_structure <- paste0(pre, sep, t$key, collapse = "")
+    data_str <- substring(toString(t$data), 1, 10)
+    cat(generate_line(tree_structure,  data_str))
+  }
+
+  if (capped)
+    cat("Maximum entries reached, change limit to a higher number to see more")
 }
