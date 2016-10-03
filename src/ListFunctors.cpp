@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <Rcpp.h>
 
 #include "ListFunctors.h"
@@ -22,7 +24,7 @@ SEXPGetUIDFunctor::Process(const TreeNode& tn) const {
 
 SEXP
 SEXPApplyFunctor::Process(const TreeNode& tn) const {
-    return wrap(f(as<TreeNode>(tn)));
+    return wrap(f(as<SEXP>(tn)));
 }
 
 
