@@ -70,7 +70,7 @@ test_that("child by using addChild on search result.", {
   tree <- GeneralTree$new(0, "parent1")
   tree$addChild("a", "child.a")
   tree$addChild("b", "child.b")
-  tree$searchNode("a")$addChild("c", "child.b.c")
+  tree$searchNode("a")$addChild("c", "child.a.c")
   tree$searchNode("b")$addChild("d", "child.b.d")
 
   tree$addNode("c", "e", "child.c.e")
