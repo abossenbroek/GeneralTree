@@ -86,3 +86,36 @@ test_that("printing a tree with multiple levels and different length ids", {
   expect_match(res[[1]][13],  "^.*\\- 6.*child1.6")
 })
 
+
+test_that("printing a tree with multiple levels and different types of data", {
+  tree  <-  GeneralTree$new("root",  list(node = 1))
+  tree$addNode("root",  "child1",  list(node = 2))
+  tree$addNode("root",  "child2",  list(node = 3))
+  tree$addNode("child2",  "child4",  list(node = 4))
+  tree$addNode("child2",  "child5",  data.frame(node = 5))
+  tree$addNode("child2",  6,  data.frame(node = 6))
+  tree$addNode("child5",  "leaf7",  list(node = 7))
+  tree$addNode("child5",  "child8",  list(node = 8))
+  tree$addNode("child5",  "child9",  list(node = 9))
+  tree$addNode("child1",  "ten",  list(node = 10))
+  tree$addNode("child1",  "eleven",  list(node = 11))
+  tree$addNode("child1",  "twelve",  list(node = 12))
+
+  res  <-  capture_output(print(tree), print  =  TRUE)
+  res  <-  strsplit(res,  "\n")
+
+  expect_match(res[[1]][1],  "TREE.*DATA")
+  expect_match(res[[1]][2],  "root.*1")
+  expect_match(res[[1]][3],  "|-  child1.*1")
+  expect_match(res[[1]][4],  "|  |-  ten.*10")
+  expect_match(res[[1]][5],  "|  |-  eleven.*11")
+  expect_match(res[[1]][6],  "|  \\-  twelve.*12")
+  expect_match(res[[1]][7],  "\\- child2.*3")
+  expect_match(res[[1]][8],  "  |-  child4.*4")
+  expect_match(res[[1]][9],  "  |-  child5.*5")
+  expect_match(res[[1]][10],  "  |  |-  leaf7.*7")
+  expect_match(res[[1]][11],  "  |  |-  child8.*8")
+  expect_match(res[[1]][12],  "  |  \\-  child9.*9")
+  expect_match(res[[1]][13],  "^.*\\- 6.*6")
+})
+
