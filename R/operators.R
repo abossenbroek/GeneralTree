@@ -47,6 +47,7 @@
 #' @return the result of the comparison.
 #' @aliases ==
 #' @usage `==.GeneralTree`(x, value)
+#' @export
 #' @rdname equals
 "==.GeneralTree" <- function(x, value) {
   x$cmp(value) && value$cmp(x)

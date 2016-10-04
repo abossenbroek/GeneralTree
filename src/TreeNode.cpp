@@ -213,6 +213,7 @@ TreeNode::operator SEXP() const
   serialization["uid"] = my_uid_;
   serialization["key"] = key_;
   serialization["data"] = data;
+  serialization["parent_uid"] = get_parent_uid();
   serialization["is_last_sibling"] = is_last_sibling();
   serialization["parents_above"] = parents_above();
 
@@ -358,3 +359,34 @@ TreeNode::is_last_sibling() const
   else
     return *(children->back()) == *this;
 }
+
+bool operator== (const TreeNode& lhs, const TreeNode& rhs)
+{
+  bool result = true;
+
+  if (lhs.have_left_child() && rhs.have_left_child()) {
+    result = result && *lhs.get_left_child() == *rhs.get_left_child();
+  } else if (!lhs.have_left_child() != !rhs.have_left_child()) {
+    /* Either lhs or rhs does not have a child so result is false. */
+    return false;
+  }
+
+  if (lhs.have_siblings() && rhs.have_siblings()) {
+    /* Verify whether the size of both are equal. */
+    if (lhs.get_siblings()->size() != rhs.get_siblings()->size()) {
+      return false;
+    }
+
+    /* Compare all the siblings. */
+    for (int i = 0; i < lhs.get_siblings()->size(); ++i)
+      result = result && *lhs.get_siblings()->at(i) ==
+        *rhs.get_siblings()->at(i);
+  } else if (!lhs.have_siblings() != !rhs.have_siblings()) {
+    /* Either lhs or rhs does not have siblings so result is false. */
+    return false;
+  }
+
+  return result && lhs.get_key() == rhs.get_key() && lhs.get_data() == rhs.get_data();
+}
+
+

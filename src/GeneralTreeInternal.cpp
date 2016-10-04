@@ -436,10 +436,15 @@ GeneralTreeInternal::operator SEXP() const
   List node_data(no_init(nodes.size()));
   List node_parents(no_init(nodes.size()));
 
-  for (int i = 0; i < nodes.size(); ++i) {
-    node_keys[i] = nodes.at(i)->get_key();
-    node_data[i] = nodes.at(i)->get_data();
-    node_parents[i] = nodes.at(i)->get_parent_uid();
+  tree_node_c_sp_vec_sp children = const_pointer_cast<const TreeNode>(root)->get_children(true);
+  children->insert(children->begin(), root);
+
+  int i = 0;
+  for (auto it : *children) {
+    node_keys[i] = it->get_key();
+    node_data[i] = it->get_data();
+    node_parents[i] = it->get_parent_uid();
+    ++i;
   }
 
   serialization["keys"] = node_keys;
@@ -851,8 +856,9 @@ operator== (const GeneralTreeInternal& lhs,
 {
   bool result = true;
 
-  if (*lhs.get_root() != *rhs.get_root())
+  if (*lhs.get_root() != *rhs.get_root()) {
     return false;
+  }
 
 
   tree_node_c_sp_vec_sp lhs_tree =
@@ -860,11 +866,13 @@ operator== (const GeneralTreeInternal& lhs,
   tree_node_c_sp_vec_sp rhs_tree =
     const_pointer_cast<const TreeNode>(rhs.get_root())->get_children(true);
 
-  if (lhs_tree->size() != rhs_tree->size())
+  if (lhs_tree->size() != rhs_tree->size()) {
     return false;
+  }
 
-  for (int i = 0; i < lhs_tree->size(); ++i)
+  for (int i = 0; i < lhs_tree->size(); ++i) {
     result = result && *lhs_tree->at(i) == *rhs_tree->at(i);
+  }
 
   return result;
 }

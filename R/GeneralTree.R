@@ -662,6 +662,14 @@ getRoot <- function (self, private) {
 cmp <- function (self, private, val)
 {
   result <- cmp_gti(private$.xptr, val$getXptr())
+
+  # cmp_gti() will only return success if the keys and data of nodes point to
+  # the same objects. If this is not the case, which would be the case if we
+  # have a true copy of an object we still may have the same object and data
+  # but true copies. We still need to verify for that case
+  if (!result)
+    result <- result && (serialize(private$.xptr) == serialize(val$getXptr()))
+
   result <- result && private$.ref_uid == val$getRefUID()
 
   return(result)
