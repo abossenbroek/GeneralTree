@@ -23,26 +23,28 @@
 #' @export
 as.data.frame.GeneralTree <- function(x, row.names = NULL, optional = NULL,
                                       ...) {
-  i <- x$iterator()
 
-  id <- list()
-  data <- list()
-  parent <- list()
-
-  while (!is.null(i)) {
-    id <- c(id, i$id)
-    data <- c(data, i$data)
-    parent_id <- i$parent$id
-    if (is.null(parent_id))
-      parent_id <- NA
-    parent <- c(parent, parent_id)
-
-    i <- tryCatch(i$nextElem(), error = function(e) NULL)
+  node_info <- function(tn) {
+    list(key = unlist(tn$key), data = unlist(tn$data),
+         uid = unlist(tn$uid),
+         parent_uid = unlist(tn$parent_uid))
   }
 
-  return(data.frame(id = unlist(id),
-                    data = unlist(data),
-                    parent = unlist(parent), stringsAsFactors = FALSE))
+  branch <- x$applyOnBranch(node_info)
+
+  tree_info <- list()
+  tree_info$key <- sapply(branch, function(x) x$key)
+  tree_info$data <- sapply(branch, function(x) x$data)
+  uids <- sapply(branch, function(x) x$uid)
+  tree_info$parent_key <-
+      sapply(branch, function(x) {
+                 if (x$parent_uid == -1)
+                     return(NA)
+                 else
+                     return(tree_info$key[which(x$parent_uid == uids)])
+         })
+
+  return(as.data.frame(tree_info, stringsAsFactors = FALSE))
 }
 
 #' Convert an object to a GeneralTree.
@@ -70,51 +72,45 @@ as.GeneralTree <- function(x, ...) UseMethod("as.GeneralTree")
 as.GeneralTree.data.frame <- function(x, ...) {
   dots <- list(...)
 
-  id_colname = "id"
-  data_colname = "data"
-  parent_colname = "parent"
-  parent_node = NULL
+  key_colname <- "key"
+  data_colname <- "data"
+  parent_colname <- "parent_key"
+  parent_node <- NULL
 
-  if ("id" %in% names(dots))
-    id_colname = dots$id
   if ("data" %in% names(dots))
-    data_colname = dots$data
-  if ("parent" %in% names(dots))
-    parent_colname = dots$parent
+    data_colname <- dots$data
+  if ("key" %in% names(dots))
+    key_colname <- dots$key
+  if ("parent_key" %in% names(dots))
+    parent_colname <- dots$parent_key
   if ("parent_node" %in% names(dots))
-    parent_node = dots$parent_node
+    parent_node <- dots$parent_node
 
-
-  if (!(id_colname %in% names(x)))
-      stop("Could not find id column ", id_colname)
   if (!(data_colname %in% names(x)))
       stop("Could not find data column ", data_colname)
+  if (!(key_colname %in% names(x)))
+      stop("Could not find key column ", key_colname)
   if (!(parent_colname %in% names(x)))
-      stop("Could not find product column ", parent_colname)
+      stop("Could not find parent column ", parent_colname)
 
-  if (any(sapply(x[c(id_colname, data_colname, parent_colname)], is.factor)))
+
+  if (any(sapply(x[c(key_colname, data_colname, parent_colname)], is.factor)))
     warning("Some columns are encoded as factors which could lead to errors.")
 
   if ((sum(is.na(x[parent_colname][, 1])) != 1) && is.null(parent_node))
     stop(paste0("Multiple entries with NA parent where found.",
                 "Make sure to have only one entry with parent NA."))
 
-  new_tree = NULL
+  new_tree <- NULL
 
   if (is.null(parent_node)) {
-    root_id = x[id_colname][is.na(x[parent_colname]), 1]
-    root_data = x[data_colname][is.na(x[parent_colname]), 1]
+    root_id <- x[key_colname][is.na(x[parent_colname]), 1]
+    root_data <- x[data_colname][is.na(x[parent_colname]), 1]
 
-    new_tree = GeneralTree$new(root_id, root_data)
+    new_tree <- GeneralTree$new(root_id, root_data)
   } else {
-    if (inherits(parent_node, "GeneralTree")) {
-        if (parent_node$isSingletonTree) {
-            new_tree = parent_node
-        } else {
-            stop("the passed parent_node is not a singleton tree.")
-        }
-    } else {
-        stop("the passed parent_node was not a GeneralTree object.")
+    if (!inherits(parent_node, "GeneralTree")) {
+      stop("the passed parent_node was not a GeneralTree object.")
     }
   }
 
@@ -132,7 +128,7 @@ as.GeneralTree.data.frame <- function(x, ...) {
         stop("Could not find parent: ", remaining_data[parent_colname][i, 1])
       }
       i = idx_to_push[1]
-      current_id = remaining_data[id_colname][i, 1]
+      current_id = remaining_data[key_colname][i, 1]
       current_data = remaining_data[data_colname][i, 1]
       current_parent = remaining_data[parent_colname][i, 1]
 
@@ -157,7 +153,7 @@ as.GeneralTree.data.frame <- function(x, ...) {
         if (!(current_parent %in% remaining_data[parent_colname][, 1]))
           stop("Could not find parent ", current_parent)
 
-        parent_location = which(remaining_data[id_colname][, 1] %in%
+        parent_location = which(remaining_data[key_colname][, 1] %in%
                                 current_parent)
         pivot = match(parent_location, idx_to_push)
 
@@ -219,6 +215,7 @@ as.GeneralTree.expression <- function(x, ...) {
 
   tree <- GeneralTree$new(0L, "BaseEnvironment")
 
-  return(GeneralTree::as.GeneralTree(parsed_data, data = what,
+  return(GeneralTree::as.GeneralTree(parsed_data, key = "id", data = what,
+                                     parent_key = "parent",
                                      parent_node = tree))
 }
