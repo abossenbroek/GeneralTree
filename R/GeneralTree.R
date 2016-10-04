@@ -182,53 +182,30 @@ GeneralTree <- R6Class("GeneralTree",
    getChildId = function(recursive = FALSE)
      getChildId(self, private, recursive)
    ,
-   getChildrenKeys = function(recursive = FALSE)
-     getChildrenKeys(self, private, recursive = recursive)
+   getChildrenInfo = function(what, recursive = FALSE)
+     getChildrenInfo(self, private, recursive = recursive, what = what)
    ,
-   getChildrenData = function(recursive = FALSE)
-     getChildrenData(self, private, recursive = recursive)
+   getChildrenInfoByKey = function(key, what, recursive = FALSE)
+     getChildrenInfo(self, private, key = key, recursive = recursive,
+                     what = what)
    ,
-   getChildrenKeysByKey = function(key, recursive = FALSE)
-     getChildrenKeys(self, private, key = key, recursive = recursive)
+   getLeafsInfo = function(what)
+     getLeafsInfo(self, private, what = what)
    ,
-   getChildrenDataByKey = function(key, recursive = FALSE)
-     getChildrenData(self, private, key = key, recursive = recursive)
+   getLeafsInfoByKey = function(key, what)
+     getLeafsInfo(self, private, key = key, what = what)
    ,
-   getSiblingsKeys = function()
-     getSiblingsKeys(self, private)
+   getBranchInfo = function(what)
+     getBranchInfo(self, private, what = what)
    ,
-   getSiblingsData = function()
-     getSiblingsData(self, private)
+   getBranchInfoByKey = function(key, what)
+     getBranchInfo(self, private, key = key, what = what)
    ,
-   getSiblingsKeysByKey = function(key)
-     getSiblingsKeys(self, private, key)
+   getSiblingsInfo = function(what)
+     getSiblingsInfo(self, private, what = what)
    ,
-   getSiblingsDataByKey = function(key)
-     getSiblingsData(self, private, key)
-   ,
-   getBranchKeys = function()
-     getBranchKeys(self, private)
-   ,
-   getBranchData = function()
-     getBranchData(self, private)
-   ,
-   getBranchKeysByKey = function(key)
-     getBranchKeys(self, private, key)
-   ,
-   getBranchDataByKey = function(key)
-     getBranchData(self, private, key)
-   ,
-   getLeafsKeys = function()
-     getLeafsKeys(self, private)
-   ,
-   getLeafsData = function()
-     getLeafsData(self, private)
-   ,
-   getLeafsKeysByKey = function(key)
-     getLeafsKeys(self, private, key)
-   ,
-   getLeafsDataByKey = function(key)
-     getLeafsData(self, private, key)
+   getSiblingsInfoByKey = function(key, what)
+     getSiblingsInfo(self, private, key = key, what = what)
    ,
    deleteId = function(key)
      deleteId(self, private, key)
@@ -410,35 +387,14 @@ searchData <- function (self, private, key) {
 #' @keywords internal
 getSiblingData <- function (self, private) {
   warning("DEPRECATED: getSiblingData will be replaced with getSiblingsData in future releases.")
-  return(getSiblingsData(self, private))
+  return(getSiblingsInfo(self, private, what = "data"))
 }
 
 #'
 #' @keywords internal
 getSiblingId <- function (self, private) {
   warning("DEPRECATED: getSiblingId will be replaced with getSiblingsKey in future releases.")
-  return(getSiblingsKeys(self, private))
-}
-
-#'
-#' @keywords internal
-getSiblingsKeys <- function (self, private, key) {
-  if (missing(key)) {
-    self$changeRef()
-    return(get_siblings_keys_at_ref(private$.xptr))
-  }
-
-  return(get_siblings_keys(private$.xptr, key))
-}
-
-#'
-#' @keywords internal
-getSiblingsData <- function (self, private, key) {
-  if (missing(key)) {
-    self$changeRef()
-    return(get_siblings_data_at_ref(private$.xptr))
-  }
-  return(get_siblings_data(private$.xptr, key))
+  return(getSiblingsInfo(self, private, what = "key"))
 }
 
 #'
@@ -465,24 +421,10 @@ setData <- function (self, private, new_data) {
 #' @return the data associated with child nodes.
 #' @keywords internal
 getChildData <- function (self, private, recursive = FALSE) {
-  warning("DEPRECATED: getChildData will be replaced with getChildrenData in future releases")
-  return(getChildrenData(self, private, recursive = recursive))
+  warning("DEPRECATED: getChildData will be replaced with getChildrenInfo in future releases")
+  return(getChildrenInfo(self, private, recursive = recursive, what = "data"))
 }
 
-#' Get the data of the child nodes below the current node.
-#'
-#' @param self The node where to start.
-#' @param recursive Should the function be called on all child nodes too?
-#' @return the data associated with child nodes.
-#' @keywords internal
-getChildrenData <- function (self, private, key, recursive = FALSE) {
-  if (missing(key)) {
-    self$changeRef()
-    return(get_children_data_at_ref(private$.xptr, recursive))
-  }
-
-  return(get_children_data(private$.xptr, key, recursive))
-}
 
 #' Get the ids of the child nodes below the current node.
 #'
@@ -491,23 +433,67 @@ getChildrenData <- function (self, private, key, recursive = FALSE) {
 #' @return the ids associated with child nodes.
 #' @keywords internal
 getChildId <- function (self, private, recursive = FALSE) {
-  warning("DEPRECATED: getChildId will be replaced with getChildrenKeys in future releases")
-  return(getChildrenKeys(self, private, recursive = recursive))
+  warning("DEPRECATED: getChildId will be replaced with getChildrenInfo in future releases")
+  return(getChildrenInfo(self, private, recursive = recursive, what = "key"))
 }
 
-#' Get the keys of the child nodes below the current node.
+
+#' Get the keys of the branch nodes below the current node.
 #'
 #' @param self The node where to start.
-#' @param recursive Should the function be called on all child nodes too?
-#' @return the keys associated with child nodes.
+#' @param private the private members of the GeneralTree.
+#' @return the keys associated with branch nodes.
 #' @keywords internal
-getChildrenKeys <- function (self, private, key, recursive = FALSE) {
+getChildrenInfo <- function (self, private, key, recursive = FALSE,
+                             what = c("key", "data")) {
+  what <- match.arg(what)
+  res <- NULL
   if (missing(key)) {
     self$changeRef()
-    return(get_children_keys_at_ref(private$.xptr, recursive))
+    res <- get_children_at_ref(private$.xptr, recursive)
+  } else {
+    res <- get_children(private$.xptr, key, recursive)
   }
 
-  return(get_children_keys(private$.xptr, key, recursive))
+  lapply(res, function(x) x[[what]])
+}
+
+#' Get the keys of the leafs nodes below the current node.
+#'
+#' @param self The node where to start.
+#' @param private the private members of the GeneralTree.
+#' @return the keys associated with leafs nodes.
+#' @keywords internal
+getLeafsInfo <- function (self, private, key, what = c("key", "data")) {
+  what <- match.arg(what)
+  res <- NULL
+  if (missing(key)) {
+    self$changeRef()
+    res <- get_leafs_at_ref(private$.xptr)
+  } else {
+    res <- get_leafs(private$.xptr, key)
+  }
+
+  lapply(res, function(x) x[[what]])
+}
+
+#' Get the keys of the siblings nodes below the current node.
+#'
+#' @param self The node where to start.
+#' @param private the private members of the GeneralTree.
+#' @return the keys associated with siblings nodes.
+#' @keywords internal
+getSiblingsInfo <- function (self, private, key, what = c("key", "data")) {
+  what <- match.arg(what)
+  res <- NULL
+  if (missing(key)) {
+    self$changeRef()
+    res <- get_siblings_at_ref(private$.xptr)
+  } else {
+    res <- get_siblings(private$.xptr, key)
+  }
+
+  lapply(res, function(x) x[[what]])
 }
 
 #' Get the keys of the branch nodes below the current node.
@@ -516,59 +502,17 @@ getChildrenKeys <- function (self, private, key, recursive = FALSE) {
 #' @param private the private members of the GeneralTree.
 #' @return the keys associated with branch nodes.
 #' @keywords internal
-getBranchKeys <- function (self, private, key) {
+getBranchInfo <- function (self, private, key, what = c("key", "data")) {
+  what <- match.arg(what)
+  res <- NULL
   if (missing(key)) {
     self$changeRef()
-    return(get_branch_keys_at_ref(private$.xptr))
+    res <- get_branch_at_ref(private$.xptr)
+  } else {
+    res <- get_branch(private$.xptr, key)
   }
 
-  return(get_branch_keys(private$.xptr, key))
-}
-
-#' Get the data of the branch nodes below the current node.
-#'
-#' @param self The node where to start.
-#' @param private the private members of the GeneralTree.
-#' @param key The key for which the branch should be returned
-#' @return the data associated with branch nodes.
-#' @keywords internal
-getBranchData <- function (self, private, key) {
-  if (missing(key)) {
-    self$changeRef()
-    return(get_branch_data_at_ref(private$.xptr))
-  }
-  return(get_branch_data(private$.xptr, key))
-}
-
-#' Get the keys of the leafs nodes below the current node.
-#'
-#' @param self The node where to start.
-#' @param private the private members of the GeneralTree.
-#' @param key The key for which the leafs should be returned
-#' @return the keys associated with leafs nodes.
-#' @keywords internal
-getLeafsKeys <- function (self, private, key) {
-  if (missing(key)) {
-    self$changeRef()
-    return(get_leafs_keys_at_ref(private$.xptr))
-  }
-  return(get_leafs_keys(private$.xptr, key))
-}
-
-#' Get the data of the leafs nodes below the current node.
-#'
-#' @param self The node where to start.
-#' @param private the private members of the GeneralTree.
-#' @param key The key for which the leafs should be returned
-#' @return the data associated with leafs nodes.
-#' @keywords internal
-getLeafsData <- function (self, private, key) {
-  if (missing(key)) {
-    self$changeRef()
-    return(get_leafs_data_at_ref(private$.xptr))
-  }
-
-  return(get_leafs_data(private$.xptr, key))
+  lapply(res, function(x) x[[what]])
 }
 
 #' Delete last referenced key.

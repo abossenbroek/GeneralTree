@@ -166,168 +166,6 @@ serialize(SEXP gti_sexp)
 }
 
 // [[Rcpp::export]]
-std::vector<SEXP>
-get_children_keys(SEXP gti_sexp, SEXP parent_key, bool recursive = false)
-{
-  gti_xptr gti(gti_sexp);
-  SEXP_vec_sp c_keys = gti->get_children_keys(parent_key, recursive);
-
-  return *c_keys;
-}
-
-// [[Rcpp::export]]
-std::vector<SEXP>
-get_children_data(SEXP gti_sexp, SEXP parent_key, bool recursive = false)
-{
-  gti_xptr gti(gti_sexp);
-  SEXP_vec_sp c_sexp = gti->get_children_data(parent_key, recursive);
-
-  return *c_sexp ;
-}
-
-// [[Rcpp::export]]
-std::vector<SEXP>
-get_siblings_keys(SEXP gti_sexp, SEXP node_key)
-{
-  gti_xptr gti(gti_sexp);
-  SEXP_vec_sp c_keys = gti->get_siblings_keys(node_key);
-
-  return *c_keys;
-}
-
-// [[Rcpp::export]]
-std::vector<SEXP>
-get_siblings_data(SEXP gti_sexp, SEXP node_key)
-{
-  gti_xptr gti(gti_sexp);
-  SEXP_vec_sp c_sexp = gti->get_siblings_data(node_key);
-
-  return *c_sexp ;
-}
-
-
-
-// [[Rcpp::export]]
-std::vector<SEXP>
-get_branch_data(SEXP gti_sexp, SEXP node_key)
-{
-  gti_xptr gti(gti_sexp);
-  SEXP_vec_sp c_keys = gti->get_branch_data(node_key);
-
-  return *c_keys;
-}
-
-// [[Rcpp::export]]
-std::vector<SEXP>
-get_branch_keys(SEXP gti_sexp, SEXP node_key)
-{
-  gti_xptr gti(gti_sexp);
-  SEXP_vec_sp c_keys = gti->get_branch_keys(node_key);
-
-  return *c_keys;
-}
-
-// [[Rcpp::export]]
-std::vector<SEXP>
-get_leafs_data(SEXP gti_sexp, SEXP node_key)
-{
-  gti_xptr gti(gti_sexp);
-  SEXP_vec_sp c_keys = gti->get_leafs_data(node_key);
-
-  return *c_keys;
-}
-
-// [[Rcpp::export]]
-std::vector<SEXP>
-get_leafs_keys(SEXP gti_sexp, SEXP node_key)
-{
-  gti_xptr gti(gti_sexp);
-  SEXP_vec_sp c_keys = gti->get_leafs_keys(node_key);
-
-  return *c_keys;
-}
-
-// [[Rcpp::export]]
-std::vector<SEXP>
-get_children_keys_at_ref(SEXP gti_sexp, bool recursive = false)
-{
-  gti_xptr gti(gti_sexp);
-  SEXP_vec_sp c_keys = gti->get_children_keys(recursive);
-
-  return *c_keys;
-}
-
-// [[Rcpp::export]]
-std::vector<SEXP>
-get_children_data_at_ref(SEXP gti_sexp, bool recursive = false)
-{
-  gti_xptr gti(gti_sexp);
-  SEXP_vec_sp c_sexp = gti->get_children_data(recursive);
-
-  return *c_sexp ;
-}
-
-// [[Rcpp::export]]
-std::vector<SEXP>
-get_siblings_keys_at_ref(SEXP gti_sexp)
-{
-  gti_xptr gti(gti_sexp);
-  SEXP_vec_sp c_keys = gti->get_siblings_keys();
-
-  return *c_keys;
-}
-
-// [[Rcpp::export]]
-std::vector<SEXP>
-get_siblings_data_at_ref(SEXP gti_sexp)
-{
-  gti_xptr gti(gti_sexp);
-  SEXP_vec_sp c_sexp = gti->get_siblings_data();
-
-  return *c_sexp ;
-}
-
-// [[Rcpp::export]]
-std::vector<SEXP>
-get_branch_data_at_ref(SEXP gti_sexp)
-{
-  gti_xptr gti(gti_sexp);
-  SEXP_vec_sp c_keys = gti->get_branch_data();
-
-  return *c_keys;
-}
-
-// [[Rcpp::export]]
-std::vector<SEXP>
-get_branch_keys_at_ref(SEXP gti_sexp)
-{
-  gti_xptr gti(gti_sexp);
-  SEXP_vec_sp c_keys = gti->get_branch_keys();
-
-  return *c_keys;
-}
-
-// [[Rcpp::export]]
-std::vector<SEXP>
-get_leafs_data_at_ref(SEXP gti_sexp)
-{
-  gti_xptr gti(gti_sexp);
-  SEXP_vec_sp c_keys = gti->get_leafs_data();
-
-  return *c_keys;
-}
-
-// [[Rcpp::export]]
-std::vector<SEXP>
-get_leafs_keys_at_ref(SEXP gti_sexp)
-{
-  gti_xptr gti(gti_sexp);
-  SEXP_vec_sp c_keys = gti->get_leafs_keys();
-
-  return *c_keys;
-}
-
-// [[Rcpp::export]]
 int
 get_tree_depth_at_ref(SEXP gti_sexp)
 {
@@ -478,4 +316,84 @@ apply_on_branch_at_ref(SEXP& gti_sexp, SEXP& key, Function& f)
   SEXP_vec_sp c_res = gti->apply_branch(key, f);
 
   return *c_res;
+}
+
+// [[Rcpp::export]]
+List
+get_children(SEXP& gti_sexp, SEXP& key, bool recursive = false)
+{
+  gti_xptr gti(gti_sexp);
+  tree_node_c_sp_vec_sp c_res = gti->get_children(key, recursive);
+
+  return wrap(*c_res);
+}
+
+// [[Rcpp::export]]
+List
+get_branch(SEXP& gti_sexp, SEXP& key)
+{
+  gti_xptr gti(gti_sexp);
+  tree_node_c_sp_vec_sp c_res = gti->get_branch(key);
+
+  return wrap(*c_res);
+}
+
+// [[Rcpp::export]]
+List
+get_leafs(SEXP& gti_sexp, SEXP& key)
+{
+  gti_xptr gti(gti_sexp);
+  tree_node_c_sp_vec_sp c_res = gti->get_leafs(key);
+
+  return wrap(*c_res);
+}
+
+// [[Rcpp::export]]
+List
+get_siblings(SEXP& gti_sexp, SEXP& key)
+{
+  gti_xptr gti(gti_sexp);
+  tree_node_c_sp_vec_sp c_res = gti->get_siblings(key);
+
+  return wrap(*c_res);
+}
+
+// [[Rcpp::export]]
+List
+get_children_at_ref(SEXP& gti_sexp, bool recursive = false)
+{
+  gti_xptr gti(gti_sexp);
+  tree_node_c_sp_vec_sp c_res = gti->get_children(recursive);
+
+  return wrap(*c_res);
+}
+
+// [[Rcpp::export]]
+List
+get_branch_at_ref(SEXP& gti_sexp)
+{
+  gti_xptr gti(gti_sexp);
+  tree_node_c_sp_vec_sp c_res = gti->get_branch();
+
+  return wrap(*c_res);
+}
+
+// [[Rcpp::export]]
+List
+get_leafs_at_ref(SEXP& gti_sexp)
+{
+  gti_xptr gti(gti_sexp);
+  tree_node_c_sp_vec_sp c_res = gti->get_leafs();
+
+  return wrap(*c_res);
+}
+
+// [[Rcpp::export]]
+List
+get_siblings_at_ref(SEXP& gti_sexp)
+{
+  gti_xptr gti(gti_sexp);
+  tree_node_c_sp_vec_sp c_res = gti->get_siblings();
+
+  return wrap(*c_res);
 }

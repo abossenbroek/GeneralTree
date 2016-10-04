@@ -251,27 +251,24 @@ context("GeneralTreeInternal get_branch works correctly") {
       std::const_pointer_cast<const TreeNode>(added_nodes[4])
     };
 
-
-
-    test_that("recursive works when retrieving children list first level") {
-      expect_true(*gti.get_branch(values[0]) == root_branch);
-    }
-
     test_that("const recursive works when retrieving children list first level") {
       const GeneralTreeInternal* gti_const = const_cast<const GeneralTreeInternal*>(&gti);
       tree_node_c_sp_vec_sp result = gti_const->get_branch(values[0]);
       expect_true(*result == root_branch_c);
     }
 
-    tree_node_sp_vec branch_five = {
-      added_nodes[5],
-      added_nodes[6],
-      added_nodes[8],
-      added_nodes[9],
-      added_nodes[7]
+    tree_node_c_sp_vec branch_five = {
+      std::const_pointer_cast<const TreeNode>(added_nodes[5]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[6]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[8]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[9]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[7])
     };
 
     test_that("recursive works when retrieving children list second level") {
+      const GeneralTreeInternal* gti_const = const_cast<const GeneralTreeInternal*>(&gti);
+      tree_node_c_sp_vec_sp result = gti_const->get_branch(values[0]);
+
       expect_true(*gti.get_branch(values[5]) == branch_five);
     }
 }
@@ -356,12 +353,6 @@ context("GeneralTreeInternal get_childeren works correctly") {
     };
 
 
-
-    test_that("recursive works when retrieving children list first level") {
-      expect_true(*gti.get_children(values[0]) == level_one_not_recursive);
-      expect_true(*gti.get_children(values[0], true) == level_one_recursive);
-    }
-
     test_that("const recursive works when retrieving children list first level") {
       const GeneralTreeInternal* gti_const = const_cast<const GeneralTreeInternal*>(&gti);
       tree_node_c_sp_vec_sp result_non_recursive = gti_const->get_children(values[0]);
@@ -370,184 +361,27 @@ context("GeneralTreeInternal get_childeren works correctly") {
       expect_true(*result_recursive == level_one_recursive_c);
     }
 
-    tree_node_sp_vec level_two_not_recursive = {
-      added_nodes[2]
+    tree_node_c_sp_vec level_two_not_recursive_c = {
+      std::const_pointer_cast<const TreeNode>(added_nodes[2])
     };
 
-    tree_node_sp_vec level_two_recursive = {
-      added_nodes[2],
-      added_nodes[3],
-      added_nodes[5],
-      added_nodes[6],
-      added_nodes[8],
-      added_nodes[9],
-      added_nodes[7],
-      added_nodes[4]
+    tree_node_c_sp_vec level_two_recursive_c = {
+      std::const_pointer_cast<const TreeNode>(added_nodes[2]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[3]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[5]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[6]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[8]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[9]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[7]),
+      std::const_pointer_cast<const TreeNode>(added_nodes[4])
     };
 
     test_that("recursive works when retrieving children list second level") {
-      expect_true(*gti.get_children(values[1]) == level_two_not_recursive);
-      expect_true(*gti.get_children(values[1], true) == level_two_recursive);
-    }
-}
-
-context("GeneralTreeInternal get_childeren_keys works correctly") {
-    SEXP values[] = {
-      NumericVector::create(0),
-      NumericVector::create(1),
-      NumericVector::create(2),
-      NumericVector::create(3),
-      NumericVector::create(4),
-      NumericVector::create(5),
-      NumericVector::create(6),
-      NumericVector::create(7),
-      NumericVector::create(8),
-      NumericVector::create(9)
-    };
-
-    // 0
-    // \ 1
-    //   \ 2
-    //     - 3
-    //     - 5
-    //     | - 6
-    //     | | - 8
-    //     | | - 9
-    //     | \ 7
-    //     |
-    //     \ 4
-    //  Create the tree above.
-    GeneralTreeInternal gti(values[0], values[0]);
-    // Add child node.
-    gti.add_node(values[0], values[1], values[1]);
-    gti.add_node(values[1], values[2], values[2]);
-    gti.add_node(values[2], values[3], values[3]);
-    gti.add_node(values[2], values[5], values[5]);
-    gti.add_node(values[5], values[6], values[6]);
-    gti.add_node(values[5], values[7], values[7]);
-    gti.add_node(values[6], values[8], values[8]);
-    gti.add_node(values[6], values[9], values[9]);
-    gti.add_node(values[2], values[4], values[4]);
-
-    SEXP_vec level_one_not_recursive = {
-      values[1]
-    };
-
-    SEXP_vec level_one_recursive = {
-      values[1],
-      values[2],
-      values[3],
-      values[5],
-      values[6],
-      values[8],
-      values[9],
-      values[7],
-      values[4]
-    };
-
-    test_that("recursive works when retrieving children keys first level") {
-      expect_true(*gti.get_children_keys(values[0]) == level_one_not_recursive);
-      expect_true(*gti.get_children_keys(values[0], true) == level_one_recursive);
-    }
-
-    SEXP_vec level_two_not_recursive = {
-      values[2]
-    };
-
-    SEXP_vec level_two_recursive = {
-      values[2],
-      values[3],
-      values[5],
-      values[6],
-      values[8],
-      values[9],
-      values[7],
-      values[4]
-    };
-
-    test_that("recursive works when retrieving children keys second level") {
-      expect_true(*gti.get_children_keys(values[1]) == level_two_not_recursive);
-      expect_true(*gti.get_children_keys(values[1], true) == level_two_recursive);
-    }
-}
-
-context("GeneralTreeInternal get_childeren_data works correctly") {
-    SEXP values[] = {
-      NumericVector::create(0),
-      NumericVector::create(1),
-      NumericVector::create(2),
-      NumericVector::create(3),
-      NumericVector::create(4),
-      NumericVector::create(5),
-      NumericVector::create(6),
-      NumericVector::create(7),
-      NumericVector::create(8),
-      NumericVector::create(9)
-    };
-
-    // 0
-    // \ 1
-    //   \ 2
-    //     - 3
-    //     - 5
-    //     | - 6
-    //     | | - 8
-    //     | | - 9
-    //     | \ 7
-    //     |
-    //     \ 4
-    //  Create the tree above.
-    GeneralTreeInternal gti(values[0], values[0]);
-    // Add child node.
-    gti.add_node(values[0], values[1], values[1]);
-    gti.add_node(values[1], values[2], values[2]);
-    gti.add_node(values[2], values[3], values[3]);
-    gti.add_node(values[2], values[5], values[5]);
-    gti.add_node(values[5], values[6], values[6]);
-    gti.add_node(values[5], values[7], values[7]);
-    gti.add_node(values[6], values[8], values[8]);
-    gti.add_node(values[6], values[9], values[9]);
-    gti.add_node(values[2], values[4], values[4]);
-
-    SEXP_vec level_one_not_recursive = {
-      values[1]
-    };
-
-    SEXP_vec level_one_recursive = {
-      values[1],
-      values[2],
-      values[3],
-      values[5],
-      values[6],
-      values[8],
-      values[9],
-      values[7],
-      values[4]
-    };
-
-    test_that("recursive works when retrieving children data first level") {
-      expect_true(*gti.get_children_data(values[0]) == level_one_not_recursive);
-      expect_true(*gti.get_children_data(values[0], true) == level_one_recursive);
-    }
-
-    SEXP_vec level_two_not_recursive = {
-      values[2]
-    };
-
-    SEXP_vec level_two_recursive = {
-      values[2],
-      values[3],
-      values[5],
-      values[6],
-      values[8],
-      values[9],
-      values[7],
-      values[4]
-    };
-
-    test_that("recursive works when retrieving children data second level") {
-      expect_true(*gti.get_children_data(values[1]) == level_two_not_recursive);
-      expect_true(*gti.get_children_data(values[1], true) == level_two_recursive);
+      const GeneralTreeInternal* gti_const = const_cast<const GeneralTreeInternal*>(&gti);
+      tree_node_c_sp_vec_sp result_non_recursive = gti_const->get_children(values[1]);
+      tree_node_c_sp_vec_sp result_recursive = gti_const->get_children(values[1], true);
+      expect_true(*result_non_recursive == level_two_not_recursive_c);
+      expect_true(*result_recursive == level_two_recursive_c);
     }
 }
 
@@ -564,7 +398,6 @@ context("GeneralTreeInternal get_siblings works correctly") {
       NumericVector::create(8),
       NumericVector::create(9)
     };
-
 
     // 0
     // \ 1
@@ -607,132 +440,10 @@ context("GeneralTreeInternal get_siblings works correctly") {
       std::const_pointer_cast<const TreeNode>(added_nodes[4])
     };
 
-
-    test_that("get_siblings works on first run") {
-      expect_true(*gti.get_siblings(values[3]) == siblings_three);
-    }
-    test_that("get_siblings works on second run, ensuring nothing is deleted") {
-      expect_true(*gti.get_siblings(values[3]) == siblings_three);
-    }
-
-
     test_that("const get_siblings works") {
       const GeneralTreeInternal* gti_const = const_cast<const GeneralTreeInternal*>(&gti);
       tree_node_c_sp_vec_sp results = gti_const->get_siblings(values[3]);
       expect_true(*results == siblings_three_c);
-    }
-}
-
-context("GeneralTreeInternal get_siblings_keys works correctly") {
-    SEXP values[] = {
-      NumericVector::create(0),
-      NumericVector::create(1),
-      NumericVector::create(2),
-      NumericVector::create(3),
-      NumericVector::create(4),
-      NumericVector::create(5),
-      NumericVector::create(6),
-      NumericVector::create(7),
-      NumericVector::create(8),
-      NumericVector::create(9)
-    };
-
-    // 0
-    // \ 1
-    //   \ 2
-    //     - 3
-    //     - 5
-    //     | - 6
-    //     | | - 8
-    //     | | - 9
-    //     | \ 7
-    //     |
-    //     \ 4
-    //  Create the tree above.
-    GeneralTreeInternal gti(values[0], values[0]);
-    // Add child node.
-    gti.add_node(values[0], values[1], values[1]);
-    gti.add_node(values[1], values[2], values[2]);
-    gti.add_node(values[2], values[3], values[3]);
-    gti.add_node(values[2], values[5], values[5]);
-    gti.add_node(values[5], values[6], values[6]);
-    gti.add_node(values[5], values[7], values[7]);
-    gti.add_node(values[6], values[8], values[8]);
-    gti.add_node(values[6], values[9], values[9]);
-    gti.add_node(values[2], values[4], values[4]);
-
-    SEXP_vec siblings_three = {
-      values[5],
-      values[4]
-    };
-
-    SEXP_vec siblings_five = {
-      values[3],
-      values[4]
-    };
-
-    test_that("get_siblings_keys works correctly on left child") {
-      expect_true(*gti.get_siblings_keys(values[3]) == siblings_three);
-    }
-    test_that("get_siblings_keys works correctly on sibling") {
-      expect_true(*gti.get_siblings_keys(values[5]) == siblings_five);
-    }
-}
-
-
-context("GeneralTreeInternal get_siblings_data works correctly") {
-    SEXP values[] = {
-      NumericVector::create(0),
-      NumericVector::create(1),
-      NumericVector::create(2),
-      NumericVector::create(3),
-      NumericVector::create(4),
-      NumericVector::create(5),
-      NumericVector::create(6),
-      NumericVector::create(7),
-      NumericVector::create(8),
-      NumericVector::create(9)
-    };
-
-    // 0
-    // \ 1
-    //   \ 2
-    //     - 3
-    //     - 5
-    //     | - 6
-    //     | | - 8
-    //     | | - 9
-    //     | \ 7
-    //     |
-    //     \ 4
-    //  Create the tree above.
-    GeneralTreeInternal gti(values[0], values[0]);
-    // Add child node.
-    gti.add_node(values[0], values[1], values[1]);
-    gti.add_node(values[1], values[2], values[2]);
-    gti.add_node(values[2], values[3], values[3]);
-    gti.add_node(values[2], values[5], values[5]);
-    gti.add_node(values[5], values[6], values[6]);
-    gti.add_node(values[5], values[7], values[7]);
-    gti.add_node(values[6], values[8], values[8]);
-    gti.add_node(values[6], values[9], values[9]);
-    gti.add_node(values[2], values[4], values[4]);
-
-    SEXP_vec siblings_three = {
-      values[5],
-      values[4]
-    };
-
-    SEXP_vec siblings_five = {
-      values[3],
-      values[4]
-    };
-
-    test_that("get_siblings_data works correctly on left child") {
-      expect_true(*gti.get_siblings_data(values[3]) == siblings_three);
-    }
-    test_that("get_siblings_data works correctly on sibling") {
-      expect_true(*gti.get_siblings_data(values[5]) == siblings_five);
     }
 }
 
@@ -798,123 +509,10 @@ context("GeneralTreeInternal get_leafs works correctly") {
       std::const_pointer_cast<const TreeNode>(added_nodes[4])
     };
 
-
-    test_that("get_leafs work") {
-      expect_true(*gti.get_leafs(values[0]) == leafs);
-    }
-
     test_that("const get_leafs works") {
       const GeneralTreeInternal* gti_const = const_cast<const GeneralTreeInternal*>(&gti);
       tree_node_c_sp_vec_sp results = gti_const->get_leafs(values[0]);
       expect_true(*results == leafs_c);
-    }
-}
-
-context("GeneralTreeInternal get_leafs_keys and get_leafs_data work") {
-    SEXP values[] = {
-      NumericVector::create(0),
-      NumericVector::create(1),
-      NumericVector::create(2),
-      NumericVector::create(3),
-      NumericVector::create(4),
-      NumericVector::create(5),
-      NumericVector::create(6),
-      NumericVector::create(7),
-      NumericVector::create(8),
-      NumericVector::create(9)
-    };
-
-    // 0
-    // \ 1
-    //   \ 2
-    //     - 3
-    //     - 5
-    //     | - 6
-    //     | | - 8
-    //     | | - 9
-    //     | \ 7
-    //     |
-    //     \ 4
-    //  Create the tree above.
-    GeneralTreeInternal gti(values[0], values[0]);
-    // Add child node.
-    gti.add_node(values[0], values[1], values[1]);
-    gti.add_node(values[1], values[2], values[2]);
-    gti.add_node(values[2], values[3], values[3]);
-    gti.add_node(values[2], values[5], values[5]);
-    gti.add_node(values[5], values[6], values[6]);
-    gti.add_node(values[5], values[7], values[7]);
-    gti.add_node(values[6], values[8], values[8]);
-    gti.add_node(values[6], values[9], values[9]);
-    gti.add_node(values[2], values[4], values[4]);
-
-    SEXP_vec leafs = {
-      values[8],
-      values[9],
-      values[7]
-    };
-
-    test_that("get_leafs_keys works") {
-      expect_true(*gti.get_leafs_keys(values[5]) == leafs);
-    }
-
-    test_that("get_leafs_data works") {
-      expect_true(*gti.get_leafs_data(values[5]) == leafs);
-    }
-}
-
-context("GeneralTreeInternal get_branch_keys and get_branch_data work") {
-    SEXP values[] = {
-      NumericVector::create(0),
-      NumericVector::create(1),
-      NumericVector::create(2),
-      NumericVector::create(3),
-      NumericVector::create(4),
-      NumericVector::create(5),
-      NumericVector::create(6),
-      NumericVector::create(7),
-      NumericVector::create(8),
-      NumericVector::create(9)
-    };
-
-    // 0
-    // \ 1
-    //   \ 2
-    //     - 3
-    //     - 5
-    //     | - 6
-    //     | | - 8
-    //     | | - 9
-    //     | \ 7
-    //     |
-    //     \ 4
-    //  Create the tree above.
-    GeneralTreeInternal gti(values[0], values[0]);
-    // Add child node.
-    gti.add_node(values[0], values[1], values[1]);
-    gti.add_node(values[1], values[2], values[2]);
-    gti.add_node(values[2], values[3], values[3]);
-    gti.add_node(values[2], values[5], values[5]);
-    gti.add_node(values[5], values[6], values[6]);
-    gti.add_node(values[5], values[7], values[7]);
-    gti.add_node(values[6], values[8], values[8]);
-    gti.add_node(values[6], values[9], values[9]);
-    gti.add_node(values[2], values[4], values[4]);
-
-    SEXP_vec branch = {
-      values[5],
-      values[6],
-      values[8],
-      values[9],
-      values[7]
-    };
-
-    test_that("get_branch_keys works") {
-      expect_true(*gti.get_branch_keys(values[5]) == branch);
-    }
-
-    test_that("get_branch_data works") {
-      expect_true(*gti.get_branch_data(values[5]) == branch);
     }
 }
 
@@ -965,12 +563,8 @@ context("GeneralTreeInternal copy works correctly") {
           gti.get_root()->get_data());
     }
     test_that("Verify whether keys in tree are identical") {
-      expect_true(*gti.get_children_keys(values[0], true) ==
-          *gti.get_children_keys(values[0], true));
-    }
-    test_that("Verify whether data in tree are identical") {
-      expect_true(*gti.get_children_data(values[0], true) ==
-          *gti.get_children_data(values[0], true));
+      expect_true(*gti.get_children(values[0], true) ==
+          *gti.get_children(values[0], true));
     }
 }
 

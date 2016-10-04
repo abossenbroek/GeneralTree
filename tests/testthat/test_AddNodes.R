@@ -82,22 +82,22 @@ test_that("child by using addChild on search result.", {
 test_that("test relative insertion", {
 
   tree <- GeneralTree$new(0, "parent1")
-  expect_identical(unlist(tree$getBranchKeys()), 0)
+  expect_identical(unlist(tree$getBranchInfo("key")), 0)
   tree$searchNode(0)$addChild("a", "child.a")
-  expect_identical(unlist(tree$getBranchKeys()), c(0, "a"))
+  expect_identical(unlist(tree$getBranchInfo("key")), c(0, "a"))
   tree$searchNode(0)$addChild("b", "child.b")
-  expect_identical(unlist(tree$getBranchKeys()), c(0, "a", "b"))
+  expect_identical(unlist(tree$getBranchInfo("key")), c(0, "a", "b"))
   tree$searchNode("b")$addChild("c", "child.b.c")
-  expect_identical(unlist(tree$getBranchKeys()), c(0, "a", "b", "c"))
+  expect_identical(unlist(tree$getBranchInfo("key")), c(0, "a", "b", "c"))
   tree$searchNode("b")$addChild("d", "child.b.d")
-  expect_identical(unlist(tree$getBranchKeys()), c(0, "a", "b", "c", "d"))
+  expect_identical(unlist(tree$getBranchInfo("key")), c(0, "a", "b", "c", "d"))
   tree$addNode("c", "e", "child.c.e")
-  expect_identical(unlist(tree$getBranchKeys()), c(0, "a", "b", "c", "e", "d"))
+  expect_identical(unlist(tree$getBranchInfo("key")), c(0, "a", "b", "c", "e", "d"))
   tree$addNode("c", "f", "child.c.e")
-  expect_identical(unlist(tree$getBranchKeys()), c(0, "a", "b", "c", "e",
+  expect_identical(unlist(tree$getBranchInfo("key")), c(0, "a", "b", "c", "e",
                                                    "f", "d"))
   tree$searchNode("b")$addSibling("g", "child.g")
-  expect_identical(unlist(tree$getBranchKeys()), c(0, "a", "b", "c", "e",
+  expect_identical(unlist(tree$getBranchInfo("key")), c(0, "a", "b", "c", "e",
                                                    "f", "d", "g"))
 
   expect_identical(tree$searchNode("g")$parent$key, 0)

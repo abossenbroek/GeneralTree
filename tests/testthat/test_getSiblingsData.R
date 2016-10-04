@@ -10,24 +10,24 @@ tree$addNode("c", "f", "child.c.f")
 tree$addNode("c", "g", "child.c.g")
 
 test_that("Verify correct sibling data is returned with relative getter", {
-  expect_identical(tree$searchNode("e")$getSiblingsData(),
+  expect_identical(tree$searchNode("e")$getSiblingsInfo("data"),
                    list("child.c.f", "child.c.g"))
-  expect_identical(tree$searchNode("e")$getSiblingsKeys(),
+  expect_identical(tree$searchNode("e")$getSiblingsInfo("key"),
                    list("f", "g"))
-  expect_identical(tree$searchNode("c")$getSiblingsData(),
+  expect_identical(tree$searchNode("c")$getSiblingsInfo(what = "data"),
                    list("child.b.d"))
-  expect_identical(tree$searchNode("c")$getSiblingsKeys(),
+  expect_identical(tree$searchNode("c")$getSiblingsInfo(what = "key"),
                    list("d"))
 })
 
 test_that("Verify correct sibling data is returned with absolute getter", {
-  expect_identical(tree$getSiblingsDataByKey("e"),
+  expect_identical(tree$getSiblingsInfoByKey("e", "data"),
                    list("child.c.f", "child.c.g"))
-  expect_identical(tree$getSiblingsKeysByKey("e"),
+  expect_identical(tree$getSiblingsInfoByKey("e", "key"),
                    list("f", "g"))
-  expect_identical(tree$getSiblingsDataByKey("c"),
+  expect_identical(tree$getSiblingsInfoByKey("c", what = "data"),
                    list("child.b.d"))
-  expect_identical(tree$getSiblingsKeysByKey("c"),
+  expect_identical(tree$getSiblingsInfoByKey("c", what = "key"),
                    list("d"))
 })
 

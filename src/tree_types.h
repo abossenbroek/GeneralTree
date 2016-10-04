@@ -44,6 +44,7 @@ typedef std::vector<SEXP> SEXP_vec;
 typedef std::vector<tree_key> key_vec;
 
 typedef std::vector<uid> uid_vec;
+typedef std::shared_ptr<uid_vec> uid_vec_sp;
 
 typedef std::shared_ptr<SEXP_vec> SEXP_vec_sp;
 typedef std::shared_ptr<tree_key> tree_key_sp;

@@ -6,25 +6,18 @@
 
 #include <RcppCommon.h>
 
-using namespace Rcpp;
-
+#include "tree_types.h"
 #include "TreeNode.h"
+
+using namespace Rcpp;
 
 template<typename T>
 struct ListFunctor {
   virtual T Process(const TreeNode& tn) const = 0;
 };
 
-struct SEXPGetDataFunctor : public ListFunctor<SEXP> {
-  SEXP Process(const TreeNode& tn) const;
-};
-
-struct SEXPGetKeyFunctor : public ListFunctor<SEXP> {
-  SEXP Process(const TreeNode& tn) const;
-};
-
-struct SEXPGetUIDFunctor : public ListFunctor<SEXP> {
-  SEXP Process(const TreeNode& tn) const;
+struct GetUIDFunctor : public ListFunctor<uid> {
+  uid Process(const TreeNode& tn) const;
 };
 
 class SEXPApplyFunctor : public ListFunctor<SEXP> {

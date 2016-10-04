@@ -2,6 +2,7 @@
 // [[Rcpp::plugins(cpp11)]]
 #ifndef _TREENODE_H_
 #define _TREENODE_H_
+#pragma once
 
 #include "config.h"
 
@@ -178,5 +179,13 @@ public:
 
   const bool is_last_sibling() const;
 };
+
+
+namespace Rcpp {
+  template <> SEXP wrap( const tree_node_sp& tn);
+  template <> SEXP wrap( const tree_node_c_sp& tn);
+}
+
+#include <Rcpp.h>
 
 #endif /* _TREENODE_H_ */

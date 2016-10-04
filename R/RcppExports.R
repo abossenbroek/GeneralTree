@@ -65,70 +65,6 @@ serialize <- function(gti_sexp) {
     .Call('GeneralTree_serialize', PACKAGE = 'GeneralTree', gti_sexp)
 }
 
-get_children_keys <- function(gti_sexp, parent_key, recursive = FALSE) {
-    .Call('GeneralTree_get_children_keys', PACKAGE = 'GeneralTree', gti_sexp, parent_key, recursive)
-}
-
-get_children_data <- function(gti_sexp, parent_key, recursive = FALSE) {
-    .Call('GeneralTree_get_children_data', PACKAGE = 'GeneralTree', gti_sexp, parent_key, recursive)
-}
-
-get_siblings_keys <- function(gti_sexp, node_key) {
-    .Call('GeneralTree_get_siblings_keys', PACKAGE = 'GeneralTree', gti_sexp, node_key)
-}
-
-get_siblings_data <- function(gti_sexp, node_key) {
-    .Call('GeneralTree_get_siblings_data', PACKAGE = 'GeneralTree', gti_sexp, node_key)
-}
-
-get_branch_data <- function(gti_sexp, node_key) {
-    .Call('GeneralTree_get_branch_data', PACKAGE = 'GeneralTree', gti_sexp, node_key)
-}
-
-get_branch_keys <- function(gti_sexp, node_key) {
-    .Call('GeneralTree_get_branch_keys', PACKAGE = 'GeneralTree', gti_sexp, node_key)
-}
-
-get_leafs_data <- function(gti_sexp, node_key) {
-    .Call('GeneralTree_get_leafs_data', PACKAGE = 'GeneralTree', gti_sexp, node_key)
-}
-
-get_leafs_keys <- function(gti_sexp, node_key) {
-    .Call('GeneralTree_get_leafs_keys', PACKAGE = 'GeneralTree', gti_sexp, node_key)
-}
-
-get_children_keys_at_ref <- function(gti_sexp, recursive = FALSE) {
-    .Call('GeneralTree_get_children_keys_at_ref', PACKAGE = 'GeneralTree', gti_sexp, recursive)
-}
-
-get_children_data_at_ref <- function(gti_sexp, recursive = FALSE) {
-    .Call('GeneralTree_get_children_data_at_ref', PACKAGE = 'GeneralTree', gti_sexp, recursive)
-}
-
-get_siblings_keys_at_ref <- function(gti_sexp) {
-    .Call('GeneralTree_get_siblings_keys_at_ref', PACKAGE = 'GeneralTree', gti_sexp)
-}
-
-get_siblings_data_at_ref <- function(gti_sexp) {
-    .Call('GeneralTree_get_siblings_data_at_ref', PACKAGE = 'GeneralTree', gti_sexp)
-}
-
-get_branch_data_at_ref <- function(gti_sexp) {
-    .Call('GeneralTree_get_branch_data_at_ref', PACKAGE = 'GeneralTree', gti_sexp)
-}
-
-get_branch_keys_at_ref <- function(gti_sexp) {
-    .Call('GeneralTree_get_branch_keys_at_ref', PACKAGE = 'GeneralTree', gti_sexp)
-}
-
-get_leafs_data_at_ref <- function(gti_sexp) {
-    .Call('GeneralTree_get_leafs_data_at_ref', PACKAGE = 'GeneralTree', gti_sexp)
-}
-
-get_leafs_keys_at_ref <- function(gti_sexp) {
-    .Call('GeneralTree_get_leafs_keys_at_ref', PACKAGE = 'GeneralTree', gti_sexp)
-}
-
 get_tree_depth_at_ref <- function(gti_sexp) {
     .Call('GeneralTree_get_tree_depth_at_ref', PACKAGE = 'GeneralTree', gti_sexp)
 }
@@ -195,5 +131,37 @@ apply_on_branch <- function(gti_sexp, f) {
 
 apply_on_branch_at_ref <- function(gti_sexp, key, f) {
     .Call('GeneralTree_apply_on_branch_at_ref', PACKAGE = 'GeneralTree', gti_sexp, key, f)
+}
+
+get_children <- function(gti_sexp, key, recursive = FALSE) {
+    .Call('GeneralTree_get_children', PACKAGE = 'GeneralTree', gti_sexp, key, recursive)
+}
+
+get_branch <- function(gti_sexp, key) {
+    .Call('GeneralTree_get_branch', PACKAGE = 'GeneralTree', gti_sexp, key)
+}
+
+get_leafs <- function(gti_sexp, key) {
+    .Call('GeneralTree_get_leafs', PACKAGE = 'GeneralTree', gti_sexp, key)
+}
+
+get_siblings <- function(gti_sexp, key) {
+    .Call('GeneralTree_get_siblings', PACKAGE = 'GeneralTree', gti_sexp, key)
+}
+
+get_children_at_ref <- function(gti_sexp, recursive = FALSE) {
+    .Call('GeneralTree_get_children_at_ref', PACKAGE = 'GeneralTree', gti_sexp, recursive)
+}
+
+get_branch_at_ref <- function(gti_sexp) {
+    .Call('GeneralTree_get_branch_at_ref', PACKAGE = 'GeneralTree', gti_sexp)
+}
+
+get_leafs_at_ref <- function(gti_sexp) {
+    .Call('GeneralTree_get_leafs_at_ref', PACKAGE = 'GeneralTree', gti_sexp)
+}
+
+get_siblings_at_ref <- function(gti_sexp) {
+    .Call('GeneralTree_get_siblings_at_ref', PACKAGE = 'GeneralTree', gti_sexp)
 }
 

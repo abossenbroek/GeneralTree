@@ -11,44 +11,50 @@ tree$addNode("c", "g", "child.c.g")
 
 
 test_that("Verify correct child data is returned with relative getter", {
-  expect_identical(tree$searchNode("b")$getChildrenData(),
+  expect_identical(tree$searchNode("b")$getChildrenInfo("data"),
                    list("child.b.c", "child.b.d"))
-  expect_identical(tree$searchNode("c")$getChildrenData(),
+  expect_identical(tree$searchNode("c")$getChildrenInfo("data"),
                    list("child.c.e", "child.c.f", "child.c.g"))
-  expect_identical(tree$searchNode("c")$getChildrenKeys(),
+  expect_identical(tree$searchNode("c")$getChildrenInfo("key"),
                    list("e", "f", "g"))
-  expect_identical(tree$searchNode("b")$getChildrenKeys(TRUE),
+  expect_identical(tree$searchNode("b")$getChildrenInfo("key", TRUE),
                    list("c", "e", "f", "g", "d"))
-  expect_identical(tree$searchNode("b")$getChildrenKeys(recursive = TRUE),
+  expect_identical(tree$searchNode("b")$getChildrenInfo(what = "key",
+                                                        recursive = TRUE),
                    list("c", "e", "f", "g", "d"))
-  expect_identical(tree$searchNode("b")$getChildrenData(TRUE),
+  expect_identical(tree$searchNode("b")$getChildrenInfo("data", TRUE),
                    list("child.b.c", "child.c.e", "child.c.f",
                         "child.c.g", "child.b.d"))
-  expect_identical(tree$searchNode("b")$getChildrenData(recursive = TRUE),
+  expect_identical(tree$searchNode("b")$getChildrenInfo(recursive = TRUE,
+                                                        what = "data"),
                    list("child.b.c", "child.c.e", "child.c.f",
                         "child.c.g", "child.b.d"))
-  expect_identical(tree$searchNode("g")$getChildrenDataByKey(recursive = TRUE),
+  expect_identical(tree$searchNode("g")$getChildrenInfoByKey(what = "key", 
+                                                             recursive = TRUE),
                    list())
 })
 
 test_that("Verify correct child data is returned with absolute getter", {
-  expect_identical(tree$getChildrenDataByKey(key = "b"),
+  expect_identical(tree$getChildrenInfoByKey(key = "b", what = "data"),
                    list("child.b.c", "child.b.d"))
-  expect_identical(tree$getChildrenDataByKey(key = "c"),
+  expect_identical(tree$getChildrenInfoByKey(key = "c", "data"),
                    list("child.c.e", "child.c.f", "child.c.g"))
-  expect_identical(tree$getChildrenKeysByKey(key = "c"),
+  expect_identical(tree$getChildrenInfoByKey(key = "c", "key"),
                    list("e", "f", "g"))
-  expect_identical(tree$getChildrenKeysByKey("b", TRUE),
+  expect_identical(tree$getChildrenInfoByKey("b", what = "key", recursive = TRUE),
                    list("c", "e", "f", "g", "d"))
-  expect_identical(tree$getChildrenKeysByKey(key = "b", recursive = TRUE),
+  expect_identical(tree$getChildrenInfoByKey(key = "b", recursive = TRUE,
+                                             "key"),
                    list("c", "e", "f", "g", "d"))
-  expect_identical(tree$getChildrenDataByKey("b", TRUE),
+  expect_identical(tree$getChildrenInfoByKey("b", recursive = TRUE, what = "data"),
                    list("child.b.c", "child.c.e", "child.c.f",
                         "child.c.g", "child.b.d"))
-  expect_identical(tree$getChildrenDataByKey(key = "b", recursive = TRUE),
+  expect_identical(tree$getChildrenInfoByKey(key = "b", recursive = TRUE,
+                                             "data"),
                    list("child.b.c", "child.c.e", "child.c.f",
                         "child.c.g", "child.b.d"))
-  expect_identical(tree$getChildrenDataByKey(key = "g", recursive = TRUE),
+  expect_identical(tree$getChildrenInfoByKey(key = "g", recursive = TRUE,
+                                             "data"),
                    list())
 })
 
@@ -60,7 +66,7 @@ test_that("Verify deprecated functions work but yield warnings", {
 })
 
 test_that("Verify correct error is returned", {
-  expect_error(tree$getChildrenDataByKey(key = 10),
+  expect_error(tree$getChildrenInfoByKey(key = 10, what = "key"),
                    ".*not find key in tree.$")
 })
 

@@ -107,39 +107,21 @@ public:
   const tree_node_sp get_ref() const;
   void change_ref(const uid& new_uid);
 
-  std::shared_ptr<tree_node_sp_vec> get_children(const SEXP& parent_key, bool recursive = false);
   tree_node_c_sp_vec_sp get_children(const SEXP& parent_key, bool recursive = false) const;
+  tree_node_c_sp_vec_sp get_children(bool recursive = false) const;
 
-  std::shared_ptr<tree_node_sp_vec> get_siblings(const SEXP& node_key);
   tree_node_c_sp_vec_sp get_siblings(const SEXP& node_key) const;
+  tree_node_c_sp_vec_sp get_siblings() const;
 
-  std::shared_ptr<tree_node_sp_vec> get_branch(const SEXP& node_key);
   tree_node_c_sp_vec_sp get_branch(const SEXP& node_key) const;
+  tree_node_c_sp_vec_sp get_branch() const;
 
-  std::shared_ptr<tree_node_sp_vec> get_leafs(const SEXP& node_key);
   tree_node_c_sp_vec_sp get_leafs(const SEXP& node_key) const;
+  tree_node_c_sp_vec_sp get_leafs() const;
 
   void clean_internal_storage();
 
-  SEXP_vec_sp get_children_keys(const SEXP& parent_key, bool recursive = false)
-    const;
-  SEXP_vec_sp get_children_data(const SEXP& parent_key, bool recursive = false)
-    const;
-  SEXP_vec_sp get_children_keys(bool recursive = false) const;
-  SEXP_vec_sp get_children_data(bool recursive = false) const;
-  SEXP_vec_sp get_siblings_keys(const SEXP& node_key) const;
-  SEXP_vec_sp get_siblings_data(const SEXP& node_key) const;
-  SEXP_vec_sp get_siblings_keys() const;
-  SEXP_vec_sp get_siblings_data() const;
-  SEXP_vec_sp get_branch_keys(const SEXP& node_key) const;
-  SEXP_vec_sp get_branch_data(const SEXP& node_key) const;
-  SEXP_vec_sp get_branch_uids() const;
-  SEXP_vec_sp get_branch_keys() const;
-  SEXP_vec_sp get_branch_data() const;
-  SEXP_vec_sp get_leafs_keys(const SEXP& node_key) const;
-  SEXP_vec_sp get_leafs_data(const SEXP& node_key) const;
-  SEXP_vec_sp get_leafs_keys() const;
-  SEXP_vec_sp get_leafs_data() const;
+  uid_vec_sp get_branch_uids() const;
 
   SEXP_vec_sp apply_branch(const Function& f) const;
   SEXP_vec_sp apply_branch(const SEXP& node_key, const Function& f) const;

@@ -71,8 +71,8 @@ test_that("branchToList is working as expected", {
   tree$addNode(8, 14, "child.8.14")
   tree$addNode(2, 6, "child.2.6")
 
-  expect_equal(unlist(tree$getBranchKeys()), 1 : 14)
+  expect_equal(unlist(tree$getBranchInfo("key")), 1 : 14)
 
-  res <- tree$searchNode(8)$getBranchKeys()
+  res <- tree$searchNode(8)$getBranchInfo("key")
   expect_equal(unlist(res), 8 : 14)
 })

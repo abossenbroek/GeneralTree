@@ -389,4 +389,11 @@ bool operator== (const TreeNode& lhs, const TreeNode& rhs)
   return result && lhs.get_key() == rhs.get_key() && lhs.get_data() == rhs.get_data();
 }
 
-
+namespace Rcpp {
+  template <> SEXP wrap( const tree_node_sp& tn) {
+    return wrap(*tn);
+  }
+  template <> SEXP wrap( const tree_node_c_sp& tn) {
+    return wrap(*tn);
+  }
+}

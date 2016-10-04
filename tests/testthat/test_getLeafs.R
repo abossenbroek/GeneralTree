@@ -10,22 +10,22 @@ tree$addNode("c", "f", "child.c.f")
 tree$addNode("c", "g", "child.c.g")
 
 test_that("Verify correct leafs data is returned with relative getter", {
-  expect_identical(tree$searchNode("e")$getLeafsData(),
+  expect_identical(tree$searchNode("e")$getLeafsInfo(what = "data"),
                    list("child.c.e"))
-  expect_identical(tree$searchNode("e")$getLeafsKeys(),
+  expect_identical(tree$searchNode("e")$getLeafsInfo(what = "key"),
                    list("e"))
-  expect_identical(tree$searchNode("b")$getLeafsData(),
+  expect_identical(tree$searchNode("b")$getLeafsInfo("data"),
                    list("child.c.e", "child.c.f", "child.c.g", "child.b.d"))
-  expect_identical(tree$searchNode("b")$getLeafsKeys(),
+  expect_identical(tree$searchNode("b")$getLeafsInfo("key"),
                    list("e", "f", "g", "d"))
 })
 
 test_that("Verify correct leafs data is returned with absolute getter", {
-  expect_identical(tree$getLeafsDataByKey("e"), list("child.c.e"))
-  expect_identical(tree$getLeafsKeysByKey("e"), list("e"))
-  expect_identical(tree$getLeafsDataByKey("b"),
+  expect_identical(tree$getLeafsInfoByKey("e", what = "data"), list("child.c.e"))
+  expect_identical(tree$getLeafsInfoByKey("e", what = "key"), list("e"))
+  expect_identical(tree$getLeafsInfoByKey("b", "data"),
                    list("child.c.e", "child.c.f", "child.c.g", "child.b.d"))
-  expect_identical(tree$getLeafsKeysByKey("b"),
+  expect_identical(tree$getLeafsInfoByKey("b", "key"),
                    list("e", "f", "g", "d"))
 })
 
